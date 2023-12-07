@@ -21,8 +21,12 @@ const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
 
 // Syncing all the models at once.
-conn.sync({ force: true }).then(() => {
+conn.sync() // eslint-disable-line no-unused-expressions
+.then(() => {
   server.listen(3001, () => {
-    console.log('%s listening at 3001'); // eslint-disable-line no-console
+    console.log('%s listening at 3001'); // eslint-disable-
   });
+})
+.catch((error)  => {
+  console.error('No se han sincronizado los modelos:',error);
 });
