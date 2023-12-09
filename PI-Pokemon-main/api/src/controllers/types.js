@@ -8,7 +8,7 @@ const typesController = {
 
             if (countTypes === 0) {
 
-                const apiResponse = await axios.getAdapter('https://pokeapi.co/api/v2/type');
+                const apiResponse = await axios.get('https://pokeapi.co/api/v2/type');
                 const apiTypes = apiResponse.data.results;
 
                 const typesToSave = apiTypes.map((type) =>({ name: type.name}));

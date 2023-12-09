@@ -8,7 +8,7 @@ const modelDefiners = [];
 const sequelize = new Sequelize(
    `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
    {
-      logging: false,
+      logging: console.log,
       native: false,
    }
 );
@@ -39,8 +39,8 @@ sequelize.models = Object.fromEntries(capsEntries);
 const { Pokemon, Types } = sequelize.models;
 
 // Definición de relaciones
-Types.hasMany(Pokemon);
-Pokemon.hasMany(Types);
+Types.belongsToMany(Pokemon, { through: 'Type_Pokemon'});
+Pokemon.belongsToMany(Types, { through: 'Type_Pokemon'});
 
 // Exportamos los modelos y la conexión
 module.exports = {
