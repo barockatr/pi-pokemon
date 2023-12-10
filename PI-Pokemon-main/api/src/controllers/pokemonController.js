@@ -1,4 +1,6 @@
-const { Pokemon, Types } = require('../db');
+const { Pokemon, Types } = require('../db.js');
+
+const pokemon =[];
 
 const pokemonController = {
     getPokemons: async (req, res) => {
