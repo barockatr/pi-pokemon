@@ -15,8 +15,8 @@ const getPokemonById = async (req, res) => {
         res.status(200).json(pokemon);
     } catch (error) {
         console.error('Error al obtener el ID del pokémon:', error);
-        res.status(500).json({ message: 'Error en eñ servidor' });
+        res.status(500).json({ message: 'Error en el servidor' });
     }
-},
+};
 
-exports = getPokemonById;
+module.exports = getPokemonById;
