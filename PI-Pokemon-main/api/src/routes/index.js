@@ -1,8 +1,7 @@
 const express = require('express');
-const pokemonRouter = require('./pokemon');
 const typesRouter = require('./types');
 const getPokemons = require('../controllers/getPokemon');
-const getHandlers =('../handlers/gethandlers');
+const getHandlers = require('../handlers/gethandlers');
 const createPokemonController = require('../controllers/createPokemon');
 
 const router = express.Router();
