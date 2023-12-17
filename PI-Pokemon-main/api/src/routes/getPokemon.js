@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { getPokemons } =('../controllers/getPokemon.js');
+const { getPokemons } = require('../controllers/getPokemon.js');
 const router = Router();
 
 router.get('/', async (req, res) => {
