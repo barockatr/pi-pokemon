@@ -7,6 +7,11 @@ const SearchBar = () => {
     setSearchTerm(event.target.value);
   };
 
+  const handleSearch = () => {
+    // Add your search logic here, using the 'searchTerm' state
+    console.log(`Searching for: ${searchTerm}`);
+  };
+
   return (
     <div>
       <input
@@ -15,7 +20,7 @@ const SearchBar = () => {
         value={searchTerm}
         onChange={handleInputChange}
       />
-      <button onClick={() => {}}>Search</button>
+      <button onClick={handleSearch}>Search</button>
     </div>
   );
 };
