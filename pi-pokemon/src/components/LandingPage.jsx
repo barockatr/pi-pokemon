@@ -1,19 +1,17 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    history.push("/home");
+    navigate("/home");
   };
 
   return (
-    <div>
-      <h1>Landing Page</h1>
-      <img src="C:\Users\tony_\OneDrive\Escritorio\pi-pokemon\PI-Pokemon-main\pokemon.png" alt="POKEMON" />
-      <button onClick={handleButtonClick}>Go to Home Page</button>
+    <div className="landing">
+      <h1>Welcome to Pokémon App</h1>
+      <button onClick={handleButtonClick}>Enter</button>
     </div>
   );
 };

@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { filterByCreate, orderByAttack, orderByName, filterByType, clearHome } from '../../Redux/Actions';
+import { filterByCreate, orderByAttack, orderByName, filterByType, clearHome, getTypes } from '../redux/actions';
 import './Filter.css';
 
 function Filter({ setCurrentPage }) {
   const dispatch = useDispatch();
-  const pokemons = useSelector((state) => state.pokemons);
+  const types = useSelector((state) => state.types);
+
+  useEffect(() => {
+    dispatch(getTypes());
+  }, [dispatch]);
 
   const clearFilters = () => {
     dispatch(clearHome());
@@ -38,16 +42,16 @@ function Filter({ setCurrentPage }) {
         Clear filters
       </button>
       <label htmlFor="orderByAttack">Order Pokemons:</label>
-      <select id="orderByAttack" onChange={handleAttack} className="filter-button">
-        <option disabled defaultValue>
+      <select id="orderByAttack" onChange={handleAttack} className="filter-button" defaultValue="all">
+        <option value="all" disabled>
           Order Pokemons
         </option>
-        <option value="asc">Ascendente</option>
-        <option value="des">Descendente</option>
+        <option value="asc">Menor Ataque</option>
+        <option value="des">Mayor Ataque</option>
       </select>
       <label htmlFor="orderByName">Order by Name:</label>
-      <select id="orderByName" onChange={handleName} className="filter-button">
-        <option disabled defaultValue>
+      <select id="orderByName" onChange={handleName} className="filter-button" defaultValue="all">
+        <option value="all" disabled>
           Order by Name
         </option>
         <option value="asc">A-Z</option>
@@ -62,16 +66,11 @@ function Filter({ setCurrentPage }) {
       <label htmlFor="filterByType">Filter by Type:</label>
       <select id="filterByType" onChange={handleType} className="filter-button">
         <option value="all">Select one Poke-Type</option>
-        <option value="fire">Fire</option>
-        <option value="normal">Normal</option>
-        <option value="ground">Ground</option>
-        <option value="fairy">Fairy</option>
-        <option value="electric">Electric</option>
-        <option value="grass">Grass</option>
-        <option value="poison">Poison</option>
-        <option value="flying">Flying</option>
-        <option value="water">Water</option>
-        <option value="bug">Bug</option>
+        {types?.map((type) => (
+          <option key={type.id} value={type.name}>
+            {type.name}
+          </option>
+        ))}
       </select>
     </div>
   );

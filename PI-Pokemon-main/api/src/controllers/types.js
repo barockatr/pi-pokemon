@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { Types } = require('../db');
+const { Type } = require('../db');
 
 const typesController = {
   getAllTypes: async (req, res) => {
@@ -10,12 +10,12 @@ const typesController = {
 
       // Guardar los tipos en la base de datos si no existen
       for (const typeName of apiTypeNames) {
-        await Types.findOrCreate({
+        await Type.findOrCreate({
           where: { name: typeName },
         });
       }
 
-      const dbTypes = await Types.findAll();
+      const dbTypes = await Type.findAll();
       res.status(200).json(dbTypes);
     } catch (error) {
       console.error('Error al obtener los tipos de pokémon:', error);

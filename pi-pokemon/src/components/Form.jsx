@@ -13,22 +13,22 @@ const Form = () => {
         throw new Error("Numeric fields must be valid numbers");
       }
 
-      // Send the pokemon data to the API (replace "your-api-endpoint" with the actual endpoint)
-      const response = await fetch("https://pokeapi.co/api/v2/pokemon", {
+      // Send the pokemon data to the API
+      const response = await fetch("http://localhost:3001/pokemons", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(pokemon),
+        body: JSON.stringify({
+          ...pokemon,
+          name: pokemon.name.toLowerCase()
+        }),
       });
 
       if (!response.ok) {
         throw new Error("Failed to create the Pokemon");
       }
-
-      // Clear the form after successful submission
-      setPokemon({});
-      setError(null);
+      alert('Pokemon created successfully!');
     } catch (error) {
       setError(error.message);
     }

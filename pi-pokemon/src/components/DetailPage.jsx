@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
 
 const DetailPage = () => {
+  const { id } = useParams();
   const [pokemon, setPokemon] = useState(null);
   const [loading, setLoading] = useState(true);
-  const pokemonId = 1; // Reemplaza con el ID del Pokémon que deseas cargar
 
   useEffect(() => {
     const fetchPokemon = async () => {
       try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
-        const data = await response.json();
-        setPokemon(data);
+        const response = await axios.get(`http://localhost:3001/pokemons/${id}`);
+        setPokemon(response.data);
         setLoading(false);
       } catch (error) {
         console.error("Error al cargar el Pokémon:", error);
@@ -19,30 +20,36 @@ const DetailPage = () => {
     };
 
     fetchPokemon();
-  }, [pokemonId]);
+  }, [id]);
 
   if (loading) {
     return <p>Cargando...</p>;
   }
 
   if (!pokemon) {
-    return <p>No se pudo cargar el Pokémon</p>;
+    return (
+      <div>
+        <p>No se pudo cargar el Pokémon</p>
+        <Link to="/home">Volver</Link>
+      </div>
+    );
   }
 
   return (
     <div>
+      <Link to="/home">Volver</Link>
       <h1>{pokemon.name}</h1>
-      <img src={`https://pokeapi.co/media/sprites/pokemon/${pokemonId}.png`} alt={pokemon.name} />
+      <img src={pokemon.image} alt={pokemon.name} />
       <ul>
         <li>ID: {pokemon.id}</li>
         <li>Nombre: {pokemon.name}</li>
-        <li>Vida: {pokemon.stats[0].base_stat}</li>
-        <li>Ataque: {pokemon.stats[1].base_stat}</li>
-        <li>Defensa: {pokemon.stats[2].base_stat}</li>
-        <li>Velocidad: {pokemon.stats[5].base_stat}</li>
+        <li>Vida: {pokemon.life}</li>
+        <li>Ataque: {pokemon.attack}</li>
+        <li>Defensa: {pokemon.defense}</li>
+        <li>Velocidad: {pokemon.speed}</li>
         <li>Altura: {pokemon.height}</li>
         <li>Peso: {pokemon.weight}</li>
-        <li>Tipo: {pokemon.types.map((type) => type.type.name).join(", ")}</li>
+        <li>Tipo: {pokemon.types?.join(", ")}</li>
       </ul>
     </div>
   );

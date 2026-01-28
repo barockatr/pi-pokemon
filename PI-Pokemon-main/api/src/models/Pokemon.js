@@ -5,9 +5,15 @@ module.exports = (sequelize) => {
   // defino el modelo
   const Pokemon = sequelize.define('pokemon', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      autoIncrement: true,
+      allowNull: false,
+    },
+    created: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false
     },
     name: {
       type: DataTypes.STRING,
@@ -24,7 +30,7 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
     },
     defense: {
-      type:  DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
     },
     speed: {
       type: DataTypes.INTEGER,

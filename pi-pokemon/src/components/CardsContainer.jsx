@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPokemon } from '../../Redux/Actions';
-import Cards from '../Cards/Card'; // Asegúrate de tener la importación correcta
-import Loading from '../Loading/Loading';
-import Filter from '../Filter/Filter';
-import SearchBar from '../SearchBar/SearchBar';
+import { getPokemon } from '../redux/actions';
+import Card from './Card';
+import Loading from './Loading';
+import Filter from './Filter';
+import SearchBar from './SearchBar';
 import './CardsContainer.css';
 
 const CardsContainer = () => {
@@ -45,8 +45,9 @@ const CardsContainer = () => {
           {pokemons
             .slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage)
             .map((pokemon) => (
-              <Cards
+              <Card
                 key={pokemon.id}
+                id={pokemon.id}
                 name={pokemon.name}
                 image={pokemon.image}
                 types={pokemon.types}
@@ -68,9 +69,8 @@ const CardsContainer = () => {
           {Array.from({ length: pageCount }).map((_, index) => (
             <button
               key={index}
-              className={`handlePageButton ${
-                currentPage === index ? 'active' : ''
-              }`}
+              className={`handlePageButton ${currentPage === index ? 'active' : ''
+                }`}
               onClick={() => setCurrentPage(index)}
             >
               {index + 1}

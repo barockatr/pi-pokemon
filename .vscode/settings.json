@@ -1,5 +1,18 @@
 {
     "editor.inlineSuggest.showToolbar": "onHover",
     "bitoAI.codeCompletion.enableAutoCompletion": true,
-    "bitoAI.codeCompletion.enableCommentToCode": true
+    "bitoAI.codeCompletion.enableCommentToCode": true,
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "username": "pokemon",
+            "database": "postgres",
+            "name": "base de datos"
+        }
+    ]
 }

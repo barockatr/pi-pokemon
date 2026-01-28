@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { getPokemonByName } from "../redux/actions";
 
-const SearchBar = () => {
+const SearchBar = ({ setCurrentPage }) => {
+  const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleInputChange = (event) => {
@@ -8,8 +11,11 @@ const SearchBar = () => {
   };
 
   const handleSearch = () => {
-    // Add your search logic here, using the 'searchTerm' state
-    console.log(`Searching for: ${searchTerm}`);
+    if (searchTerm.trim() !== "") {
+      dispatch(getPokemonByName(searchTerm));
+      setSearchTerm("");
+      setCurrentPage(0);
+    }
   };
 
   return (

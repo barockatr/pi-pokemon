@@ -1,20 +1,23 @@
-const express = require('express');
-const typesRouter = require('./types');
+const { Router } = require('express');
 const getPokemons = require('../controllers/getPokemon');
-const getHandlers = require('../handlers/gethandlers');
-const createPokemonController = require('../controllers/createPokemon');
+const getPokemonById = require('../controllers/getPokemonById');
+const getPokemonByName = require('../controllers/getPokemonByName');
+const createPokemon = require('../controllers/createPokemon');
+const typesController = require('../controllers/types');
 
-const router = express.Router();
-// Rutas
-router.use('/pokemons', pokemonRouter);
+const router = Router();
 
-router.get('/pokemons', getPokemons.getPokemons); 
-router.get('/pokemons/:idPokemon', getPokemons.getPokemonById); 
-router.get('/pokemons/name/:pokemonName', getPokemons.getPokemonByName); 
+router.get('/pokemons', (req, res) => {
+    if (req.query.name) {
+        return getPokemonByName(req, res);
+    }
+    return getPokemons(req, res);
+});
 
-router.post('/pokemons', createPokemonController.createPokemon);
+router.get('/pokemons/:idPokemon', getPokemonById);
 
-router.use('/pokemons', pokemonRouter);
-router.use('/types', typesRouter);
+router.post('/pokemons', createPokemon);
+
+router.get('/types', typesController.getAllTypes);
 
 module.exports = router;

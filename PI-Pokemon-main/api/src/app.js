@@ -2,8 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const { pokemonRouter } = require('./routes/pokemon.router.js');
-const { typeRouter } = require('./routes/type.router.js');
+const routes = require('./routes/index.js');
 
 require('./db.js');
 
@@ -16,7 +15,7 @@ server.use(bodyParser.json({ limit: '50mb' }));
 server.use(cookieParser());
 server.use(morgan('dev'));
 server.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Origin', '*'); // Allow all for now or http://localhost:5173
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
@@ -24,8 +23,7 @@ server.use((req, res, next) => {
 });
 
 // Utilizamos las rutas importadas
-server.use('/pokemon', pokemonRouter);
-server.use('/type', typeRouter);
+server.use('/', routes);
 
 server.use((err, req, res, next) => {
   const status = err.status || 500;

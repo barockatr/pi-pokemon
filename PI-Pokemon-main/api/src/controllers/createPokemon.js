@@ -1,4 +1,4 @@
-const { Pokemon, Types } = require('../db');
+const { Pokemon, Type } = require('../db');
 
 const createPokemonController = async (req, res) => {
     const {
@@ -8,7 +8,7 @@ const createPokemonController = async (req, res) => {
         attack,
         defense,
         speed,
-        heigth,
+        height,
         weight,
         types,
     } = req.body;
@@ -19,7 +19,7 @@ const createPokemonController = async (req, res) => {
         });
 
         if (existingPokemon) {
-            return res.status(400).json({ message: 'Ya existe un Pokémon con ese nombre'});
+            return res.status(400).json({ message: 'Ya existe un Pokémon con ese nombre' });
         }
 
         const createPokemon = await Pokemon.create({
@@ -29,17 +29,19 @@ const createPokemonController = async (req, res) => {
             attack,
             defense,
             speed,
-            heigth,
-            weight, 
+            height,
+            weight,
         });
 
-        await created.addTypes(types);
+        if (types && types.length) {
+            await createPokemon.addTypes(types);
+        }
 
         res.status(201).json(createPokemon);
     } catch (error) {
-        console.error('Error al crear el Pokémon');
-        res.status(500).json({ message: 'Error en el servidor'});
-    } 
+        console.error('Error al crear el Pokémon:', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
 };
 
 module.exports = createPokemonController;
