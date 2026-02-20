@@ -76,3 +76,37 @@ npm start
 # 6. Iniciar el servidor de desarrollo UI (Desde la carpeta pi-pokemon)
 npm run dev
 ```
+
+---
+
+## 🏗️ Arquitectura y Estructura del Proyecto
+
+El proyecto sigue una arquitectura Full-Stack estricta, separando el cliente del servidor para garantizar escalabilidad y un código limpio:
+
+- **Backend (`/api`)**: API RESTful construida con Node.js y Express. Utiliza un patrón de controladores y enrutamiento modularizado. La persistencia y modelado de datos se manejan a través del ORM Sequelize conectado a PostgreSQL.
+- **Frontend (`/client` o `/pi-pokemon`)**: SPA (Single Page Application) desarrollada con React. La estructura jerarquiza componentes reutilizables de UI (`/components`), vistas lógicas (`/views`) y gestión de peticiones.
+- **State Management (`/redux`)**: Centralización del estado global para evitar el anti-patrón de *prop drilling* y mantener sincronizada la paginación y los filtros en toda la app.
+
+---
+
+## 🧠 Decisiones Técnicas y Retos
+
+- **Unificación de Fuentes de Datos (El mayor reto):** Se diseñó una lógica en el backend para normalizar y unificar las respuestas asíncronas provenientes de la PokéAPI con los registros de la base de datos local (PostgreSQL). Esto garantiza que el frontend reciba un único arreglo estandarizado, logrando que los ordenamientos y filtros cruzados (por tipo o procedencia) funcionen de manera transparente sin importar el origen de los datos.
+- **Validaciones Estrictas y Controladas:** Para el formulario de creación de nuevos Pokémon, se prescindió de validaciones HTML nativas en favor de un estado 100% controlado por JavaScript. Esto asegura una sanitización profunda de los inputs (nombres sin caracteres especiales, estadísticas dentro de rangos lógicos) antes de realizar el *dispatch* de la petición POST.
+- **Optimización de Renderizado (Paginación):** Dado el volumen masivo de datos que maneja la franquicia, se implementó un sistema de paginación mediante Redux (12 elementos por página) para no sobrecargar el DOM, asegurando tiempos de carga rápidos y una UX fluida.
+
+---
+
+## 🗺️ Roadmap (Próximas Mejoras)
+
+- [ ] Implementar un sistema de caché en el servidor para reducir el consumo de la PokéAPI externa y disminuir los tiempos de respuesta (*latency*).
+- [ ] Desarrollar tests unitarios para los modelos de la base de datos y rutas principales del backend utilizando Jest y Supertest.
+- [ ] Refactorizar el manejo de asincronía en Redux integrando herramientas más modernas como Redux Toolkit.
+
+---
+
+## 👨‍💻 Autor
+
+**Antonio**
+- [LinkedIn](TU_URL_DE_LINKEDIN_AQUI) <!-- Reemplazar con URL -->
+- [GitHub](https://github.com/barockatr)
