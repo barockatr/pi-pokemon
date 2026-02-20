@@ -33,6 +33,7 @@
 - **Detalles Completos**: Visualiza a fondo las estadísticas clave de cada criatura, incluyendo ataque, vida, defensa, velocidad, dimensiones y sus respectivos tipos.
 - **Filtros Avanzados**: Ordena los resultados de manera alfabética, por nivel de ataque, o filtra la vista según el tipo del Pokémon y su procedencia (API original vs creados en BD local).
 - **Creación Personalizada**: Formulario interactivo con validaciones estrictas y controladas en JavaScript para poder insertar nuevos Pokémon en el universo local de la aplicación.
+- **🃏 Visualizador TCG Dinámico**: Transformación de datos crudos en una interfaz de carta coleccionable fiel al formato clásico, con cálculo automático de daños, HP y costes de retirada.
 
 ---
 
@@ -97,6 +98,22 @@ El proyecto sigue una arquitectura Full-Stack estricta, separando el cliente del
 - **Lógica de Normalización TCG:** Se desarrolló un algoritmo para transformar los stats base de la API en valores competitivos de juego de cartas (HP, Attack Damage, Retreat Cost).
 - **Interfaz Dinámica TCG:** Uso de CSS avanzado para replicar fielmente el diseño de las cartas clásicas de 2008, asegurando responsividad y componentes interactivos para cada tipo de energía.
 - **Reto Técnico TCG:** Sincronizar la estética visual de las cartas del TCG con datos dinámicos, manteniendo el rendimiento de carga al procesar múltiples imágenes, lazy loading de lore, y tipos de energía simultáneamente.
+
+---
+
+## 💻 Implementación Técnica (Best Practices)
+
+### ⚡ Manejo de Asincronía (Async/Await)
+Se implementó un flujo asíncrono robusto para el renderizado de las cartas TCG. Dado que cada carta requiere datos de múltiples endpoints (stats base + especies/lore), se optimizó el fetching para evitar "waterfalls" de peticiones, garantizando que la carta se muestre completa y sin saltos visuales.
+
+### 🛡️ Gestión de Errores (Try/Catch)
+El algoritmo de normalización de stats (conversión a valores TCG) incluye bloques de seguridad para manejar datos nulos o incompletos de la API. Si un Pokémon carece de cierto stat, el sistema asigna valores por defecto balanceados para no romper la interfaz de la carta.
+
+### 🧩 Manejo de Estado y UI Reactiva
+Uso intensivo de `useEffect` para el cálculo dinámico de debilidades y resistencias basado en el tipo de Pokémon, asegurando que la carta se actualice instantáneamente al realizar filtrados o búsquedas.
+
+### 🔑 Seguridad de Datos
+Al igual que en mis otros proyectos de alto valor, las credenciales de la base de datos PostgreSQL se manejan estrictamente vía variables de entorno (`.env`), protegiendo la integridad del servidor en entornos de producción.
 
 ---
 
