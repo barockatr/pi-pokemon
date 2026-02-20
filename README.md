@@ -122,6 +122,8 @@ Al igual que en mis otros proyectos de alto valor, las credenciales de la base d
 - [ ] Implementar un sistema de caché en el servidor para reducir el consumo de la PokéAPI externa y disminuir los tiempos de respuesta (*latency*).
 - [ ] Desarrollar tests unitarios para los modelos de la base de datos y rutas principales del backend utilizando Jest y Supertest.
 - [ ] Refactorizar el manejo de asincronía en Redux integrando herramientas más modernas como Redux Toolkit.
+- [ ] Mecánica de Combate: Implementar lógica de enfrentamiento 1v1 basada en debilidades elementales y tipos de energía.
+- [ ] PWA (Progressive Web App): Permitir que la colección de cartas se pueda consultar offline como una app nativa en el móvil.
 
 ---
 
