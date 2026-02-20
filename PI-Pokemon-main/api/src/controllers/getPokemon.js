@@ -35,6 +35,7 @@ const getPokemons = async (req, res) => {
                 height: p.height,
                 weight: p.weight,
                 types: p.types.map(t => t.type.name),
+                moves: p.moves.slice(0, 2).map(m => m.move.name),
                 created: false
             };
         });

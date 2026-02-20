@@ -91,9 +91,12 @@ El proyecto sigue una arquitectura Full-Stack estricta, separando el cliente del
 
 ## 🧠 Decisiones Técnicas y Retos
 
-- **Unificación de Fuentes de Datos (El mayor reto):** Se diseñó una lógica en el backend para normalizar y unificar las respuestas asíncronas provenientes de la PokéAPI con los registros de la base de datos local (PostgreSQL). Esto garantiza que el frontend reciba un único arreglo estandarizado, logrando que los ordenamientos y filtros cruzados (por tipo o procedencia) funcionen de manera transparente sin importar el origen de los datos.
-- **Validaciones Estrictas y Controladas:** Para el formulario de creación de nuevos Pokémon, se prescindió de validaciones HTML nativas en favor de un estado 100% controlado por JavaScript. Esto asegura una sanitización profunda de los inputs (nombres sin caracteres especiales, estadísticas dentro de rangos lógicos) antes de realizar el *dispatch* de la petición POST.
-- **Optimización de Renderizado (Paginación):** Dado el volumen masivo de datos que maneja la franquicia, se implementó un sistema de paginación mediante Redux (12 elementos por página) para no sobrecargar el DOM, asegurando tiempos de carga rápidos y una UX fluida.
+- **Unificación de Fuentes de Datos**: Se diseñó una lógica en el backend para normalizar y unificar las respuestas asíncronas provenientes de la PokéAPI con los registros de la base de datos local (PostgreSQL). Esto garantiza que el frontend reciba un único arreglo estandarizado.
+- **Validaciones Estrictas y Controladas:** Para el formulario de creación de nuevos Pokémon, se prescindió de validaciones HTML nativas en favor de un estado 100% controlado por JavaScript. Esto asegura una sanitización profunda de los inputs.
+- **Optimización de Renderizado (Paginación):** Dado el volumen masivo de datos que maneja la franquicia, se implementó un sistema de paginación mediante Redux (12 elementos por página) para no sobrecargar el DOM.
+- **Lógica de Normalización TCG:** Se desarrolló un algoritmo para transformar los stats base de la API en valores competitivos de juego de cartas (HP, Attack Damage, Retreat Cost).
+- **Interfaz Dinámica TCG:** Uso de CSS avanzado para replicar fielmente el diseño de las cartas clásicas de 2008, asegurando responsividad y componentes interactivos para cada tipo de energía.
+- **Reto Técnico TCG:** Sincronizar la estética visual de las cartas del TCG con datos dinámicos, manteniendo el rendimiento de carga al procesar múltiples imágenes, lazy loading de lore, y tipos de energía simultáneamente.
 
 ---
 

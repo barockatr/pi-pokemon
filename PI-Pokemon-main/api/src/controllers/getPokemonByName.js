@@ -47,6 +47,7 @@ const getPokemonByName = async (req, res) => {
                     height: data.height,
                     weight: data.weight,
                     types: data.types.map(t => t.type.name),
+                    moves: data.moves.slice(0, 2).map(m => m.move.name),
                     created: false
                 };
 

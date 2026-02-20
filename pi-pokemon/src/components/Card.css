@@ -1,0 +1,154 @@
+.tcg-card {
+  width: 280px;
+  height: 390px;
+  background-color: #fceb6a; /* Classic Yellow Border */
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.tcg-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.tcg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #bba32e;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.tcg-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  text-transform: capitalize;
+  font-weight: 800;
+}
+
+.tcg-hp-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tcg-hp-label {
+  font-size: 0.6rem;
+  font-weight: bold;
+  color: #d11;
+  line-height: 1;
+}
+
+.tcg-hp-value {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.tcg-type-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0,0,0,0.5);
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.tcg-image-container {
+  border: 4px solid #bba32e;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+  background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 140px;
+  margin-bottom: 6px;
+  border-radius: 2px;
+}
+
+.tcg-image-container img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.4));
+}
+
+.tcg-moves {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.tcg-move {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 4px;
+}
+
+.tcg-move-name {
+  font-weight: bold;
+  text-transform: capitalize;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tcg-move-damage {
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.tcg-flavor-text {
+  font-size: 0.65rem;
+  font-style: italic;
+  border: 1px solid #bba32e;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  margin-top: 10px;
+  text-align: center;
+  border-radius: 4px;
+  height: 45px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.tcg-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.tcg-footer div {
+  text-align: center;
+}
+
+.tcg-footer span {
+  display: block;
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  color: #555;
+}

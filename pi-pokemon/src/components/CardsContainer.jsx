@@ -51,6 +51,9 @@ const CardsContainer = () => {
                 name={pokemon.name}
                 image={pokemon.image}
                 types={pokemon.types}
+                life={pokemon.life}
+                attack={pokemon.attack}
+                moves={pokemon.moves}
               />
             ))}
         </div>
