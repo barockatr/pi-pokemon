@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { typeMatchups } from "../utils/combatHelpers";
 import "./Card.css";
 
 // Helper for energy icons (simplified mapping based on type)
@@ -69,6 +70,8 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
   const move1 = moves && moves[0] ? moves[0] : "tackle";
   const move2 = moves && moves[1] ? moves[1] : "quick attack";
 
+  const { weakness, resistance } = typeMatchups[primaryType] || { weakness: "fighting", resistance: null };
+
   return (
     <Link to={`/detail/${id}`} className="tcg-card" style={{ textDecoration: 'none' }}>
       <div className="tcg-header">
@@ -104,8 +107,8 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
       </div>
 
       <div className="tcg-footer">
-        <div><span>weakness</span> 💧+10</div>
-        <div><span>resistance</span> ⚡-20</div>
+        <div><span>weakness</span> {weakness ? <>{getEnergyIcon(weakness)}x2</> : "N/A"}</div>
+        <div><span>resistance</span> {resistance ? <>{getEnergyIcon(resistance)}-20</> : "N/A"}</div>
         <div><span>retreat cost</span> ⚪⚪</div>
       </div>
     </Link>
