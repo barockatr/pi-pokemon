@@ -7,6 +7,7 @@ import Filter from './Filter';
 import SearchBar from './SearchBar';
 import TutorialModal from './TutorialModal';
 import DuelArena from './DuelArena';
+import CardDetailModal from './CardDetailModal';
 import './CardsContainer.css';
 
 const CardsContainer = () => {
@@ -15,6 +16,7 @@ const CardsContainer = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isTutorialOpen, setTutorialOpen] = useState(false);
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
   const cardsPerPage = 12;
 
   useEffect(() => {
@@ -60,6 +62,9 @@ const CardsContainer = () => {
       {/* === DUEL ARENA (listens to fight events globally) === */}
       <DuelArena />
 
+      {/* === CARD DETAIL MODAL (3D Holographic) === */}
+      <CardDetailModal pokemon={selectedPokemon} onClose={() => setSelectedPokemon(null)} />
+
       {/* === CARD GRID with staggered animation === */}
       {currentCards.length ? (
         <div className="container">
@@ -71,6 +76,7 @@ const CardsContainer = () => {
                 animationDelay: `${index * 0.06}s`,
                 opacity: 0
               }}
+              onClick={() => setSelectedPokemon(pokemon)}
             >
               <Card
                 id={pokemon.id}
