@@ -24,15 +24,17 @@
 ---
 
 ## 🎯 ¿De qué trata?
-**PI Pokémon** resuelve la necesidad de contar con una "Pokédex" centralizada e interactiva. Permite a los usuarios consultar rápidamente información de la PokéAPI, realizar filtrados y ordenamientos combinados, e incluso crear y almacenar sus propios Pokémon personalizados en una base de datos relacional. Todo desarrollado con un enfoque en rendimiento de consultas, manejo eficiente del estado global y una UX/UI dinámica.
+**PI Pokémon** resuelve la necesidad de contar con una "Pokédex" centralizada e interactiva bajo el principio de Componentes Basados en Átomos, lo que permite actualizaciones modulares (como el sistema evolutivo o mejoras de combate) sin afectar la integridad del sistema central. Es un MVP (Producto Mínimo Viable) diseñado para el crecimiento continuo.
+
+Implementé un Landing Page minimalista basado en Call-to-Action (CTA) temático. La entrada a la aplicación está centralizada en un componente interactivo (Pokébola) que actúa como disparador de la experiencia, utilizando transiciones de estado para una navegación fluida hacia el dashboard principal.
 
 ---
 
 ## ✨ Características Clave
-- **Búsqueda y Paginación**: Localiza a tu Pokémon favorito por nombre exacto o explora todo el listado mediante un rápido sistema de paginación (12 elementos por página).
-- **Detalles Completos**: Visualiza a fondo las estadísticas clave de cada criatura, incluyendo ataque, vida, defensa, velocidad, dimensiones y sus respectivos tipos.
-- **Filtros Avanzados**: Ordena los resultados de manera alfabética, por nivel de ataque, o filtra la vista según el tipo del Pokémon y su procedencia (API original vs creados en BD local).
-- **Creación Personalizada**: Formulario interactivo con validaciones estrictas y controladas en JavaScript para poder insertar nuevos Pokémon en el universo local de la aplicación.
+- **Gamificación de la UI e Interactividad**: El uso de la Pokébola como entrada es "gamificar" la interfaz para invitar al usuario a la experiencia.
+- **Dashboard Aleatorio y Dinámico**: El Dashboard principal cuenta con un renderizado dinámico de datos aleatorios obtenidos de la API, diseñado para ofrecer una vista fresca en cada sesión. Se utiliza lógica de shuffling (mezclado) en el frontend para presentar una diversidad de tipos y regiones desde el primer contacto.
+- **UX Intuitiva con Filtros Avanzados**: Que todo sirva (filtros, búsquedas) sin recargar la página. El Dashboard integra un sistema de filtrado multivariable y búsqueda predictiva que no interrumpe la fluidez visual, manteniendo consistencia estética en toda la interfaz.
+- **Arquitectura Escalable y Enrutamiento Modular**: La arquitectura cuenta con un enrutamiento que separa la zona de exploración del módulo pedagógico (Tutorial TCG). Hoy es un dashboard y mañana es un juego completo de combate.
 - **🃏 Visualizador TCG Dinámico**: Transformación de datos crudos en una interfaz de carta coleccionable fiel al formato clásico, con cálculo automático de daños, HP y costes de retirada.
 
 ---
