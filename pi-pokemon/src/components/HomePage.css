@@ -1,0 +1,250 @@
+/* ============================================
+   HOME PAGE — TCG Arena Neon Header & Panels
+   ============================================ */
+
+.homepage {
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* ===== ARENA HEADER TITLE ===== */
+.arena-header {
+    text-align: center;
+    padding: 40px 20px 10px;
+}
+
+.arena-title-main {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1.2rem, 4vw, 2.2rem);
+    color: #00d4ff;
+    margin: 0;
+    text-shadow:
+        0 0 10px rgba(0, 212, 255, 0.8),
+        0 0 30px rgba(0, 212, 255, 0.5),
+        0 0 60px rgba(0, 212, 255, 0.2);
+    letter-spacing: 4px;
+    animation: neon-pulse 3s ease-in-out infinite;
+}
+
+@keyframes neon-pulse {
+
+    0%,
+    100% {
+        text-shadow:
+            0 0 10px rgba(0, 212, 255, 0.8),
+            0 0 30px rgba(0, 212, 255, 0.5),
+            0 0 60px rgba(0, 212, 255, 0.2);
+    }
+
+    50% {
+        text-shadow:
+            0 0 15px rgba(0, 212, 255, 1),
+            0 0 45px rgba(0, 212, 255, 0.7),
+            0 0 90px rgba(0, 212, 255, 0.3);
+    }
+}
+
+.arena-subtitle {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45rem;
+    color: rgba(0, 212, 255, 0.45);
+    margin: 10px 0 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* ===== TRAINER STATUS ===== */
+.trainer-status {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 20px auto;
+    max-width: 480px;
+    background: rgba(0, 212, 255, 0.06);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 12px;
+    padding: 12px 20px;
+    backdrop-filter: blur(10px);
+}
+
+.trainer-avatar {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.trainer-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.trainer-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    color: #00d4ff;
+    letter-spacing: 1px;
+}
+
+.trainer-progress-bg {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trainer-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00d4ff, #7c3aed);
+    border-radius: 3px;
+    transition: width 0.5s ease-out;
+}
+
+.trainer-collection {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.trainer-collection strong {
+    color: #00d4ff;
+    font-weight: 900;
+}
+
+/* ===== SPOTLIGHT / CARTA DEL DÍA ===== */
+.spotlight-section {
+    max-width: 600px;
+    margin: 10px auto 30px;
+    padding: 0 20px;
+}
+
+.spotlight-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    color: #f7d02c;
+    text-align: center;
+    margin-bottom: 12px;
+    text-shadow: 0 0 15px rgba(247, 208, 44, 0.6);
+}
+
+.spotlight-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(252, 235, 106, 0.1), rgba(232, 200, 48, 0.05));
+    border: 2px solid rgba(252, 235, 106, 0.3);
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.3s;
+    backdrop-filter: blur(10px);
+    animation: holo-shimmer 3s ease-in-out infinite;
+}
+
+.spotlight-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 40px rgba(247, 208, 44, 0.4);
+}
+
+@keyframes holo-shimmer {
+    0% {
+        box-shadow: 0 0 20px rgba(99, 144, 240, 0.3);
+    }
+
+    33% {
+        box-shadow: 0 0 30px rgba(248, 105, 88, 0.3);
+    }
+
+    66% {
+        box-shadow: 0 0 30px rgba(122, 199, 76, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 0 20px rgba(99, 144, 240, 0.3);
+    }
+}
+
+.spotlight-holo {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.05) 0%,
+            rgba(255, 100, 100, 0.05) 25%,
+            rgba(100, 100, 255, 0.05) 50%,
+            rgba(100, 255, 200, 0.05) 75%,
+            transparent 100%);
+    pointer-events: none;
+    mix-blend-mode: color-dodge;
+}
+
+.spotlight-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.spotlight-img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(247, 208, 44, 0.6));
+    animation: float-img 2.5s ease-in-out infinite;
+}
+
+@keyframes float-img {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.spotlight-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.spotlight-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.75rem;
+    color: #fceb6a;
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.spotlight-attack {
+    font-size: 0.8rem;
+    color: #EE8130;
+    margin: 0;
+    font-weight: bold;
+}
+
+.spotlight-types {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+.spotlight-badge {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: capitalize;
+}
+
+.spotlight-hint {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
+    font-style: italic;
+}
