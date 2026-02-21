@@ -92,32 +92,14 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
 
     if (!challenger) {
       dispatch(setChallenger(currentCard));
-      alert(`⚠️ ${name.toUpperCase()} está listo para pelear.\nSelecciona a su oponente dándole clic a otro botón VS.`);
+      // El botón VS se torna amarillo (.active) como feedback visual
     } else {
       if (challenger.id === id) {
-        alert("No puedes pelear contra ti mismo. Retador cancelado.");
         dispatch(clearChallenger());
         return;
       }
-
-      // Lógica de Combate
-      const damageToCurrent = calculateDamage(challenger, currentCard, challenger.attackDamage);
-      const damageToChallenger = calculateDamage(currentCard, challenger, currentCard.attackDamage);
-
-      let resultMsg = `⚔️ COMBATE TCG: ${challenger.name.toUpperCase()} VS ${currentCard.name.toUpperCase()} ⚔️\n\n`;
-      resultMsg += `> ${challenger.name} ataca con ${challenger.attackDamage} pts.\n  (Multiplicadores aplicados) -> Daño final: ${damageToCurrent}\n\n`;
-      resultMsg += `> ${currentCard.name} ataca con ${currentCard.attackDamage} pts.\n  (Multiplicadores aplicados) -> Daño final: ${damageToChallenger}\n\n`;
-
-      if (damageToCurrent > damageToChallenger) {
-        resultMsg += `🏆 ¡${challenger.name.toUpperCase()} GANA el intercambio de golpes!`;
-      } else if (damageToChallenger > damageToCurrent) {
-        resultMsg += `🏆 ¡${currentCard.name.toUpperCase()} GANA el intercambio de golpes!`;
-      } else {
-        resultMsg += `🤝 ¡Es un EMPATE táctico!`;
-      }
-
-      alert(resultMsg);
-      dispatch(clearChallenger());
+      // 🎮 Abre la Arena de Duelo visual (sin alert)
+      window.dispatchEvent(new CustomEvent('duel-request', { detail: currentCard }));
     }
   };
 
@@ -141,7 +123,11 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
   const isChallenger = challenger && challenger.id === id;
 
   return (
-    <Link to={`/detail/${id}`} className="tcg-card" style={{ textDecoration: 'none' }}>
+    <Link
+      to={`/detail/${id}`}
+      className={`tcg-card ${attack > 80 ? 'tcg-holographic' : ''} ${isCaptured ? 'tcg-captured-card' : ''}`}
+      style={{ textDecoration: 'none' }}
+    >
 
       <button
         className={`tcg-capture-btn ${isCaptured ? 'captured' : ''}`}
@@ -169,6 +155,13 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
 
       <div className="tcg-image-container">
         <img src={image} alt={name} />
+        {/* Pokeball Watermark Sello de Captura */}
+        {isCaptured && (
+          <div className="tcg-captured-seal">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg" alt="Captured" />
+            <span>CAPTURADO</span>
+          </div>
+        )}
       </div>
 
       <div className="tcg-moves">

@@ -23,6 +23,66 @@
   z-index: 10;
 }
 
+/* === HOLOGRAPHIC EFFECT — alto ataque === */
+.tcg-holographic {
+  animation: holo-shimmer 3s ease-in-out infinite;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+@keyframes holo-shimmer {
+  0% {
+    box-shadow: 0 0 15px rgba(99, 144, 240, 0.5), 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  33% {
+    box-shadow: 0 0 25px rgba(248, 105, 88, 0.6), 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  66% {
+    box-shadow: 0 0 25px rgba(122, 199, 76, 0.6), 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  100% {
+    box-shadow: 0 0 15px rgba(99, 144, 240, 0.5), 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* === CAPTURED CARD BORDER GLOW === */
+.tcg-captured-card {
+  border: 3px solid rgba(255, 50, 50, 0.8);
+  box-shadow: inset 0 0 10px rgba(220, 10, 45, 0.2);
+}
+
+/* === SHAKE ANIMATION (for battle hit) === */
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-8px) rotate(-2deg);
+  }
+
+  40% {
+    transform: translateX(8px) rotate(2deg);
+  }
+
+  60% {
+    transform: translateX(-5px);
+  }
+
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+.tcg-card.shaking {
+  animation: shake 0.5s ease-in-out;
+}
+
+
 .tcg-header {
   display: flex;
   justify-content: space-between;
@@ -80,7 +140,65 @@
   height: 140px;
   margin-bottom: 6px;
   border-radius: 2px;
+  position: relative;
+  overflow: hidden;
 }
+
+/* === SELLO DE CAPTURA (Watermark sobre imagen) === */
+.tcg-captured-seal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(220, 10, 45, 0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  animation: seal-appear 0.3s ease-out;
+}
+
+.tcg-captured-seal img {
+  width: 35px;
+  height: 35px;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+  animation: spin-once 0.5s ease-out;
+}
+
+.tcg-captured-seal span {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: white;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  letter-spacing: 1px;
+}
+
+@keyframes seal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin-once {
+  from {
+    transform: rotate(-360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
 
 .tcg-image-container img {
   max-width: 90%;
