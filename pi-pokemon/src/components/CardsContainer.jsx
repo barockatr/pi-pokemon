@@ -6,6 +6,7 @@ import Card from './Card';
 import Loading from './Loading';
 import Filter from './Filter';
 import SearchBar from './SearchBar';
+import TutorialModal from './TutorialModal';
 import './CardsContainer.css';
 
 const CardsContainer = () => {
@@ -13,6 +14,7 @@ const CardsContainer = () => {
   const pokemons = useSelector((state) => state.pokemons);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
+  const [isTutorialOpen, setTutorialOpen] = useState(false);
   const cardsPerPage = 12;
 
   useEffect(() => {
@@ -42,13 +44,21 @@ const CardsContainer = () => {
           <Filter setCurrentPage={setCurrentPage} />
           <SearchBar setCurrentPage={setCurrentPage} />
         </div>
-        <Link to="/tutorial" style={{
-          padding: '10px 20px', backgroundColor: '#2b5876', color: 'white',
-          textDecoration: 'none', borderRadius: '8px', fontWeight: 'bold'
-        }}>
-          🎓 Ver Tutorial TCG
-        </Link>
+        <button
+          onClick={() => setTutorialOpen(true)}
+          style={{
+            padding: '10px 20px', backgroundColor: '#dc0a2d', color: 'white',
+            border: '2px solid black', borderRadius: '8px', fontWeight: 'bold',
+            fontFamily: "'Press Start 2P', monospace", fontSize: '0.6rem',
+            cursor: 'pointer', boxShadow: '2px 2px 0px #000'
+          }}
+        >
+          📱 ABRIR POKÉDEX (TUTORIAL TCG)
+        </button>
       </div>
+
+      <TutorialModal isOpen={isTutorialOpen} onClose={() => setTutorialOpen(false)} />
+
       {pokemons.length ? (
         <div className="container">
           {pokemons

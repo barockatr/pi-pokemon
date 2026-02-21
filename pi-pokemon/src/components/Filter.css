@@ -8,12 +8,15 @@
 }
 
 .filter-container select,
-.filter-container button {
+.filter-container button,
+.filter-container input {
     padding: 8px 12px;
     border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
