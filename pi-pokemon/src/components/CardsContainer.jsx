@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { getPokemon } from '../redux/actions';
 import Card from './Card';
 import Loading from './Loading';
@@ -36,9 +37,17 @@ const CardsContainer = () => {
 
   return (
     <div>
-      <div className="navBar">
-        <Filter setCurrentPage={setCurrentPage} />
-        <SearchBar setCurrentPage={setCurrentPage} />
+      <div className="navBar" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', gap: '15px' }}>
+          <Filter setCurrentPage={setCurrentPage} />
+          <SearchBar setCurrentPage={setCurrentPage} />
+        </div>
+        <Link to="/tutorial" style={{
+          padding: '10px 20px', backgroundColor: '#2b5876', color: 'white',
+          textDecoration: 'none', borderRadius: '8px', fontWeight: 'bold'
+        }}>
+          🎓 Ver Tutorial TCG
+        </Link>
       </div>
       {pokemons.length ? (
         <div className="container">

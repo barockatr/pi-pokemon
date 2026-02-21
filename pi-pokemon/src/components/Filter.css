@@ -1,0 +1,25 @@
+/* Estilos básicos para el componente Filter */
+.filter-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.filter-container select,
+.filter-container button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.filter-container select:hover,
+.filter-container button:hover {
+    background-color: #fceb6a;
+    border-color: #bba32e;
+}

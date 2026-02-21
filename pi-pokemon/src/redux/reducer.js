@@ -18,10 +18,12 @@ const initialState = {
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case GET_POKEMONS:
+            // Lógica de shuffling (mezclado) dinámica para ofrecer una vista fresca
+            const shuffled = [...action.payload].sort(() => Math.random() - 0.5);
             return {
                 ...state,
-                pokemons: action.payload,
-                allPokemons: action.payload
+                pokemons: shuffled,
+                allPokemons: shuffled
             };
         case GET_POKEMON_BY_NAME:
             return {

@@ -1,0 +1,68 @@
+.tutorial-container {
+    min-height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: 'Trebuchet MS', sans-serif;
+    color: #fff;
+}
+
+.tutorial-content {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 40px;
+    border-radius: 12px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.tutorial-content h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #fceb6a;
+}
+
+.tutorial-section {
+    margin-bottom: 25px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 5px solid #fceb6a;
+}
+
+.tutorial-section h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.5rem;
+    color: #bdf2f5;
+}
+
+.tutorial-section p {
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+
+.home-button {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #fceb6a;
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.home-button:hover {
+    background-color: #bba32e;
+    transform: translateY(-2px);
+}
