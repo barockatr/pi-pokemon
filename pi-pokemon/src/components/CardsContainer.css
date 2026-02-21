@@ -6,18 +6,100 @@
     justify-items: center;
 }
 
+/* === GLASSMORPHISM NAVBAR === */
 .navBar {
     position: sticky;
     top: 0;
     z-index: 100;
     display: flex;
-    justify-content: space-around;
-    padding: 20px;
-    background: rgba(36, 36, 36, 0.85);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 30px;
+    background: rgba(13, 13, 31, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
 }
 
+/* === TOOLBAR ROW for Filters === */
+.toolbar-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* === POKEDEX FLOATING BUTTON (bottom-right corner) === */
+.floating-pokedex-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 500;
+    width: 65px;
+    height: 65px;
+    background: radial-gradient(circle at 35% 35%, #ff4444, #dc0a2d);
+    border: 3px solid white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(220, 10, 45, 0.6), 0 4px 15px rgba(0, 0, 0, 0.5);
+    animation: pokedex-float 2.5s ease-in-out infinite;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.floating-pokedex-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 35px rgba(220, 10, 45, 0.9), 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes pokedex-float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* === POKEDEX BUTTON PULSE (the standalone button in navbar) === */
+.pokedex-trigger-btn {
+    padding: 10px 22px;
+    background: radial-gradient(circle at 35% 35%, #ff4444, #dc0a2d);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(220, 10, 45, 0.5), 2px 2px 0px #000;
+    animation: btn-shimmer 2s linear infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes btn-shimmer {
+    0% {
+        box-shadow: 0 0 10px rgba(220, 10, 45, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(220, 10, 45, 0.9), 0 0 10px rgba(255, 200, 200, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(220, 10, 45, 0.4);
+    }
+}
+
+/* === PAGINATION === */
 .handlePageContainer {
     display: flex;
     justify-content: center;
@@ -28,9 +110,31 @@
 .handlePageButton {
     padding: 5px 10px;
     cursor: pointer;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    transition: background 0.2s;
+}
+
+.handlePageButton:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .handlePageButton.active {
-    background-color: #007bff;
+    background: linear-gradient(135deg, #6390F0, #134ba8);
+    border-color: #6390F0;
     color: white;
+}
+
+/* === STAGGERED CARD ENTRY ANIMATION === */
+@keyframes card-pop-in {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }

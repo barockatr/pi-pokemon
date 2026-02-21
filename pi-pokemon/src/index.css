@@ -7,7 +7,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #0d0d16;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -27,10 +27,11 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #0d0d1f 0%, #1a0533 40%, #0a1a3a 100%);
+  background-attachment: fixed;
 }
 
 h1 {
@@ -61,8 +62,8 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #0d0d16;
   }
 
   a:hover {
@@ -70,6 +71,6 @@ button:focus-visible {
   }
 
   button {
-    background-color: #f9f9f9;
+    background-color: #1a1a2e;
   }
 }

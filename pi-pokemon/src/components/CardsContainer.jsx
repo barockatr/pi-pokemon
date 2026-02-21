@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { getPokemon } from '../redux/actions';
 import Card from './Card';
 import Loading from './Loading';
@@ -26,46 +25,50 @@ const CardsContainer = () => {
   }, [pokemons.length, cardsPerPage]);
 
   const handleNextClick = () => {
-    if (currentPage < pageCount - 1) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < pageCount - 1) setCurrentPage(currentPage + 1);
   };
 
   const handlePrevClick = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
 
+  const currentCards = pokemons.slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage);
+
   return (
-    <div>
-      <div className="navBar" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', gap: '15px' }}>
+    <div style={{ minHeight: '100vh', width: '100%' }}>
+
+      {/* === GLASSMORPHISM NAVBAR === */}
+      <div className="navBar">
+        <div className="toolbar-row">
           <Filter setCurrentPage={setCurrentPage} />
           <SearchBar setCurrentPage={setCurrentPage} />
         </div>
-        <button
-          onClick={() => setTutorialOpen(true)}
-          style={{
-            padding: '10px 20px', backgroundColor: '#dc0a2d', color: 'white',
-            border: '2px solid black', borderRadius: '8px', fontWeight: 'bold',
-            fontFamily: "'Press Start 2P', monospace", fontSize: '0.6rem',
-            cursor: 'pointer', boxShadow: '2px 2px 0px #000'
-          }}
-        >
-          📱 ABRIR POKÉDEX (TUTORIAL TCG)
-        </button>
       </div>
+
+      {/* === FLOATING POKÉDEX BUTTON (bottom-right) === */}
+      <button
+        className="floating-pokedex-btn"
+        onClick={() => setTutorialOpen(true)}
+        title="Abrir Pokédex TCG"
+      >
+        📱
+      </button>
 
       <TutorialModal isOpen={isTutorialOpen} onClose={() => setTutorialOpen(false)} />
 
-      {pokemons.length ? (
+      {/* === CARD GRID with staggered animation === */}
+      {currentCards.length ? (
         <div className="container">
-          {pokemons
-            .slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage)
-            .map((pokemon) => (
+          {currentCards.map((pokemon, index) => (
+            <div
+              key={pokemon.id}
+              style={{
+                animation: 'card-pop-in 0.4s ease-out forwards',
+                animationDelay: `${index * 0.06}s`,
+                opacity: 0
+              }}
+            >
               <Card
-                key={pokemon.id}
                 id={pokemon.id}
                 name={pokemon.name}
                 image={pokemon.image}
@@ -74,36 +77,30 @@ const CardsContainer = () => {
                 attack={pokemon.attack}
                 moves={pokemon.moves}
               />
-            ))}
+            </div>
+          ))}
         </div>
       ) : (
         <Loading />
       )}
+
+      {/* === PAGINATION === */}
       {pokemons.length > 0 && (
         <div className="handlePageContainer">
-          <button
-            disabled={currentPage === 0}
-            onClick={handlePrevClick}
-            className="handlePageButton"
-          >
-            {"<"}
+          <button disabled={currentPage === 0} onClick={handlePrevClick} className="handlePageButton">
+            {'<'}
           </button>
           {Array.from({ length: pageCount }).map((_, index) => (
             <button
               key={index}
-              className={`handlePageButton ${currentPage === index ? 'active' : ''
-                }`}
+              className={`handlePageButton ${currentPage === index ? 'active' : ''}`}
               onClick={() => setCurrentPage(index)}
             >
               {index + 1}
             </button>
           ))}
-          <button
-            disabled={currentPage === pageCount - 1}
-            onClick={handleNextClick}
-            className="handlePageButton"
-          >
-            {">"}
+          <button disabled={currentPage === pageCount - 1} onClick={handleNextClick} className="handlePageButton">
+            {'>'}
           </button>
         </div>
       )}
