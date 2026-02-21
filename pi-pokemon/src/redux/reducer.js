@@ -6,13 +6,16 @@ import {
     FILTER_BY_CREATE,
     ORDER_BY_NAME,
     ORDER_BY_ATTACK,
-    CLEAR_HOME
+    CLEAR_HOME,
+    SET_CHALLENGER,
+    CLEAR_CHALLENGER
 } from './actions';
 
 const initialState = {
     pokemons: [],
     allPokemons: [],
-    types: []
+    types: [],
+    challenger: null
 };
 
 const reducer = (state = initialState, action) => {
@@ -73,6 +76,16 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 pokemons: state.allPokemons
+            };
+        case SET_CHALLENGER:
+            return {
+                ...state,
+                challenger: action.payload
+            };
+        case CLEAR_CHALLENGER:
+            return {
+                ...state,
+                challenger: null
             };
         default:
             return state;

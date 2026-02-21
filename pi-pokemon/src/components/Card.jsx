@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { typeMatchups } from "../utils/combatHelpers";
+import { useDispatch, useSelector } from "react-redux";
+import { typeMatchups, calculateDamage } from "../utils/combatHelpers";
+import { setChallenger, clearChallenger } from "../redux/actions";
 import "./Card.css";
 
 // Helper for energy icons (simplified mapping based on type)
@@ -35,7 +37,15 @@ const getEnergyIcon = (type) => {
 };
 
 const Card = ({ id, name, image, types, life, attack, moves }) => {
+  const dispatch = useDispatch();
+  const challenger = useSelector(state => state.challenger);
   const [flavorText, setFlavorText] = useState("");
+  const [isCaptured, setIsCaptured] = useState(false);
+
+  useEffect(() => {
+    const collection = JSON.parse(localStorage.getItem('myCollection') || '[]');
+    setIsCaptured(collection.some(p => p.id === id));
+  }, [id]);
 
   useEffect(() => {
     let isMounted = true;
@@ -72,8 +82,82 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
 
   const { weakness, resistance } = typeMatchups[primaryType] || { weakness: "fighting", resistance: null };
 
+  const handleVsClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const currentCard = {
+      id, name, type: primaryType, hp: life || 50, attackDamage: attackDamage1, weakness, resistance
+    };
+
+    if (!challenger) {
+      dispatch(setChallenger(currentCard));
+      alert(`⚠️ ${name.toUpperCase()} está listo para pelear.\nSelecciona a su oponente dándole clic a otro botón VS.`);
+    } else {
+      if (challenger.id === id) {
+        alert("No puedes pelear contra ti mismo. Retador cancelado.");
+        dispatch(clearChallenger());
+        return;
+      }
+
+      // Lógica de Combate
+      const damageToCurrent = calculateDamage(challenger, currentCard, challenger.attackDamage);
+      const damageToChallenger = calculateDamage(currentCard, challenger, currentCard.attackDamage);
+
+      let resultMsg = `⚔️ COMBATE TCG: ${challenger.name.toUpperCase()} VS ${currentCard.name.toUpperCase()} ⚔️\n\n`;
+      resultMsg += `> ${challenger.name} ataca con ${challenger.attackDamage} pts.\n  (Multiplicadores aplicados) -> Daño final: ${damageToCurrent}\n\n`;
+      resultMsg += `> ${currentCard.name} ataca con ${currentCard.attackDamage} pts.\n  (Multiplicadores aplicados) -> Daño final: ${damageToChallenger}\n\n`;
+
+      if (damageToCurrent > damageToChallenger) {
+        resultMsg += `🏆 ¡${challenger.name.toUpperCase()} GANA el intercambio de golpes!`;
+      } else if (damageToChallenger > damageToCurrent) {
+        resultMsg += `🏆 ¡${currentCard.name.toUpperCase()} GANA el intercambio de golpes!`;
+      } else {
+        resultMsg += `🤝 ¡Es un EMPATE táctico!`;
+      }
+
+      alert(resultMsg);
+      dispatch(clearChallenger());
+    }
+  };
+
+  const handleCaptureClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let collection = JSON.parse(localStorage.getItem('myCollection') || '[]');
+
+    if (isCaptured) {
+      collection = collection.filter(p => p.id !== id);
+      setIsCaptured(false);
+    } else {
+      collection.push({ id, name, image, types, life, attack, moves });
+      setIsCaptured(true);
+    }
+
+    localStorage.setItem('myCollection', JSON.stringify(collection));
+  };
+
+  const isChallenger = challenger && challenger.id === id;
+
   return (
     <Link to={`/detail/${id}`} className="tcg-card" style={{ textDecoration: 'none' }}>
+
+      <button
+        className={`tcg-capture-btn ${isCaptured ? 'captured' : ''}`}
+        onClick={handleCaptureClick}
+        title={isCaptured ? "Soltar de Mi Colección" : "Capturar para Mi Colección"}
+      >
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg" alt="Capture Ball" />
+      </button>
+      <button
+        className={`tcg-vs-btn ${isChallenger ? 'active' : ''}`}
+        onClick={handleVsClick}
+        title="Duelo VS"
+      >
+        VS
+      </button>
+
       <div className="tcg-header">
         <h3>{name}</h3>
         <div className="tcg-hp-container">

@@ -1,7 +1,8 @@
 .tcg-card {
   width: 280px;
   height: 390px;
-  background-color: #fceb6a; /* Classic Yellow Border */
+  background-color: #fceb6a;
+  /* Classic Yellow Border */
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   padding: 10px;
@@ -17,8 +18,9 @@
 }
 
 .tcg-card:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 0 25px rgba(252, 235, 106, 0.8), 0 8px 20px rgba(0, 0, 0, 0.6);
+  z-index: 10;
 }
 
 .tcg-header {
@@ -63,14 +65,14 @@
   justify-content: center;
   align-items: center;
   background: #fff;
-  box-shadow: 0 0 2px rgba(0,0,0,0.5);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
   font-size: 0.7rem;
   font-weight: bold;
 }
 
 .tcg-image-container {
   border: 4px solid #bba32e;
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
   background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
   display: flex;
   justify-content: center;
@@ -84,7 +86,7 @@
   max-width: 90%;
   max-height: 90%;
   object-fit: contain;
-  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.4));
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.4));
 }
 
 .tcg-moves {
@@ -99,7 +101,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding-bottom: 4px;
 }
 
@@ -132,6 +134,73 @@
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  line-clamp: 3;
+}
+
+.tcg-capture-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: transparent;
+  border: none;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.2s;
+  padding: 0;
+}
+
+.tcg-capture-btn:hover {
+  transform: scale(1.2) rotate(-10deg);
+}
+
+.tcg-capture-btn img {
+  width: 100%;
+  height: 100%;
+  filter: grayscale(100%);
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.tcg-capture-btn.captured img {
+  filter: grayscale(0%);
+  opacity: 1;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+}
+
+.tcg-vs-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff0000;
+  color: white;
+  border: 2px solid white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s;
+  z-index: 5;
+}
+
+.tcg-vs-btn:hover {
+  transform: scale(1.2) rotate(10deg);
+  background-color: #ff4444;
+}
+
+.tcg-vs-btn.active {
+  background-color: #f7d02c;
+  color: black;
+  border-color: black;
+  animation: pulse 1s infinite;
 }
 
 .tcg-footer {

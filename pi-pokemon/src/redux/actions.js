@@ -8,6 +8,8 @@ export const FILTER_BY_CREATE = 'FILTER_BY_CREATE';
 export const ORDER_BY_NAME = 'ORDER_BY_NAME';
 export const ORDER_BY_ATTACK = 'ORDER_BY_ATTACK';
 export const CLEAR_HOME = 'CLEAR_HOME';
+export const SET_CHALLENGER = 'SET_CHALLENGER';
+export const CLEAR_CHALLENGER = 'CLEAR_CHALLENGER';
 
 export const getPokemon = () => {
   return async (dispatch) => {
@@ -83,5 +85,18 @@ export const orderByAttack = (payload) => {
 export const clearHome = () => {
   return {
     type: CLEAR_HOME
+  };
+};
+
+export const setChallenger = (pokemonContext) => {
+  return {
+    type: SET_CHALLENGER,
+    payload: pokemonContext
+  };
+};
+
+export const clearChallenger = () => {
+  return {
+    type: CLEAR_CHALLENGER
   };
 };

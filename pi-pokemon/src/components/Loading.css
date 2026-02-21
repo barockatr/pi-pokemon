@@ -1,0 +1,44 @@
+.loading-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    width: 100%;
+}
+
+.spinning-pokeball {
+    width: 80px;
+    height: 80px;
+    animation: spin 1s linear infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.loading-text {
+    margin-top: 20px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    color: #fff;
+    letter-spacing: 2px;
+    animation: pulse-text 1.5s infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse-text {
+    0% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.4;
+    }
+}
