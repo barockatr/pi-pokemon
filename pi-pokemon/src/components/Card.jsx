@@ -123,10 +123,9 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
   const isChallenger = challenger && challenger.id === id;
 
   return (
-    <Link
-      to={`/detail/${id}`}
+    <div
       className={`tcg-card ${attack > 80 ? 'tcg-holographic' : ''} ${isCaptured ? 'tcg-captured-card' : ''}`}
-      style={{ textDecoration: 'none' }}
+      style={{ textDecoration: 'none', cursor: 'pointer' }}
     >
 
       <button
@@ -188,7 +187,7 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
         <div><span>resistance</span> {resistance ? <>{getEnergyIcon(resistance)}-20</> : "N/A"}</div>
         <div><span>retreat cost</span> ⚪⚪</div>
       </div>
-    </Link>
+    </div>
   );
 };
 

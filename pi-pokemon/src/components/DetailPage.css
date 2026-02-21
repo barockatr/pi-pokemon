@@ -1,0 +1,274 @@
+/* =============================================
+   DETAIL PAGE — TCG Premium Style
+   ============================================= */
+
+.dp-container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    box-sizing: border-box;
+}
+
+.dp-back-btn {
+    align-self: flex-start;
+    margin-bottom: 30px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.dp-back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+
+.dp-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 900px;
+}
+
+/* ===== TCG CARD (Left Side) ===== */
+.dp-card {
+    width: 280px;
+    background: linear-gradient(145deg, #fceb6a, #e8c830);
+    border-radius: 16px;
+    border: 4px solid #bba32e;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(252, 235, 106, 0.15);
+    animation: card-float 3s ease-in-out infinite;
+}
+
+@keyframes card-float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.dp-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+    padding-bottom: 8px;
+}
+
+.dp-name {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #000;
+    text-transform: capitalize;
+}
+
+.dp-hp {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+}
+
+.dp-hp-label {
+    font-size: 0.5rem;
+    font-weight: 800;
+    color: #cc0000;
+    line-height: 2;
+}
+
+.dp-hp-value {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #000;
+    line-height: 1;
+}
+
+.dp-image-box {
+    background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+    border: 3px solid #bba32e;
+    border-radius: 6px;
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.dp-image {
+    max-height: 85%;
+    max-width: 85%;
+    object-fit: contain;
+    filter: drop-shadow(3px 6px 10px rgba(0, 0, 0, 0.4));
+}
+
+.dp-types {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.dp-type-badge {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 0.65rem;
+    font-weight: bold;
+    text-transform: capitalize;
+    color: #333;
+}
+
+.dp-move {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    padding: 8px 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dp-move-label {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.dp-move-damage {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #000;
+}
+
+/* ===== STATS PANEL (Right Side) ===== */
+.dp-stats-panel {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+}
+
+.dp-panel-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
+    color: #fceb6a;
+    margin: 0 0 8px;
+    text-shadow: 0 0 10px rgba(252, 235, 106, 0.5);
+}
+
+.dp-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dp-stat-label {
+    min-width: 90px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.dp-stat-bar-bg {
+    flex: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dp-stat-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    animation: bar-fill 1s ease-out forwards;
+    transform-origin: left;
+}
+
+@keyframes bar-fill {
+    from {
+        width: 0 !important;
+    }
+}
+
+.dp-stat-num {
+    min-width: 35px;
+    text-align: right;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+}
+
+.dp-extra-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.dp-info-chip {
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.75rem;
+}
+
+/* ===== LOADING ===== */
+.dp-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    margin-top: 100px;
+}
+
+.dp-spinner {
+    width: 70px;
+    height: 70px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.dp-error {
+    color: #ff6b6b;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
+    margin-bottom: 20px;
+}
