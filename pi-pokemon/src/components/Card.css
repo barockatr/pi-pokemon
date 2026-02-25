@@ -205,6 +205,12 @@
   max-height: 90%;
   object-fit: contain;
   filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.4));
+  /* Critical for D&D: Prevent native browser ghost image dragging */
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 
 .tcg-moves {

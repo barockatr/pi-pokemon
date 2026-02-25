@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { typeMatchups, calculateDamage } from "../utils/combatHelpers";
-import { setChallenger, clearChallenger } from "../redux/actions";
+import useDeckStore from "../store/useDeckStore";
 import "./Card.css";
 
 // Helper for energy icons (simplified mapping based on type)
@@ -36,9 +36,9 @@ const getEnergyIcon = (type) => {
   );
 };
 
-const Card = ({ id, name, image, types, life, attack, moves }) => {
+const Card = ({ id, name, image, types, life, attack, moves, isArena = false }) => {
   const dispatch = useDispatch();
-  const challenger = useSelector(state => state.challenger);
+  const { deck, addCard, removeCard } = useDeckStore();
   const [flavorText, setFlavorText] = useState("");
   const [isCaptured, setIsCaptured] = useState(false);
 
@@ -82,24 +82,20 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
 
   const { weakness, resistance } = typeMatchups[primaryType] || { weakness: "fighting", resistance: null };
 
+  const isAlreadyInDeck = deck.some(c => c.id === id);
+
   const handleVsClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const currentCard = {
-      id, name, type: primaryType, hp: life || 50, attackDamage: attackDamage1, weakness, resistance
-    };
-
-    if (!challenger) {
-      dispatch(setChallenger(currentCard));
-      // El botón VS se torna amarillo (.active) como feedback visual
+    if (isAlreadyInDeck) {
+      removeCard(id);
     } else {
-      if (challenger.id === id) {
-        dispatch(clearChallenger());
-        return;
-      }
-      // 🎮 Abre la Arena de Duelo visual (sin alert)
-      window.dispatchEvent(new CustomEvent('duel-request', { detail: currentCard }));
+      const currentCard = {
+        id, name, type: primaryType, hp: life || 50, attackDamage: attackDamage1, weakness, resistance, image
+      };
+      const result = addCard(currentCard);
+      // Opcional: Si devuelve 'false', el deck está lleno. Podemos manejar alertas custom aquí.
     }
   };
 
@@ -120,28 +116,31 @@ const Card = ({ id, name, image, types, life, attack, moves }) => {
     localStorage.setItem('myCollection', JSON.stringify(collection));
   };
 
-  const isChallenger = challenger && challenger.id === id;
-
   return (
     <div
       className={`tcg-card ${attack > 80 ? 'tcg-holographic' : ''} ${isCaptured ? 'tcg-captured-card' : ''}`}
       style={{ textDecoration: 'none', cursor: 'pointer' }}
     >
 
-      <button
-        className={`tcg-capture-btn ${isCaptured ? 'captured' : ''}`}
-        onClick={handleCaptureClick}
-        title={isCaptured ? "Soltar de Mi Colección" : "Capturar para Mi Colección"}
-      >
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg" alt="Capture Ball" />
-      </button>
-      <button
-        className={`tcg-vs-btn ${isChallenger ? 'active' : ''}`}
-        onClick={handleVsClick}
-        title="Duelo VS"
-      >
-        VS
-      </button>
+      {!isArena && (
+        <>
+          <button
+            className={`tcg-capture-btn ${isCaptured ? 'captured' : ''}`}
+            onClick={handleCaptureClick}
+            title={isCaptured ? "Soltar de Mi Colección" : "Capturar para Mi Colección"}
+          >
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg" alt="Capture Ball" />
+          </button>
+          <button
+            className={`tcg-vs-btn ${isAlreadyInDeck ? 'active' : ''}`}
+            onClick={handleVsClick}
+            title={isAlreadyInDeck ? "Quitar del Mazo" : "Añadir al Mazo"}
+            style={{ width: 'auto', padding: '0 8px', borderRadius: '12px' }}
+          >
+            {isAlreadyInDeck ? '➖ Quitar' : '➕ Deck'}
+          </button>
+        </>
+      )}
 
       <div className="tcg-header">
         <h3>{name}</h3>
