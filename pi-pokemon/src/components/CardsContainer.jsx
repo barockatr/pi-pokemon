@@ -6,7 +6,6 @@ import Loading from './Loading';
 import Filter from './Filter';
 import SearchBar from './SearchBar';
 import TutorialModal from './TutorialModal';
-import DuelArena from './DuelArena';
 import CardDetailModal from './CardDetailModal';
 import './CardsContainer.css';
 
@@ -58,9 +57,6 @@ const CardsContainer = () => {
       </button>
 
       <TutorialModal isOpen={isTutorialOpen} onClose={() => setTutorialOpen(false)} />
-
-      {/* === DUEL ARENA (listens to fight events globally) === */}
-      <DuelArena />
 
       {/* === CARD DETAIL MODAL (3D Holographic) === */}
       <CardDetailModal pokemon={selectedPokemon} onClose={() => setSelectedPokemon(null)} />

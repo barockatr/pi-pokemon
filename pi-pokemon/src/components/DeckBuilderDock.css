@@ -1,0 +1,212 @@
+.deck-builder-dock {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(15, 15, 20, 0.95);
+    border-top: 2px solid #333;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+}
+
+.dock-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.dock-header {
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.dock-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.deck-count {
+    font-size: 0.9rem;
+    background: #333;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.deck-count.full {
+    background: #7AC74C;
+    color: #000;
+}
+
+.dock-header p {
+    margin: 5px 0 0;
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.dock-slots {
+    display: flex;
+    gap: 10px;
+}
+
+.dock-slot {
+    width: 60px;
+    height: 85px;
+    border-radius: 6px;
+    border: 2px dashed #444;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.dock-slot.filled {
+    border: 2px solid #bba32e;
+    background: #222;
+    box-shadow: 0 0 10px rgba(187, 163, 46, 0.3);
+}
+
+.dock-slot-placeholder {
+    font-size: 0.6rem;
+    color: #555;
+    text-transform: uppercase;
+}
+
+.dock-card-img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    transition: transform 0.2s;
+}
+
+.dock-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.dock-slot.filled:hover .dock-card-overlay {
+    opacity: 1;
+}
+
+.dock-slot.filled:hover .dock-card-img {
+    transform: scale(1.1);
+}
+
+.dock-remove-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: transform 0.2s;
+}
+
+.dock-remove-btn:hover {
+    transform: scale(1.2);
+}
+
+.dock-card-name {
+    color: white;
+    font-size: 0.5rem;
+    text-align: center;
+    margin-top: 5px;
+    max-width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dock-action {
+    display: flex;
+    align-items: center;
+}
+
+.dock-duel-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dock-duel-btn.disabled {
+    background: #333;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.dock-duel-btn.active {
+    background: linear-gradient(135deg, #ff0000, #cc0000);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.5);
+    border: 2px solid #ff4444;
+}
+
+.pulse-animation {
+    animation: duelPulse 2s infinite;
+}
+
+@keyframes duelPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+    }
+
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 15px rgba(255, 0, 0, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+    }
+}
+
+@media (max-width: 768px) {
+    .deck-builder-dock {
+        padding: 10px;
+    }
+
+    .dock-container {
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .dock-header,
+    .dock-action {
+        width: 100%;
+        text-align: center;
+    }
+
+    .dock-header h3 {
+        justify-content: center;
+    }
+}

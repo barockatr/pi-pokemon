@@ -1,0 +1,50 @@
+.global-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #1a1a2e;
+    border-bottom: 3px solid #bba32e;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+}
+
+.navbar-logo h2 {
+    color: #fceb6a;
+    margin: 0;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.2rem;
+    text-shadow: 2px 2px 0 #cc0000;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-btn {
+    color: white;
+    text-decoration: none;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    background-color: #2a2a4e;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.nav-btn:hover {
+    background-color: #3a3a6e;
+    transform: translateY(-2px);
+}
+
+.nav-btn.active {
+    background-color: #fceb6a;
+    color: #1a1a2e;
+    border-color: #bba32e;
+    box-shadow: 0 0 10px rgba(252, 235, 106, 0.5);
+}
