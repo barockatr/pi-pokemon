@@ -1,0 +1,259 @@
+/* DamageToken.css */
+.damage-token-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+    /* Make sure it's above the card content */
+    overflow: hidden;
+    /* Keep tokens inside the card boundary ideally */
+}
+
+.damage-token {
+    position: absolute;
+    background: radial-gradient(circle at bottom, #e74c3c, #960f0f);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.4),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        0 0 10px rgba(255, 0, 0, 0.5);
+    /* Glowing effect */
+    border: 2px solid #ff9999;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    font-family: 'Righteous', 'Arial Black', sans-serif;
+
+    /* Physical pop animation */
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.dt-50 {
+    width: 55px;
+    height: 55px;
+    font-size: 1.4rem;
+    z-index: 52;
+}
+
+.dt-10 {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    z-index: 51;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0) translateY(20px) rotate(-15deg);
+        opacity: 0;
+    }
+
+    to {
+        /* Transforms will be partially overridden inline for randomness,
+       but the scale goes to 1 */
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Playmat CSS Framework */
+.duel-arena-container {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #1e212b 0%, #0a0b10 100%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+    /* Crucial for 3D effect */
+    overflow: hidden;
+}
+
+.playmat-board {
+    width: 95vw;
+    max-width: 1100px;
+    height: 85vh;
+    position: relative;
+
+    /* Isometric/Perspective Transform */
+    transform: rotateX(55deg) translateY(-80px) translateZ(-50px);
+    transform-style: preserve-3d;
+
+    /* Board Texture/Styling */
+    background:
+        linear-gradient(rgba(20, 20, 30, 0.9), rgba(20, 20, 30, 0.9)),
+        url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+    border: 4px solid #333;
+    border-radius: 20px;
+    box-shadow:
+        0 0 50px rgba(0, 0, 0, 0.8),
+        inset 0 0 40px rgba(0, 0, 0, 0.6),
+        0 10px 0 #111,
+        /* 3D Edge */
+        0 20px 20px rgba(0, 0, 0, 0.5);
+    /* Contact shadow */
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* Separator line between players */
+.playmat-divider {
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, #ffcc00, transparent);
+    box-shadow: 0 0 10px #ffcc00;
+    z-index: 10;
+}
+
+/* Half Board Layout */
+.half-board {
+    flex: 1;
+    /* Take half the board */
+    display: grid;
+    grid-template-rows: 1fr 2.5fr;
+    /* Bench smaller, Active Area bigger */
+    padding: 10px;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+/* For Opponent, reverse the layout so Active area touches the divider */
+.half-board.opponent {
+    grid-template-rows: 2.5fr 1fr;
+}
+
+/* Zones */
+.zone-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.03);
+    position: relative;
+}
+
+.droppable-zone {
+    width: 100%;
+    height: 100%;
+    min-height: 150px;
+    border-radius: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* This ensures children position absolute inside hit the zone perfectly */
+    position: relative;
+}
+
+.active-zone {
+    /* Center stage */
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.bench-zone {
+    /* Lower/Upper edge */
+    border: 2px dashed rgba(255, 255, 255, 0.05);
+}
+
+.zone-label {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.15);
+    font-size: 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    pointer-events: none;
+}
+
+/* UI Overlay (Phases, Buttons) - Floating above the 3D board */
+.arena-ui-overlay {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #444;
+}
+
+/* Fix for existing cards inside 3D environment */
+.playmat-board .card-container {
+    /* Reverse the parent's rotateX slighty to make cards "stand up" like in TTS */
+    transform: rotateX(-35deg) translateY(-20px);
+    box-shadow: 0 20px 20px rgba(0, 0, 0, 0.6);
+    /* Cast shadow onto board */
+    transition: transform 0.3s ease;
+}
+
+.playmat-board .card-container:hover {
+    transform: rotateX(-20deg) translateY(-40px) scale(1.05);
+    /* Stand up more on hover */
+}
+
+/* Ensure the hovering clone doesn't block pointer events for the drop target underneath */
+.dragging-clone {
+    pointer-events: none !important;
+}
+
+/* Shake Animation */
+@keyframes violentShake {
+    0% {
+        transform: rotateX(-35deg) translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+        transform: rotateX(-35deg) translate(-5px, -2px) rotate(-3deg);
+    }
+
+    20% {
+        transform: rotateX(-35deg) translate(-3px, 0px) rotate(3deg);
+    }
+
+    30% {
+        transform: rotateX(-35deg) translate(5px, 2px) rotate(0deg);
+    }
+
+    40% {
+        transform: rotateX(-35deg) translate(1px, -1px) rotate(3deg);
+    }
+
+    50% {
+        transform: rotateX(-35deg) translate(-1px, 2px) rotate(-3deg);
+    }
+
+    60% {
+        transform: rotateX(-35deg) translate(-5px, 1px) rotate(0deg);
+    }
+
+    70% {
+        transform: rotateX(-35deg) translate(5px, 1px) rotate(-3deg);
+    }
+
+    80% {
+        transform: rotateX(-35deg) translate(-1px, -1px) rotate(3deg);
+    }
+
+    90% {
+        transform: rotateX(-35deg) translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+        transform: rotateX(-35deg) translate(1px, -2px) rotate(-3deg);
+    }
+}
+
+.shake-violent {
+    animation: violentShake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
