@@ -175,9 +175,67 @@
     /* Removed pointer-events: none to restore drop capability */
 }
 
+/* Mod 1: Graveyard positioning */
+.active-zone {
+    flex: 2;
+    /* Active is larger */
+}
+
 .bench-zone {
+    flex: 3;
     /* Lower/Upper edge */
     border: 2px dashed rgba(255, 255, 255, 0.05);
+}
+
+.graveyard-zone {
+    position: absolute;
+    right: 15px;
+    width: 60px;
+    height: 90px;
+    border: 2px solid rgba(135, 135, 135, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.half-board.opponent .graveyard-zone {
+    bottom: 10px;
+    /* Cerca del divisor para el Oponente */
+}
+
+.half-board.player .graveyard-zone {
+    top: 10px;
+    /* Cerca del divisor para el Jugador */
+}
+
+.graveyard-card {
+    transition: opacity 0.3s;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-back-graveyard {
+    background: linear-gradient(135deg, #444, #111);
+    border: 2px solid #555;
+    border-radius: 6px;
+    width: 50px;
+    height: 70px;
+    color: #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8), -2px -2px 0 #333, -4px -4px 0 #222;
+}
+
+.card-back-graveyard.empty {
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 1);
+    background: transparent;
+    border: 1px dashed #444;
 }
 
 .zone-label {
@@ -318,6 +376,22 @@
     height: 100%;
     overflow-x: auto;
     padding-bottom: 15px;
+
+    /* Scroll horizontal fluido para Mobile */
+    white-space: nowrap;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mod 4: Ocultar scrollbar si no te apetece */
+.hand-cards-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.hand-cards-container::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
 }
 
 .dock-card-wrapper {
@@ -326,6 +400,9 @@
     transform-origin: top center;
     margin: -50px -40px;
     /* Counteract space taken by scale */
+    display: inline-block;
+    /* Para nowrap */
+    scroll-snap-align: center;
 }
 
 .dock-card-wrapper.interactive-card:hover {
@@ -545,5 +622,70 @@
 @keyframes popIn {
     to {
         transform: scale(1);
+    }
+}
+
+/* --- Módulo 4: Responsive Design (Mobile First) --- */
+@media (max-width: 768px) {
+
+    /* Ajuste masivo de Tablero Isométrico */
+    .arena-viewport {
+        perspective: 800px;
+        /* Reducir perspectiva para evitar deformaciones colosales */
+        padding-bottom: 0;
+    }
+
+    .playmat-board {
+        /* Encoger agresivamente con scale para no reventar márgenes */
+        transform: rotateX(50deg) scale(0.65) translateY(-50px) translateZ(-50px);
+        width: 120vw;
+        /* Dejar que fluya un poco más, el scale lo centra */
+        height: auto;
+    }
+
+    /* Reducción de fuentes e íconos en cabecera */
+    .turn-indicator {
+        font-size: 0.9rem;
+        padding: 5px 12px;
+    }
+
+    .end-turn-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+
+    .dock-header {
+        padding: 0 10px;
+    }
+
+    /* Cementerios más chicos para que no tapen a las Activas */
+    .graveyard-zone {
+        width: 45px;
+        height: 65px;
+        right: 5px;
+    }
+
+    .card-back-graveyard {
+        width: 40px;
+        height: 60px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Súper móviles (iPhone SE / etc) */
+    .playmat-board {
+        transform: rotateX(45deg) scale(0.55) translateY(-80px) translateZ(-30px);
+        width: 140vw;
+    }
+
+    .dock-card-wrapper {
+        transform: scale(0.55);
+        margin: -70px -55px;
+    }
+
+    .dock-card-wrapper.interactive-card:hover {
+        transform: scale(0.65) translateY(-20px);
     }
 }

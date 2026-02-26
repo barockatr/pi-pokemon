@@ -15,6 +15,7 @@ export const usePvEBot = ({
         turnPlayer,
         isFsmPaused,
         forcePhase,
+        passTurn,
         ejecutarAtaque
     } = fsm;
 
@@ -36,6 +37,8 @@ export const usePvEBot = ({
     }, [opponentActive, playerActive, opponentHand, isFsmPaused, turnPlayer]);
 
     useEffect(() => {
+        console.log(`🤖 [BOT Observer] Evaluando turno... turnPlayer: ${turnPlayer}, isFsmPaused: ${isFsmPaused}`);
+
         // Solo actuar si es turno del oponente y no hay pausa
         if (turnPlayer !== PLAYERS.OPPONENT || isFsmPaused) return;
 
@@ -104,7 +107,7 @@ export const usePvEBot = ({
             if (isCancelled || stateRef.current.isFsmPaused) return;
 
             console.log("🤖 [BOT] Turno finalizado.");
-            forcePhase({ newPhase: GAME_PHASES.END_TURN, forPlayer: PLAYERS.OPPONENT });
+            passTurn();
         };
 
         runBotTurn();

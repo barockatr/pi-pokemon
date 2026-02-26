@@ -6,6 +6,7 @@ import { shuffleArray } from '../utils/shuffle';
 const useDeckStore = create((set, get) => ({
     deck: [],
     opponentHand: [],
+    isInitializing: true, // Módulo 2: Skeletons Flag
 
     // Add a card to the deck (max 6)
     addCard: (card) => {
@@ -43,7 +44,11 @@ const useDeckStore = create((set, get) => ({
 
     // --- Módulo 2: Rejugabilidad del Bot ---
     generarMazoBot: async () => {
+        set({ isInitializing: true });
         try {
+            // Delay artificial mínimo para que el skeleton se respire (opcional, pero mejora la UX para no parpadear)
+            await new Promise(r => setTimeout(r, 600));
+
             // Fetch all pokemons from API to form a pool
             const response = await axios.get('http://localhost:3001/pokemons');
             const allPokemons = response.data;
@@ -61,12 +66,12 @@ const useDeckStore = create((set, get) => ({
             }));
 
             // Assign to the opponent's hand
-            set({ opponentHand: botDeck });
+            set({ opponentHand: selectedPokemons, isInitializing: false });
 
         } catch (error) {
             console.error("Error generating Bot Deck:", error);
             // Fallback just in case
-            set({ opponentHand: [] });
+            set({ opponentHand: [], isInitializing: false });
         }
     }
 }));

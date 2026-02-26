@@ -10,7 +10,7 @@ import './CardContextMenu.css';
 const CardContextMenu = ({
     card,
     position,
-    contextArgs, // { type: 'HAND' | 'BENCH' | 'ACTIVE', canMoveToBench: bool, canMoveToActive: bool }
+    contextArgs, // { type: 'HAND' | 'BENCH' | 'ACTIVE', canMoveToBench: bool, isPlayerActiveEmpty: bool }
     actions,     // { onPlayToBench, onMoveToActive, onViewInfo, onClose, onAttack }
 }) => {
     const menuRef = useRef(null);
@@ -42,36 +42,55 @@ const CardContextMenu = ({
         left: `${position.x}px`,
     };
 
+    const cardArgsActiveFilled = !contextArgs.isPlayerActiveEmpty;
+
     const renderButtons = () => {
         if (contextArgs.type === 'HAND') {
             return (
                 <>
-                    <button
-                        className={`context-btn action-btn ${!contextArgs.canMoveToBench ? 'disabled' : ''}`}
-                        onClick={() => { if (contextArgs.canMoveToBench) actions.onPlayToBench(card); }}
-                        disabled={!contextArgs.canMoveToBench}
-                    >
-                        ⚔️ Jugar a la Banca
-                    </button>
+                    {!cardArgsActiveFilled ? (
+                        <button
+                            className={`context-btn action-btn ${!contextArgs.canMoveToBench ? 'disabled' : ''}`}
+                            onClick={() => { if (contextArgs.canMoveToBench) actions.onMoveToActive(card); }}
+                            disabled={!contextArgs.canMoveToBench} // We use the bench condition because if the hand is empty it shouldn't show anyway
+                        >
+                            🚀 Jugar a Activo
+                        </button>
+                    ) : (
+                        <button
+                            className={`context-btn action-btn ${!contextArgs.canMoveToBench ? 'disabled' : ''}`}
+                            onClick={() => { if (contextArgs.canMoveToBench) actions.onPlayToBench(card); }}
+                            disabled={!contextArgs.canMoveToBench}
+                        >
+                            ⚔️ Jugar a la Banca
+                        </button>
+                    )}
                     <button className="context-btn info-btn" onClick={() => actions.onViewInfo(card)}>
                         🔍 Ver Info
                     </button>
                 </>
             );
         } else if (contextArgs.type === 'BENCH') {
+            if (!cardArgsActiveFilled) {
+                return (
+                    <>
+                        <button
+                            className={`context-btn action-btn`}
+                            onClick={() => actions.onMoveToActive(card)}
+                        >
+                            🚀 Mover a Activo
+                        </button>
+                        <button className="context-btn info-btn" onClick={() => actions.onViewInfo(card)}>
+                            🔍 Ver Info
+                        </button>
+                    </>
+                );
+            }
+            // If active is filled, only show info.
             return (
-                <>
-                    <button
-                        className={`context-btn action-btn ${!contextArgs.canMoveToActive ? 'disabled' : ''}`}
-                        onClick={() => { if (contextArgs.canMoveToActive) actions.onMoveToActive(card); }}
-                        disabled={!contextArgs.canMoveToActive}
-                    >
-                        🚀 Mover a Activo
-                    </button>
-                    <button className="context-btn info-btn" onClick={() => actions.onViewInfo(card)}>
-                        🔍 Ver Info
-                    </button>
-                </>
+                <button className="context-btn info-btn" onClick={() => actions.onViewInfo(card)}>
+                    🔍 Ver Info
+                </button>
             );
         } else if (contextArgs.type === 'ACTIVE') {
             // Módulo 3: Menú Táctico RPG

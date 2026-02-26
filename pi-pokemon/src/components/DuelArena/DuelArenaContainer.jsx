@@ -10,12 +10,15 @@ import ImpactEffect from './effects/ImpactEffect';
 import Card from '../Card';
 import CardContextMenu from './CardContextMenu';
 import CardDetailModal from '../CardDetailModal'; // Holographic modal
+import ArenaSkeleton from './ArenaSkeleton'; // UX Suave (Módulo 2)
+import { useGameAudio } from './hooks/useGameAudio'; // Módulo 3: Audio
 
 import './DuelArena.css';
 
 const DuelArenaContainer = () => {
     const navigate = useNavigate();
-    const { deck, opponentHand, generarMazoBot } = useDeckStore();
+    const { deck, opponentHand, isInitializing, generarMazoBot } = useDeckStore();
+    const { playBGM, stopBGM, playSFX } = useGameAudio(); // Instancia de Audio
 
     // Context Menu State
     const [activeMenu, setActiveMenu] = useState(null);
@@ -51,6 +54,7 @@ const DuelArenaContainer = () => {
         turnPlayer,
         advancePhase,
         forcePhase,
+        passTurn,
         ejecutarAtaque,
         canDragAndDrop: isActionPhase, // Renombrado lógicamente ya que no hay DND
         isPlayerTurn,
@@ -96,7 +100,7 @@ const DuelArenaContainer = () => {
 
     // --- Módulo 3: El Cerebro de Nuez ---
     usePvEBot({
-        fsm: { currentPhase, turnPlayer, isFsmPaused, advancePhase, ejecutarAtaque, forcePhase },
+        fsm: { currentPhase, turnPlayer, isFsmPaused, advancePhase, ejecutarAtaque, forcePhase, passTurn },
         boardState: {
             opponentActive,
             setOpponentActive,
@@ -157,7 +161,7 @@ const DuelArenaContainer = () => {
             if (!selectedInfoCard) {
                 resumeFSM();
             }
-        }, 1200);
+        }, 1150); // Módulo 1: Sincronizado con la duración de la animación implosion en CSS (1.2s avg)
     };
 
     // --- Módulo 4: Game Over Observer ---
@@ -190,14 +194,13 @@ const DuelArenaContainer = () => {
 
         // Calcular si las acciones están permitidas
         const canMoveToBench = locationType === 'HAND' && playerBench.length < 5;
-        const canMoveToActive = locationType === 'BENCH' && !playerActive;
 
         setActiveMenu({
             card,
             type: locationType,
             position: { x: e.clientX, y: e.clientY },
             canMoveToBench,
-            canMoveToActive
+            isPlayerActiveEmpty: !playerActive
         });
     };
 
@@ -212,7 +215,13 @@ const DuelArenaContainer = () => {
     };
 
     const handleMoveToActive = (card) => {
-        setPlayerBench(prev => prev.filter(c => c.currentInstanceId !== card.currentInstanceId));
+        // If it comes from hand, remove from hand, else from bench
+        if (activeMenu?.type === 'HAND') {
+            setPlayerHand(prev => prev.filter(c => c.currentInstanceId !== card.currentInstanceId));
+            setHasGameStarted(true);
+        } else {
+            setPlayerBench(prev => prev.filter(c => c.currentInstanceId !== card.currentInstanceId));
+        }
         setPlayerActive(card);
         closeMenu();
     };
@@ -244,11 +253,12 @@ const DuelArenaContainer = () => {
         // El turno del jugador finaliza tras un ataque exitoso (RPG rule)
         // Damos un breve delay para que termine la animación
         setTimeout(() => {
-            forcePhase({ newPhase: GAME_PHASES.END_TURN, forPlayer: PLAYERS.PLAYER });
+            passTurn();
         }, 1200);
     };
 
-    if (!opponentCard) return null;
+    // Early return para Módulo 2
+    if (!opponentCard || isInitializing) return <ArenaSkeleton />;
 
     return (
         <div className="duel-arena-container tactical-mode" onClick={closeMenu}>
@@ -280,6 +290,16 @@ const DuelArenaContainer = () => {
                 <div className="playmat-board">
                     {/* OPPONENT HALF */}
                     <div className="half-board opponent">
+                        <div className="zone-container graveyard-zone">
+                            <div className="graveyard-card" style={{ opacity: opponentGraveyard.length > 0 ? 1 : 0.1 }}>
+                                {opponentGraveyard.length > 0 ? (
+                                    <div className="card-back-graveyard" title="Cementerio">🪦 {opponentGraveyard.length}</div>
+                                ) : (
+                                    <div className="card-back-graveyard empty" />
+                                )}
+                            </div>
+                        </div>
+
                         <div className="zone-container active-zone">
                             <span className="zone-label">Active</span>
                             {opponentActive && (
@@ -302,6 +322,16 @@ const DuelArenaContainer = () => {
 
                     {/* PLAYER HALF */}
                     <div className="half-board player">
+                        <div className="zone-container graveyard-zone">
+                            <div className="graveyard-card" style={{ opacity: playerGraveyard.length > 0 ? 1 : 0.1 }}>
+                                {playerGraveyard.length > 0 ? (
+                                    <div className="card-back-graveyard" title="Cementerio">🪦 {playerGraveyard.length}</div>
+                                ) : (
+                                    <div className="card-back-graveyard empty" />
+                                )}
+                            </div>
+                        </div>
+
                         <div className="zone-container active-zone">
                             <span className="zone-label">Active</span>
                             {playerActive && (
@@ -348,7 +378,10 @@ const DuelArenaContainer = () => {
                     {turnPlayer === PLAYERS.PLAYER && (
                         <button
                             className="end-turn-btn"
-                            onClick={() => forcePhase({ newPhase: GAME_PHASES.END_TURN, forPlayer: PLAYERS.PLAYER })}
+                            onClick={() => {
+                                console.log("Cambiando turno a OPPONENT");
+                                passTurn();
+                            }}
                             disabled={isFsmPaused}
                         >
                             Terminar Turno
@@ -381,7 +414,7 @@ const DuelArenaContainer = () => {
                     contextArgs={{
                         type: activeMenu.type,
                         canMoveToBench: activeMenu.canMoveToBench,
-                        canMoveToActive: activeMenu.canMoveToActive
+                        isPlayerActiveEmpty: activeMenu.isPlayerActiveEmpty
                     }}
                     actions={{
                         onPlayToBench: handlePlayToBench,

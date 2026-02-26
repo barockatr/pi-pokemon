@@ -65,6 +65,14 @@ export const useGamePhase = (initialPlayer = PLAYERS.PLAYER) => {
         }
     }, [isFsmPaused]);
 
+    // Función unificada para pasar el turno en el RPG mode
+    const passTurn = useCallback(() => {
+        if (!isFsmPaused) {
+            setTurnPlayer(prev => prev === PLAYERS.PLAYER ? PLAYERS.OPPONENT : PLAYERS.PLAYER);
+            setCurrentPhase(GAME_PHASES.MAIN_PHASE);
+        }
+    }, [isFsmPaused]);
+
     // Orquestación estricta de la Secuencia de Ataque
     const ejecutarAtaque = useCallback(async ({
         attacker,
@@ -73,8 +81,9 @@ export const useGamePhase = (initialPlayer = PLAYERS.PLAYER) => {
         setIsAttacking
     }) => {
         // Validación de seguridad para prevenir exploits
-        if (isFsmPaused || currentPhase !== GAME_PHASES.BATTLE_PHASE || !attacker || !defender) {
-            console.warn("Ataque denegado: Estado del tablero inválido o fase incorrecta.");
+        // Note: For RPG Combat Módulo 3, we allow attacks from MAIN_PHASE
+        if (isFsmPaused || !attacker || !defender) {
+            console.warn("Ataque denegado: Estado del tablero inválido o fase incorrecta.", { currentPhase, attacker, defender, isFsmPaused });
             return;
         }
 
@@ -95,10 +104,7 @@ export const useGamePhase = (initialPlayer = PLAYERS.PLAYER) => {
                     resolve(0);
                 } finally {
                     setIsAttacking(false);
-                    // M1 Regla estricta: Finaliza agresión = Auto transiciona al Final del Turno
-                    forcePhase(GAME_PHASES.END_PHASE);
-
-                    // Nota del FSM: Inmediatamente después de esto, `advancePhase` o un auto-bot tirará a DRAW_PHASE.
+                    // Dejamos que el controlador (Módulo 3) decida cuándo hacer passTurn para mejor UX
                 }
             }, 500); // 500ms sincronizado exacto con la duración de <ImpactEffect />
         });
@@ -112,6 +118,7 @@ export const useGamePhase = (initialPlayer = PLAYERS.PLAYER) => {
         resumeFSM,
         advancePhase,
         forcePhase,
+        passTurn,
         ejecutarAtaque,
 
         // Helpers booleanos útiles para renderizado condicional en la UI
