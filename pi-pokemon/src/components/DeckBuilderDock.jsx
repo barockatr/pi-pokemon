@@ -1,12 +1,16 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import useDeckStore from '../store/useDeckStore';
+import useGameStore from '../store/useGameStore';
 import './DeckBuilderDock.css'; // Make sure this CSS has the styling for sticky bottom
 
 const DeckBuilderDock = () => {
-    const { deck, removeCard } = useDeckStore();
+    const { deck, removeCard, addCard, clearDeck } = useDeckStore();
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Obtenemos la lista global de Pokémon desde Zustand para el autocompletado aleatorio
+    const pokemons = useGameStore((state) => state.pokemons);
 
     // Ocultar el Dock si ya estamos en la Arena o en el Detail (opcional)
     if (location.pathname === '/arena') return null;
@@ -19,6 +23,21 @@ const DeckBuilderDock = () => {
     const handleStartDuel = () => {
         if (isDeckFull) {
             navigate('/arena');
+        }
+    };
+
+    const handleRandomizeDeck = () => {
+        if (!pokemons || pokemons.length === 0) return;
+
+        clearDeck(); // Vaciamos el mazo actual
+        let availablePokemons = [...pokemons];
+
+        // Agregar 6 Pokémon al azar, asegurando que no haya duplicados si es posible
+        for (let i = 0; i < MAX_CARDS; i++) {
+            if (availablePokemons.length === 0) break;
+            const randomIndex = Math.floor(Math.random() * availablePokemons.length);
+            const randomPokemon = availablePokemons.splice(randomIndex, 1)[0];
+            addCard(randomPokemon); // Zustand maneja esto de forma síncrona excelente
         }
     };
 
@@ -57,6 +76,11 @@ const DeckBuilderDock = () => {
                 </div>
 
                 <div className="dock-action">
+                    <button className="dock-random-btn" onClick={handleRandomizeDeck} title="Mazo Aleatorio">
+                        <div className="random-pokeball">
+                            <span>?</span>
+                        </div>
+                    </button>
                     {isDeckFull ? (
                         <button className="dock-duel-btn active pulse-animation" onClick={handleStartDuel}>
                             ¡DUELO! ⚔️

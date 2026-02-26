@@ -2,10 +2,10 @@ import { useState, useCallback } from 'react';
 
 // Constantes estrictas para evitar typos
 export const GAME_PHASES = {
-    DRAW_PHASE: 'DRAW_PHASE',     // Robar carta inicio de turno (opcional por ahora, prepara terreno)
+    DRAW_PHASE: 'DRAW_PHASE',     // Robar carta inicio de turno (preparación)
     MAIN_PHASE: 'MAIN_PHASE',     // Bajar a banca, mover a activa (D&D permitido)
     BATTLE_PHASE: 'BATTLE_PHASE', // D&D bloqueado. Seleccionar ataque.
-    END_PHASE: 'END_PHASE',       // Resolver venenos/quemaduras, pasar turno
+    END_PHASE: 'END_PHASE',       // Resolver efectos de final de turno
 };
 
 export const PLAYERS = {
@@ -16,14 +16,33 @@ export const PLAYERS = {
 export const useGamePhase = (initialPlayer = PLAYERS.PLAYER) => {
     const [currentPhase, setCurrentPhase] = useState(GAME_PHASES.MAIN_PHASE);
     const [turnPlayer, setTurnPlayer] = useState(initialPlayer);
+    const [isFsmPaused, setIsFsmPaused] = useState(false); // Para detener mecánicas durante animaciones mortales
+
+    // Controles de Pausa para la Parca
+    const pauseFSM = useCallback(() => setIsFsmPaused(true), []);
+    const resumeFSM = useCallback(() => setIsFsmPaused(false), []);
 
     // Lógica de avance seguro de fases
-    const advancePhase = useCallback(() => {
+    const advancePhase = useCallback(({ playerActive, opponentActive }) => {
+        if (isFsmPaused) {
+            console.warn("FSM Bloqueada: Resolviendo ciclo de muerte.");
+            return;
+        }
+
         setCurrentPhase((prevPhase) => {
             switch (prevPhase) {
                 case GAME_PHASES.DRAW_PHASE:
                     return GAME_PHASES.MAIN_PHASE;
                 case GAME_PHASES.MAIN_PHASE:
+                    // Regla de Bloqueo: Si 'Active Zone' del jugador del turno está vacío, no se puede avanzar.
+                    if (turnPlayer === PLAYERS.PLAYER && !playerActive) {
+                        console.warn("FSM Bloqueada: El jugador no tiene Pokémon activo.");
+                        return GAME_PHASES.MAIN_PHASE;
+                    }
+                    if (turnPlayer === PLAYERS.OPPONENT && !opponentActive) {
+                        console.warn("FSM Bloqueada: El oponente no tiene Pokémon activo.");
+                        return GAME_PHASES.MAIN_PHASE;
+                    }
                     return GAME_PHASES.BATTLE_PHASE;
                 case GAME_PHASES.BATTLE_PHASE:
                     return GAME_PHASES.END_PHASE;
@@ -37,63 +56,68 @@ export const useGamePhase = (initialPlayer = PLAYERS.PLAYER) => {
                     return GAME_PHASES.MAIN_PHASE;
             }
         });
-    }, []);
+    }, [isFsmPaused, turnPlayer]);
 
     // Función para forzar saltos (ej: cartas de efecto que terminan el turno)
     const forcePhase = useCallback((phase) => {
-        if (Object.values(GAME_PHASES).includes(phase)) {
+        if (!isFsmPaused && Object.values(GAME_PHASES).includes(phase)) {
             setCurrentPhase(phase);
         }
-    }, []);
+    }, [isFsmPaused]);
 
-    // Operación 2: Orquestación estricta de la Secuencia de Ataque
+    // Orquestación estricta de la Secuencia de Ataque
     const ejecutarAtaque = useCallback(async ({
-        playerActive,
-        opponentActive,
-        setOpponentDamage,
+        attacker,
+        defender,
+        setDefenderDamage,
         setIsAttacking
     }) => {
         // Validación de seguridad para prevenir exploits
-        if (currentPhase !== GAME_PHASES.BATTLE_PHASE || !playerActive || !opponentActive) {
-            console.warn("Ataque denegado: Fase incorrecta o faltan Pokémon activos.");
+        if (isFsmPaused || currentPhase !== GAME_PHASES.BATTLE_PHASE || !attacker || !defender) {
+            console.warn("Ataque denegado: Estado del tablero inválido o fase incorrecta.");
             return;
         }
 
         return new Promise((resolve) => {
-            // 1. Trigger de Animación Visual (UI: SVG de impacto y temblor)
-            setIsAttacking(true);
+            setIsAttacking(true); // Bloque que dispara daño visual CSS/SVG
 
             setTimeout(() => {
                 try {
-                    // 2. Cálculo Lógico del Daño (aislado de la UI temporal)
-                    const damageDealt = playerActive.attackDamage || 20;
+                    // Cálculo Lógico del Daño (Mínimo 20 por ahora, pero escalable en Módulo 3)
+                    const damageDealt = attacker.attackDamage || 20;
 
-                    // 3. Modificación del Estado del Tablero (Activa el DamageToken Overlay)
-                    setOpponentDamage(prev => prev + damageDealt);
+                    // Aplica Daño Acumulado al estado React
+                    setDefenderDamage(prev => prev + damageDealt);
 
                     resolve(damageDealt);
                 } catch (error) {
                     console.error("Error crítico durante la resolución del ataque:", error);
-                    resolve(0); // Resolvemos con 0 para que la Promesa no quede colgada
+                    resolve(0);
                 } finally {
-                    // 4. Transición Segura de la Máquina de Estados al terminar
                     setIsAttacking(false);
+                    // M1 Regla estricta: Finaliza agresión = Auto transiciona al Final del Turno
                     forcePhase(GAME_PHASES.END_PHASE);
+
+                    // Nota del FSM: Inmediatamente después de esto, `advancePhase` o un auto-bot tirará a DRAW_PHASE.
                 }
             }, 500); // 500ms sincronizado exacto con la duración de <ImpactEffect />
         });
-    }, [currentPhase, forcePhase]);
+    }, [currentPhase, isFsmPaused, forcePhase]);
 
     return {
         currentPhase,
         turnPlayer,
+        isFsmPaused,
+        pauseFSM,
+        resumeFSM,
         advancePhase,
         forcePhase,
-        ejecutarAtaque, // Exportamos la nueva función orquestadora
+        ejecutarAtaque,
+
         // Helpers booleanos útiles para renderizado condicional en la UI
         isPlayerTurn: turnPlayer === PLAYERS.PLAYER,
         isMainPhase: currentPhase === GAME_PHASES.MAIN_PHASE,
         isBattlePhase: currentPhase === GAME_PHASES.BATTLE_PHASE,
-        canDragAndDrop: (turnPlayer === PLAYERS.PLAYER && currentPhase === GAME_PHASES.MAIN_PHASE)
+        canDragAndDrop: (!isFsmPaused && turnPlayer === PLAYERS.PLAYER && currentPhase === GAME_PHASES.MAIN_PHASE)
     };
 };

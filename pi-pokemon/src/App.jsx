@@ -7,6 +7,7 @@ import Form from "./components/Form";
 import NavBar from "./components/NavBar";
 import DeckBuilderDock from "./components/DeckBuilderDock";
 import DuelArenaContainer from "./components/DuelArena/DuelArenaContainer";
+import ErrorScreen from "./components/ErrorScreen";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/arena" element={<DuelArenaContainer />} />
       </Routes>
       <DeckBuilderDock />
+      <ErrorScreen />
     </Router>
   );
 };

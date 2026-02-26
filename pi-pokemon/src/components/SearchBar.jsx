@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { getPokemonByName } from "../redux/actions";
+import useGameStore from "../store/useGameStore";
 
 const SearchBar = ({ setCurrentPage }) => {
-  const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
+  const getPokemonByName = useGameStore(state => state.getPokemonByName);
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
@@ -12,7 +11,7 @@ const SearchBar = ({ setCurrentPage }) => {
 
   const handleSearch = () => {
     if (searchTerm.trim() !== "") {
-      dispatch(getPokemonByName(searchTerm));
+      getPokemonByName(searchTerm);
       setSearchTerm("");
       setCurrentPage(0);
     }

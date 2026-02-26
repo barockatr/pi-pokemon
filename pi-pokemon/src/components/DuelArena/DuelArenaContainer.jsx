@@ -1,51 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useDeckStore from '../../store/useDeckStore';
-import {
-    DndContext,
-    DragOverlay,
-    closestCenter,
-    useSensor,
-    useSensors,
-    PointerSensor
-} from '@dnd-kit/core';
 
 import { useGamePhase, GAME_PHASES, PLAYERS } from './hooks/useGamePhase';
-import DraggableCard from './DraggableCard';
-import DroppableZone from './DroppableZone';
+import { usePvEBot } from './hooks/usePvEBot';
+
 import DamageTokenOverlay from './DamageToken';
 import ImpactEffect from './effects/ImpactEffect';
 import Card from '../Card';
+import CardContextMenu from './CardContextMenu';
+import CardDetailModal from '../CardDetailModal'; // Holographic modal
 
 import './DuelArena.css';
 
 const DuelArenaContainer = () => {
     const navigate = useNavigate();
-    const { deck } = useDeckStore();
+    const { deck, opponentHand, generarMazoBot } = useDeckStore();
 
-    // Initial Opponent logic (similar to old DuelArena)
+    // Context Menu State
+    const [activeMenu, setActiveMenu] = useState(null);
+    const [selectedInfoCard, setSelectedInfoCard] = useState(null);
+
+    // Initial Opponent logic
     const [opponentCard, setOpponentCard] = useState(null);
 
     // Board State
     const [playerHand, setPlayerHand] = useState([]);
+    const [playerBench, setPlayerBench] = useState([]);
     const [playerActive, setPlayerActive] = useState(null);
     const [opponentActive, setOpponentActive] = useState(null);
 
-    // Combat State
+    // Combat & Graveyard State
     const [playerDamage, setPlayerDamage] = useState(0);
     const [opponentDamage, setOpponentDamage] = useState(0);
     const [isAttacking, setIsAttacking] = useState(false);
-    const [activeDragId, setActiveDragId] = useState(null);
     const [result, setResult] = useState(null);
+    const [gameOver, setGameOver] = useState(null); // 'VICTORY' or 'DEFEAT'
+    const [hasGameStarted, setHasGameStarted] = useState(false); // Evita derrota instántanea al inicio
+    const [playerGraveyard, setPlayerGraveyard] = useState([]);
+    const [opponentGraveyard, setOpponentGraveyard] = useState([]);
+    const [dyingCard, setDyingCard] = useState({ player: false, opponent: false });
+    const [isCriticalHit, setIsCriticalHit] = useState(false); // Mod 3: Screen shake
 
-    // Configure DND Sensors for robust cross-device drag handling without click delays
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 5, // minimum drag distance before overriding clicks
-            }
-        })
-    );
+    // Bot State (Módulo 3)
+    const [opponentBench, setOpponentBench] = useState([]);
 
     // Custom Hook FSM
     const {
@@ -54,22 +52,25 @@ const DuelArenaContainer = () => {
         advancePhase,
         forcePhase,
         ejecutarAtaque,
-        canDragAndDrop,
+        canDragAndDrop: isActionPhase, // Renombrado lógicamente ya que no hay DND
         isPlayerTurn,
         isMainPhase,
-        isBattlePhase
+        isBattlePhase,
+        isFsmPaused,
+        pauseFSM,
+        resumeFSM
     } = useGamePhase();
 
     // Al montarse el componente o cambiar el deck, hidratamos la mano
     useEffect(() => {
         if (!deck || deck.length !== 6) {
-            navigate('/home'); // Evitar que el usuario entre a la arena con mano vacía o truncada
+            navigate('/home');
             return;
         }
 
         setPlayerHand(deck.map((card, idx) => ({ ...card, currentInstanceId: `hand-${card.id}-${idx}` })));
 
-        // Dummy opponent para testing del Deck Builder (hasta que integremos IA o PvP)
+        // Dummy opponent
         const dummyOpponent = {
             id: 'dummy-ai-1',
             name: "Dragonite (Gimnasio)",
@@ -79,102 +80,221 @@ const DuelArenaContainer = () => {
 
         setOpponentCard(dummyOpponent);
         setOpponentActive({ ...dummyOpponent, currentInstanceId: `opp-${dummyOpponent.id}` });
+
+        // Módulo 2: Inicializar el Mazo del Bot desde la BD
+        generarMazoBot();
+
+        // Limpiar el estado de banca del rival al iniciar
+        setOpponentBench([]);
+
         setOpponentDamage(0);
         setPlayerDamage(0);
         setResult(null);
-    }, [deck]);
+        setGameOver(null);
+        setHasGameStarted(false);
+    }, [deck, navigate]);
 
-    // Cleanup on close
-    const handleClose = () => {
-        navigate('/home'); // Volver a la Pokédex
-    };
-
-    // --- DND Handlers ---
-    const handleDragStart = (event) => {
-        console.log("🎮 Drag STARTED:", event.active.id, event);
-        setActiveDragId(event.active.id);
-    };
-
-    const handleDragEnd = (event) => {
-        const { active, over } = event;
-        console.log("🎮 Drag ENDED. Active:", active?.id, "Over:", over?.id);
-
-        setActiveDragId(null);
-
-        // Only allow dropping if Phase is correct and hover is valid
-        if (!over || !canDragAndDrop) {
-            if (!canDragAndDrop) console.warn("D&D Blocked: Not Main Phase or Not Player Turn");
-            if (!over) console.warn("D&D Failed: Dropped outside a valid zone");
-            return;
-        }
-
-        console.log("✅ Valid Drop Detected over:", over.id);
-
-        // Moving from Hand to Player Active Zone
-        if (over.id === 'player-active-zone' && playerHand.find(c => c.currentInstanceId === active.id)) {
-            const cardToMove = playerHand.find(c => c.currentInstanceId === active.id);
-            console.log("-> Moving to active zone:", cardToMove.name);
-            setPlayerHand(prev => prev.filter(c => c.currentInstanceId !== active.id));
-            setPlayerActive(cardToMove);
-            // Optionally, play a summon sound effect here
-        }
-    };
-
-    // --- Combat Logic ---
-    const handleAttack = async () => {
-        if (!isBattlePhase || !playerActive || !opponentActive || isAttacking) return;
-
-        // Delegamos la orquestación estricta al FSM
-        const damageDealt = await ejecutarAtaque({
-            playerActive,
+    // --- Módulo 3: El Cerebro de Nuez ---
+    usePvEBot({
+        fsm: { currentPhase, turnPlayer, isFsmPaused, advancePhase, ejecutarAtaque, forcePhase },
+        boardState: {
             opponentActive,
-            setOpponentDamage,
+            setOpponentActive,
+            playerActive,
+            setPlayerDamage,
+            setIsAttacking,
+            opponentBench,
+            setOpponentBench
+        }
+    });
+
+    const handleClose = () => {
+        navigate('/home');
+    };
+
+    // --- Módulo 2: Interrupción Holográfica (FSM Pause) ---
+    useEffect(() => {
+        if (selectedInfoCard) {
+            pauseFSM();
+        } else {
+            // Al cerrar el modal, solo reanudamos si no estamos procesando una muerte o Game Over
+            if (!gameOver && !dyingCard.opponent && !dyingCard.player) {
+                resumeFSM();
+            }
+        }
+    }, [selectedInfoCard, pauseFSM, resumeFSM, gameOver, dyingCard]);
+
+    // --- Módulo 3: La Parca (Ciclo de Vida) ---
+    useEffect(() => {
+        if (opponentActive && opponentDamage >= (opponentActive.hp || 50)) {
+            resolveDeath(PLAYERS.OPPONENT, opponentActive);
+        }
+        if (playerActive && playerDamage >= (playerActive.hp || 50)) {
+            resolveDeath(PLAYERS.PLAYER, playerActive);
+        }
+    }, [opponentActive, opponentDamage, playerActive, playerDamage]);
+
+    const resolveDeath = (targetPlayer, card) => {
+        pauseFSM();
+        setDyingCard(prev => ({ ...prev, [targetPlayer === PLAYERS.OPPONENT ? 'opponent' : 'player']: true }));
+
+        // Módulo 3: El "Juice" Visual - Activar Screen Shake global por golpe letal
+        setIsCriticalHit(true);
+        setTimeout(() => setIsCriticalHit(false), 500);
+
+        setTimeout(() => {
+            if (targetPlayer === PLAYERS.OPPONENT) {
+                setOpponentGraveyard(prev => [...prev, card]);
+                setOpponentActive(null);
+                setOpponentDamage(0);
+                setDyingCard(prev => ({ ...prev, opponent: false }));
+            } else {
+                setPlayerGraveyard(prev => [...prev, card]);
+                setPlayerActive(null);
+                setPlayerDamage(0);
+                setDyingCard(prev => ({ ...prev, player: false }));
+            }
+            if (!selectedInfoCard) {
+                resumeFSM();
+            }
+        }, 1200);
+    };
+
+    // --- Módulo 4: Game Over Observer ---
+    useEffect(() => {
+        if (isFsmPaused || gameOver || !hasGameStarted) return;
+
+        // Player Lose Condition: Active vacío Y Bench vacío Y Mano vacía
+        if (!playerActive && playerBench.length === 0 && playerHand.length === 0 && deck.length > 0) {
+            setGameOver('DEFEAT');
+            setResult('☠️ ¡HAS SIDO DERROTADO!');
+            pauseFSM();
+        }
+
+        // Opponent Lose Condition: Active vacío Y Banca vacía
+        if (!opponentActive && opponentBench.length === 0 && opponentCard) {
+            setGameOver('VICTORY');
+            setResult('🏆 ¡VICTORIA APLASTANTE!');
+            pauseFSM();
+        }
+    }, [isFsmPaused, playerActive, playerBench.length, playerHand.length, opponentActive, opponentBench.length, gameOver, hasGameStarted, deck.length]);
+
+    // --- Context Menu Triggers ---
+    const handleCardClick = (e, card, locationType) => {
+        e.stopPropagation(); // Evitar cerrar inmediatamente si se hace clic dentro
+
+        // Módulo 3: No abrir menús si no es tu turno o estamos en animación.
+        // Además, la fase de Action es cualquiera mientras sea Play Phase,
+        // pero vamos a flexibilizar si locationType === 'ACTIVE'.
+        if (turnPlayer !== PLAYERS.PLAYER || isFsmPaused) return;
+
+        // Calcular si las acciones están permitidas
+        const canMoveToBench = locationType === 'HAND' && playerBench.length < 5;
+        const canMoveToActive = locationType === 'BENCH' && !playerActive;
+
+        setActiveMenu({
+            card,
+            type: locationType,
+            position: { x: e.clientX, y: e.clientY },
+            canMoveToBench,
+            canMoveToActive
+        });
+    };
+
+    const closeMenu = () => setActiveMenu(null);
+
+    // --- Context Menu Actions ---
+    const handlePlayToBench = (card) => {
+        setPlayerHand(prev => prev.filter(c => c.currentInstanceId !== card.currentInstanceId));
+        setPlayerBench(prev => [...prev, card]);
+        setHasGameStarted(true); // Arranca el motor
+        closeMenu();
+    };
+
+    const handleMoveToActive = (card) => {
+        setPlayerBench(prev => prev.filter(c => c.currentInstanceId !== card.currentInstanceId));
+        setPlayerActive(card);
+        closeMenu();
+    };
+
+    const handleViewInfo = (card) => {
+        setSelectedInfoCard(card);
+        closeMenu();
+    };
+
+    // --- Módulo 3: RPG Combat Logic ---
+    const handleRpgAttack = async (damageAmount, moveName) => {
+        // Cierra el menú táctico
+        closeMenu();
+
+        if (!playerActive || !opponentActive || isAttacking || isFsmPaused) return;
+
+        console.log(`⚔️ Jugador usa ${moveName} infligiendo ${damageAmount} de daño!`);
+
+        // Sobrescribimos temporalmente el attackDamage de la carta activa para este golpe particular
+        const striker = { ...playerActive, attackDamage: damageAmount };
+
+        await ejecutarAtaque({
+            attacker: striker,
+            defender: opponentActive,
+            setDefenderDamage: setOpponentDamage,
             setIsAttacking
         });
 
-        // 5. Post-Resolución: Chequeo de condición de victoria
-        if (damageDealt !== undefined) {
-            const newTotalDamage = opponentDamage + damageDealt;
-            if (newTotalDamage >= (opponentActive.hp || 50)) {
-                setResult(`🏆 ¡${playerActive.name.toUpperCase()} GANA!`);
-            }
-        }
+        // El turno del jugador finaliza tras un ataque exitoso (RPG rule)
+        // Damos un breve delay para que termine la animación
+        setTimeout(() => {
+            forcePhase({ newPhase: GAME_PHASES.END_TURN, forPlayer: PLAYERS.PLAYER });
+        }, 1200);
     };
 
     if (!opponentCard) return null;
 
     return (
-        <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-        >
-            <div className="duel-arena-container">
-                {/* Top Status Bar (Optional) */}
-                {result && (
-                    <div className="arena-result" style={{ position: 'absolute', top: '10%', zIndex: 99999, fontSize: '3rem', color: 'gold' }}>
-                        {result}
+        <div className="duel-arena-container tactical-mode" onClick={closeMenu}>
+            {/* Modal Global: Game Over */}
+            {gameOver && (
+                <div className="game-over-modal-overlay">
+                    <div className={`game-over-modal ${gameOver === 'VICTORY' ? 'victory' : 'defeat'}`}>
+                        <h1>{gameOver === 'VICTORY' ? '🏆 VICTORIA' : '☠️ DERROTA'}</h1>
+                        <p>{result}</p>
+                        <button className="arena-btn" onClick={handleClose} style={{ marginTop: '20px', padding: '15px 30px', fontSize: '1.2rem' }}>
+                            Volver al Dashboard (Home)
+                        </button>
                     </div>
-                )}
+                </div>
+            )}
 
-                {/* The 3D Perspective Board */}
+            {/* Float Escape Button */}
+            <button className="escape-btn-floating" onClick={handleClose}>
+                ❌ Abandonar
+            </button>
+
+            {/* Modal Global: Info */}
+            <CardDetailModal pokemon={selectedInfoCard} onClose={() => setSelectedInfoCard(null)} />
+
+            {/* --- MÓDULO 1: El Divorcio Visual --- */}
+
+            {/* AREA 1: 3D ARENA VIEWPORT (Top 75%) */}
+            <div className={`arena-viewport ${isCriticalHit ? 'global-screen-shake' : ''}`}>
                 <div className="playmat-board">
                     {/* OPPONENT HALF */}
                     <div className="half-board opponent">
-                        <DroppableZone id="opponent-active-zone" className="zone-container active-zone">
+                        <div className="zone-container active-zone">
                             <span className="zone-label">Active</span>
                             {opponentActive && (
-                                <div className={`card-container ${isAttacking ? 'shake-violent' : ''}`} style={{ position: 'relative' }}>
+                                <div className={`card-container ${isAttacking ? 'shake-violent' : ''} ${dyingCard.opponent ? 'card-explosion' : ''}`} style={{ position: 'relative' }}>
                                     <ImpactEffect isActive={isAttacking} />
                                     <DamageTokenOverlay totalDamage={opponentDamage} />
                                     <Card {...opponentActive} isArena={true} />
                                 </div>
                             )}
-                        </DroppableZone>
+                        </div>
                         <div className="zone-container bench-zone">
-                            <span className="zone-label">Bench</span>
-                            {/* Empty for MVP, but scalable */}
+                            <span className="zone-label">Bench (Bot)</span>
+                            {opponentBench.map((c, idx) => (
+                                <div key={idx} style={{ width: '40px', height: '60px', backgroundColor: '#204abb', border: '2px solid #bba32e', borderRadius: '4px', margin: '0 2px' }} />
+                            ))}
                         </div>
                     </div>
 
@@ -182,85 +302,97 @@ const DuelArenaContainer = () => {
 
                     {/* PLAYER HALF */}
                     <div className="half-board player">
-                        <DroppableZone id="player-active-zone" className="zone-container active-zone" accept="pokemon">
+                        <div className="zone-container active-zone">
                             <span className="zone-label">Active</span>
                             {playerActive && (
-                                <div className="card-container" style={{ position: 'relative' }}>
+                                <div
+                                    className={`card-container interactive-card ${dyingCard.player ? 'card-explosion' : ''}`}
+                                    style={{ position: 'relative' }}
+                                    onClick={(e) => handleCardClick(e, playerActive, 'ACTIVE')}
+                                >
                                     <DamageTokenOverlay totalDamage={playerDamage} />
                                     <Card {...playerActive} isArena={true} />
                                 </div>
                             )}
-                        </DroppableZone>
+                        </div>
 
-                        <div className="zone-container bench-zone" style={{ display: 'flex', gap: '10px' }}>
-                            <span className="zone-label" style={{ fontSize: '1.2rem', top: '-25px' }}>Hand</span>
-                            {playerHand.map((card) => (
-                                <DraggableCard
-                                    key={card.currentInstanceId}
-                                    id={card.currentInstanceId}
-                                    pokemon={card}
-                                    isDraggable={canDragAndDrop}
-                                >
-                                    <div className="card-container">
+                        <div className="zone-container bench-zone">
+                            <span className="zone-label">Bench</span>
+                            <div className="bench-cards-wrapper">
+                                {playerBench.map((card) => (
+                                    <div
+                                        key={card.currentInstanceId}
+                                        className="card-container interactive-card"
+                                        onClick={(e) => handleCardClick(e, card, 'BENCH')}
+                                    >
                                         <Card {...card} isArena={true} />
                                     </div>
-                                </DraggableCard>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Overlays during Drag must be OUTSIDE the 3D container to avoid clipping/z-index issues */}
-                <DragOverlay dropAnimation={null}>
-                    {activeDragId ? (
-                        <div className="card-container dragging-clone" style={{
-                            transform: 'scale(1.2) rotate(-5deg)',
-                            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)'
-                        }}>
-                            <Card {...(playerHand.find(c => c.currentInstanceId === activeDragId) || {})} isArena={true} />
-                        </div>
-                    ) : null}
-                </DragOverlay>
-
-                {/* TCG UI OVERLAY */}
-                <div className="arena-ui-overlay">
-                    <h3 style={{ color: '#fff', margin: '0 0 10px 0', borderBottom: '1px solid #444', paddingBottom: '5px' }}>
-                        {currentPhase.replace('_', ' ')}
-                    </h3>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <button
-                            className="arena-btn"
-                            style={{
-                                backgroundColor: isMainPhase && playerActive && opponentActive ? '#7AC74C' : '#333',
-                                opacity: isMainPhase && playerActive && opponentActive ? 1 : 0.5
-                            }}
-                            onClick={() => { if (isMainPhase && playerActive && opponentActive) advancePhase(); }}
-                            disabled={!isMainPhase || !playerActive || !opponentActive || result}
-                        >
-                            {isMainPhase && playerActive && opponentActive ? 'Terminar Fase Principal' : 'Esperando...'}
-                        </button>
-
-                        <button
-                            className="arena-btn fight-btn"
-                            style={{
-                                backgroundColor: isBattlePhase ? '#EE8130' : '#333',
-                                opacity: isBattlePhase && playerActive && !isAttacking ? 1 : 0.5,
-                                transform: isBattlePhase ? 'scale(1.05)' : 'scale(1)'
-                            }}
-                            onClick={handleAttack}
-                            disabled={!isBattlePhase || !playerActive || isAttacking || result}
-                        >
-                            {isAttacking ? 'ATACANDO...' : '⚔️ DECLARAR ATAQUE'}
-                        </button>
-                    </div>
-
-                    <button className="arena-btn close-btn" onClick={handleClose} style={{ marginTop: '15px' }}>
-                        Huir / Cerrar
-                    </button>
                 </div>
             </div>
-        </DndContext>
+
+            {/* AREA 2: 2D PLAYER DOCK (Bottom 25%) */}
+            <div className="player-dock-2d">
+                <div className="dock-header">
+                    <div className="dock-title">Mano Táctica</div>
+
+                    {/* Indicador de Turno */}
+                    <div className={`turn-indicator ${turnPlayer === PLAYERS.PLAYER ? 'player-turn' : 'opponent-turn'}`}>
+                        {turnPlayer === PLAYERS.PLAYER ? '🟢 Tu Turno' : '🔴 Turno Rival'}
+                    </div>
+
+                    {/* Botón de Terminar Turno */}
+                    {turnPlayer === PLAYERS.PLAYER && (
+                        <button
+                            className="end-turn-btn"
+                            onClick={() => forcePhase({ newPhase: GAME_PHASES.END_TURN, forPlayer: PLAYERS.PLAYER })}
+                            disabled={isFsmPaused}
+                        >
+                            Terminar Turno
+                        </button>
+                    )}
+                </div>
+
+                <div className="hand-cards-container">
+                    {playerHand.map((card, index) => (
+                        <div key={card.currentInstanceId} className="staggered-entrance" style={{ animationDelay: `${index * 0.15}s` }}>
+                            <div
+                                className="dock-card-wrapper interactive-card"
+                                onClick={(e) => handleCardClick(e, card, 'HAND')}
+                            >
+                                <Card {...card} isArena={true} />
+                            </div>
+                        </div>
+                    ))}
+                    {playerHand.length === 0 && (
+                        <div className="empty-hand-text">Sin cartas en la mano</div>
+                    )}
+                </div>
+            </div>
+
+            {/* Context Menu Render Portal */}
+            {activeMenu && (
+                <CardContextMenu
+                    card={activeMenu.card}
+                    position={activeMenu.position}
+                    contextArgs={{
+                        type: activeMenu.type,
+                        canMoveToBench: activeMenu.canMoveToBench,
+                        canMoveToActive: activeMenu.canMoveToActive
+                    }}
+                    actions={{
+                        onPlayToBench: handlePlayToBench,
+                        onMoveToActive: handleMoveToActive,
+                        onViewInfo: handleViewInfo,
+                        onAttack: handleRpgAttack,
+                        onClose: closeMenu
+                    }}
+                />
+            )}
+        </div>
     );
 };
 

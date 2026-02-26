@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { typeMatchups, calculateDamage } from "../utils/combatHelpers";
 import useDeckStore from "../store/useDeckStore";
 import "./Card.css";
@@ -37,7 +36,6 @@ const getEnergyIcon = (type) => {
 };
 
 const Card = ({ id, name, image, types, life, attack, moves, isArena = false }) => {
-  const dispatch = useDispatch();
   const { deck, addCard, removeCard } = useDeckStore();
   const [flavorText, setFlavorText] = useState("");
   const [isCaptured, setIsCaptured] = useState(false);

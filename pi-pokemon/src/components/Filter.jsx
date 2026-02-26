@@ -1,38 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { filterByCreate, orderByAttack, orderByName, filterByType, clearHome, getTypes } from '../redux/actions';
+import React, { useEffect } from 'react';
+import useGameStore from '../store/useGameStore';
 import './Filter.css';
 
 function Filter({ setCurrentPage }) {
-  const dispatch = useDispatch();
-  const types = useSelector((state) => state.types);
+  const types = useGameStore((state) => state.types);
+  const getTypes = useGameStore((state) => state.getTypes);
+  const clearHome = useGameStore((state) => state.clearHome);
+  const filterByType = useGameStore((state) => state.filterByType);
+  const orderByName = useGameStore((state) => state.orderByName);
+  const orderByAttack = useGameStore((state) => state.orderByAttack);
+  const filterByCreate = useGameStore((state) => state.filterByCreate);
 
   useEffect(() => {
-    dispatch(getTypes());
-  }, [dispatch]);
+    getTypes();
+  }, [getTypes]);
 
   const clearFilters = () => {
-    dispatch(clearHome());
+    clearHome();
     setCurrentPage(0);
   };
 
   const handleType = (event) => {
-    dispatch(filterByType(event.target.value));
+    filterByType(event.target.value);
     setCurrentPage(0);
   };
 
   const handleName = (event) => {
-    dispatch(orderByName(event.target.value));
+    orderByName(event.target.value);
     setCurrentPage(0);
   };
 
   const handleAttack = (event) => {
-    dispatch(orderByAttack(event.target.value));
+    orderByAttack(event.target.value);
     setCurrentPage(0);
   };
 
   const handleCreated = (event) => {
-    dispatch(filterByCreate(event.target.value));
+    filterByCreate(event.target.value);
     setCurrentPage(0);
   };
 

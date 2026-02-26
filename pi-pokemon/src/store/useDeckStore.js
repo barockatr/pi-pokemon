@@ -1,8 +1,11 @@
 import { create } from 'zustand';
+import axios from 'axios';
+import { shuffleArray } from '../utils/shuffle';
 
-// Store for managing the player's 6-card combat deck
+// Store for managing the player's 6-card combat deck and bot logic
 const useDeckStore = create((set, get) => ({
     deck: [],
+    opponentHand: [],
 
     // Add a card to the deck (max 6)
     addCard: (card) => {
@@ -36,6 +39,35 @@ const useDeckStore = create((set, get) => ({
     // Clear the entire deck
     clearDeck: () => {
         set({ deck: [] });
+    },
+
+    // --- Módulo 2: Rejugabilidad del Bot ---
+    generarMazoBot: async () => {
+        try {
+            // Fetch all pokemons from API to form a pool
+            const response = await axios.get('http://localhost:3001/pokemons');
+            const allPokemons = response.data;
+
+            // Usamos Fisher-Yates puro para una distribución uniforme
+            const shuffledPool = shuffleArray(allPokemons);
+
+            // 2. Tomar los primeros 6 para la mano del bot
+            const selectedPokemons = shuffledPool.slice(0, 6).map((card, idx) => ({
+                ...card,
+                // Attach a unique ID string to avoid React key collisions during combat
+                currentInstanceId: `bot-card-${card.id}-${idx}`,
+                // Give them a flat basic ATK if mapped weirdly, but usually 'attack' is present
+                attackDamage: card.attack || 40
+            }));
+
+            // Assign to the opponent's hand
+            set({ opponentHand: botDeck });
+
+        } catch (error) {
+            console.error("Error generating Bot Deck:", error);
+            // Fallback just in case
+            set({ opponentHand: [] });
+        }
     }
 }));
 

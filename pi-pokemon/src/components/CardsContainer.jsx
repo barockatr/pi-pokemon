@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPokemon } from '../redux/actions';
+import useGameStore from '../store/useGameStore';
 import Card from './Card';
 import Loading from './Loading';
 import Filter from './Filter';
@@ -10,8 +9,8 @@ import CardDetailModal from './CardDetailModal';
 import './CardsContainer.css';
 
 const CardsContainer = () => {
-  const dispatch = useDispatch();
-  const pokemons = useSelector((state) => state.pokemons);
+  const pokemons = useGameStore((state) => state.pokemons);
+  const getPokemon = useGameStore((state) => state.getPokemons);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isTutorialOpen, setTutorialOpen] = useState(false);
@@ -19,8 +18,8 @@ const CardsContainer = () => {
   const cardsPerPage = 12;
 
   useEffect(() => {
-    dispatch(getPokemon());
-  }, [dispatch]);
+    getPokemon();
+  }, [getPokemon]);
 
   useEffect(() => {
     setPageCount(Math.ceil(pokemons.length / cardsPerPage));

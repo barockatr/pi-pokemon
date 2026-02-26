@@ -62,29 +62,38 @@
     }
 }
 
-/* Playmat CSS Framework */
-.duel-arena-container {
+/* Playmat CSS Framework (Módulo 1: El Divorcio Visual) */
+.duel-arena-container.tactical-mode {
     position: fixed;
     inset: 0;
     background: radial-gradient(circle at center, #1e212b 0%, #0a0b10 100%);
     z-index: 9999;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+}
+
+/* AREA 1: 3D Viewport (75% height) */
+.arena-viewport {
+    flex: 1;
+    /* Takes remaining space, approx 75-80% */
+    display: flex;
     justify-content: center;
     align-items: center;
     perspective: 1200px;
-    /* Crucial for 3D effect */
-    overflow: hidden;
+    /* Crucial for 3D effect moved here */
+    position: relative;
+    padding-bottom: 20px;
 }
 
 .playmat-board {
     width: 95vw;
-    max-width: 1100px;
-    height: 85vh;
+    max-width: 1000px;
+    height: 90%;
     position: relative;
 
     /* Isometric/Perspective Transform */
-    transform: rotateX(55deg) translateY(-80px) translateZ(-50px);
+    transform: rotateX(55deg) translateY(-50px) translateZ(-50px);
     transform-style: preserve-3d;
 
     /* Board Texture/Styling */
@@ -118,27 +127,34 @@
 .half-board {
     flex: 1;
     /* Take half the board */
-    display: grid;
-    grid-template-rows: 1fr 2.5fr;
-    /* Bench smaller, Active Area bigger */
+    display: flex;
+    flex-direction: column;
     padding: 10px;
     gap: 10px;
     box-sizing: border-box;
 }
 
+.half-board.player {
+    flex-direction: column;
+}
+
 /* For Opponent, reverse the layout so Active area touches the divider */
 .half-board.opponent {
-    grid-template-rows: 2.5fr 1fr;
+    flex-direction: column-reverse;
 }
 
 /* Zones */
 .zone-container {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 12px;
     background-color: rgba(255, 255, 255, 0.03);
     position: relative;
+    z-index: 5;
+    pointer-events: auto;
+    /* Ensure zones always receive clicks/drops */
 }
 
 .droppable-zone {
@@ -156,6 +172,7 @@
 .active-zone {
     /* Center stage */
     border: 2px solid rgba(255, 255, 255, 0.1);
+    /* Removed pointer-events: none to restore drop capability */
 }
 
 .bench-zone {
@@ -173,38 +190,154 @@
     pointer-events: none;
 }
 
-/* UI Overlay (Phases, Buttons) - Floating above the 3D board */
-.arena-ui-overlay {
+.interactive-card {
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s;
+}
+
+.interactive-card:hover {
+    filter: brightness(1.2) drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+}
+
+.playmat-board .interactive-card:hover {
+    transform: rotateX(-20deg) translateY(-40px) scale(1.1);
+}
+
+/* Mod 1: Indicators and Dock UI */
+.dock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+
+.turn-indicator {
+    font-size: 1.2rem;
+    font-weight: 800;
+    padding: 8px 20px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.turn-indicator.player-turn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: 2px solid #34d399;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.turn-indicator.opponent-turn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: 2px solid #f87171;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.end-turn-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    font-weight: bold;
+    font-family: 'Outfit', sans-serif;
+    border: 2px solid #fbbf24;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.end-turn-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(245, 158, 11, 0.4);
+    filter: brightness(1.1);
+}
+
+.end-turn-btn:active {
+    transform: translateY(1px);
+}
+
+.escape-btn-floating {
     position: absolute;
-    bottom: 20px;
+    top: 20px;
     right: 20px;
-    z-index: 10000;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s;
+}
+
+.escape-btn-floating:hover {
+    background: rgba(220, 38, 38, 0.8);
+    border-color: #ef4444;
+}
+
+/* AREA 2: 2D Player Dock (Bottom ~25%) */
+.player-dock-2d {
+    height: 25vh;
+    min-height: 220px;
+    background: linear-gradient(to bottom, #111, #000);
+    border-top: 3px solid #bba32e;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 10001;
+    /* Flotar por encima del viewport */
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid #444;
+    align-items: center;
+    padding: 10px 20px;
 }
 
-/* Fix for existing cards inside 3D environment */
-.playmat-board .card-container {
-    /* Reverse the parent's rotateX slighty to make cards "stand up" like in TTS */
-    transform: rotateX(-35deg) translateY(-20px);
-    box-shadow: 0 20px 20px rgba(0, 0, 0, 0.6);
-    /* Cast shadow onto board */
-    transition: transform 0.3s ease;
+.dock-title {
+    color: #ffd700;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
 }
 
-.playmat-board .card-container:hover {
-    transform: rotateX(-20deg) translateY(-40px) scale(1.05);
-    /* Stand up more on hover */
+.hand-cards-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    padding-bottom: 15px;
 }
 
-/* Ensure the hovering clone doesn't block pointer events for the drop target underneath */
-.dragging-clone {
-    pointer-events: none !important;
+.dock-card-wrapper {
+    /* Scale down slightly to fit the dock neatly */
+    transform: scale(0.65);
+    transform-origin: top center;
+    margin: -50px -40px;
+    /* Counteract space taken by scale */
+}
+
+.dock-card-wrapper.interactive-card:hover {
+    transform: scale(0.75) translateY(-20px);
+    z-index: 10;
+}
+
+.empty-hand-text {
+    color: #555;
+    font-size: 1.2rem;
+    font-family: monospace;
+    text-transform: uppercase;
 }
 
 /* Shake Animation */
@@ -256,4 +389,161 @@
 
 .shake-violent {
     animation: violentShake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+/* --- Módulo 3: El "Juice" Visual (Animaciones Cinematográficas) --- */
+
+/* 1. Global Screen Shake para Golpes Letales */
+.global-screen-shake {
+    animation: globalShake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes globalShake {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-10px, -10px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translate(10px, 10px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(-10px, 10px) rotate(0deg);
+    }
+
+    40% {
+        transform: translate(10px, -10px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-10px, 0px) rotate(-1deg);
+    }
+
+    60% {
+        transform: translate(10px, 0px) rotate(0deg);
+    }
+
+    70% {
+        transform: translate(0px, 10px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(0px, -10px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(-5px, 5px) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+}
+
+/* 2. Animación de Entrada Escalonada para la Mano (Dock 2D) */
+.staggered-entrance {
+    opacity: 0;
+    transform: translateY(100px);
+    animation: slideUpFade 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes slideUpFade {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Módulo 2: Animación de "La Parca" (Muerte de Carta) --- */
+.card-explosion {
+    animation: implodeFade 1.2s forwards;
+    pointer-events: none !important;
+    /* Critical: Prevent dead cards from blocking drops */
+    /* Glow rojizo intenso antes de desaparecer */
+    filter: brightness(1) invert(0) sepia(1) saturate(10000%) hue-rotate(330deg);
+}
+
+@keyframes implodeFade {
+    0% {
+        transform: rotateX(-35deg) scale(1) translateY(-20px);
+        opacity: 1;
+    }
+
+    30% {
+        transform: rotateX(-35deg) scale(1.15) translateY(-40px);
+        filter: brightness(1.5) drop-shadow(0 0 40px red);
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: rotateX(-35deg) scale(0) translateY(0);
+        filter: brightness(0) drop-shadow(0 0 0 red);
+        opacity: 0;
+    }
+}
+
+/* --- Módulo 4: Game Over UI --- */
+.game-over-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.game-over-modal {
+    background: linear-gradient(135deg, #222, #111);
+    border: 4px solid #bba32e;
+    border-radius: 16px;
+    padding: 50px 80px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(255, 255, 255, 0.1);
+    transform: scale(0.9);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.game-over-modal.victory h1 {
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    font-size: 3rem;
+    margin: 0;
+}
+
+.game-over-modal.defeat h1 {
+    color: #ff3333;
+    text-shadow: 0 0 20px rgba(255, 51, 51, 0.5);
+    font-size: 3rem;
+    margin: 0;
+}
+
+.game-over-modal p {
+    font-size: 1.5rem;
+    color: #fff;
+    margin-top: 10px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    to {
+        transform: scale(1);
+    }
 }

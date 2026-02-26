@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CardsContainer from "./CardsContainer";
-import { useSelector } from "react-redux";
+import useGameStore from "../store/useGameStore";
 import CardDetailModal from "./CardDetailModal";
 import "./HomePage.css";
 
@@ -85,7 +85,7 @@ const SpotlightCard = ({ pokemons }) => {
 };
 
 const HomePage = () => {
-  const pokemons = useSelector(state => state.pokemons);
+  const pokemons = useGameStore(state => state.pokemons);
 
   return (
     <div className="homepage">
