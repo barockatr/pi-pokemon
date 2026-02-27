@@ -1,136 +1,121 @@
-# 🌀 PI Pokémon
-> Aplicación web interactiva tipo enciclopedia para explorar, buscar y crear nuevos Pokémon utilizando datos de la PokéAPI y una base de datos propia.
+# 🚀 TCG Pokémon Arena: Vitrina de Patrones de Diseño Frontend
 
+> Una **Aplicación de Alto Rendimiento** diseñada para demostrar arquitectura escalable, mecánicas inmersivas y excelencia visual en el ecosistema React moderno.
+
+<p align="center">
+  <!-- INSERTA AQUÍ LA IMAGEN PRINCIPAL DEL LANDING O HOME -->
+  <img src="URL_IMAGEN_PRINCIPAL_AQUI" alt="Vista principal de TCG Pokémon Arena mostrando el Pokédex OS" width="800">
+</p>
+
+![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
-![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
-![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
-![PostgreSQL](https://img.shields.io/badge/postgresql-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
-
-## 🔗 Enlaces Rápidos
-- [🚀 Live Demo / Deploy](#) <!-- Reemplazar con URL si aplica -->
-- [📹 Video Tour del Proyecto](#) <!-- Reemplazar con URL si aplica -->
+![Zustand](https://img.shields.io/badge/zustand-%2320232a.svg?style=for-the-badge&logo=react&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer%20Motion-black?style=for-the-badge&logo=framer&logoColor=blue)
+![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 
 ---
 
-## 📸 Vistazo Rápido
+## ⚔️ Duel Arena: El Motor de Combate (Highlight Principal)
 
-![Vista Principal](./docs/dashboard.png)
-*Interfaz principal mostrando el listado de Pokémon y opciones de filtrado (Actualiza con la imagen real)*
+<p align="center">
+  <!-- INSERTA AQUÍ EL GIF O IMAGEN DEL COMBATE -->
+  <img src="URL_IMAGEN_COMBATE_AQUI" alt="Interfaz de Duel Arena mostrando un combate táctico entre jugador y bot" width="800">
+</p>
 
-![Funcionalidad Clave](./docs/feature.png)
-*Vista detallada de las estadísticas y atributos de un Pokémon (Actualiza con la imagen real)*
+El corazón de la aplicación es su simulador de batallas inspirado en RPGs tácticos y TCGs.
 
----
-
-## 🎯 ¿De qué trata?
-**PI Pokémon** resuelve la necesidad de contar con una "Pokédex" centralizada e interactiva bajo el principio de Componentes Basados en Átomos, lo que permite actualizaciones modulares (como el sistema evolutivo o mejoras de combate) sin afectar la integridad del sistema central. Es un MVP (Producto Mínimo Viable) diseñado para el crecimiento continuo.
-
-Implementé un Landing Page minimalista basado en Call-to-Action (CTA) temático. La entrada a la aplicación está centralizada en un componente interactivo (Pokébola) que actúa como disparador de la experiencia, utilizando transiciones de estado para una navegación fluida hacia el dashboard principal.
+- **Game Loop mediante Máquina de Estados (FSM):** Gestión determinista de turnos (*Player Phase* / *Enemy Phase*) garantizando un flujo de combate robusto y sin *race conditions*.
+- **IA Táctica con Alta Rejugabilidad:** El Engine PVE genera dinámicamente mazos aleatorios de 6 cartas para el "Rival". El Bot evalúa su mano y toma decisiones en tiempo real sobre cuándo invocar y cuándo atacar.
+- **Mapeo Dinámico de Ataques RPG:** Extracción y transformación de *stats* base (Attack, HP, Speed) desde la metadata original de los Pokémon para calcular daño, prioridades y debilidades. Transformamos un endpoint pasivo en un motor de juego vibrante.
 
 ---
 
-## ✨ Características Clave
-- **Gamificación de la UI e Interactividad**: El uso de la Pokébola como entrada es "gamificar" la interfaz para invitar al usuario a la experiencia.
-- **Dashboard Aleatorio y Dinámico**: El Dashboard principal cuenta con un renderizado dinámico de datos aleatorios obtenidos de la API, diseñado para ofrecer una vista fresca en cada sesión. Se utiliza lógica de shuffling (mezclado) en el frontend para presentar una diversidad de tipos y regiones desde el primer contacto.
-- **UX Intuitiva con Filtros Avanzados**: Que todo sirva (filtros, búsquedas) sin recargar la página. El Dashboard integra un sistema de filtrado multivariable y búsqueda predictiva que no interrumpe la fluidez visual, manteniendo consistencia estética en toda la interfaz.
-- **Arquitectura Escalable y Enrutamiento Modular**: La arquitectura cuenta con un enrutamiento que separa la zona de exploración del módulo pedagógico (Tutorial TCG). Hoy es un dashboard y mañana es un juego completo de combate.
-- **🃏 Visualizador TCG Dinámico**: Transformación de datos crudos en una interfaz de carta coleccionable fiel al formato clásico, con cálculo automático de daños, HP y costes de retirada.
+## 🛠️ Architecture Insights: El "Exorcismo" de Redux
+
+Para maximizar el rendimiento del Game Loop y la agilidad de desarrollo, se ejecutó una refactorización arquitectónica profunda: **la migración total de Redux y Redux-Thunk hacia Zustand**.
+
+- **Zero Boilerplate:** Sustitución de *reducers*, *actions* y *dispatchers* verbosos por hooks reactivos, limpios y precisos.
+- **Rendimiento Optimizado para Gaming:** Zustand permite suscribir componentes directamente a selectores específicos. Esto logra renderizados hiper-granulares y anula los re-renders globales innecesarios durante la vertiginosa cascada de interacciones en la Arena.
+- **Velocity y Agilidad Mental:** Centralización de las promesas asíncronas y el control de estado en ecosistemas minimalistas (`useGameStore` y `useDeckStore`).
 
 ---
 
-## 🛠️ Stack Tecnológico
-- **Frontend Core / Backend Core**: React 18 / Node.js
-- **State Management**: Redux y Redux Thunk
-- **Enrutamiento / API**: React Router v6 / Express
-- **Base de Datos / Data Fetching**: PostgreSQL (Sequelize ORM) / Axios
-- **Estilos**: Vanilla CSS / CSS Modules
+## ✨ High-Fidelity UX/UI & Features
+
+<p align="center">
+  <!-- INSERTA AQUÍ UN COLLAGE O GIF DE LA UI (Radar Chart y Modal Holográfico) -->
+  <img src="URL_IMAGEN_UI_AQUI" alt="Demostración visual del Radar Chart de stats y el efecto holográfico 3D de las cartas" width="800">
+</p>
+
+- **Radar Chart Strategy:** Implementación de **Recharts** para esculpir gráficos analíticos de stats (HP, Attack, Defense, Speed), inyectando dinámicamente la paleta de colores nativa del Tipo elemental (ej. Tonos acuáticos para *Water*, Carmesí para *Fire*).
+- **Hologramas 3D Premium:** Integración y tuneo avanzado de `react-parallax-tilt`. Manipulamos variables CSS inyectadas por el tracking del cursor para emular el brillo cromático (Holo foil) y la profundidad espacial de las cartas reales raras.
+- **Búsqueda Intuitiva (Fuzzy Search):** Motor de *search* robusto tolerante a errores ortográficos. 
+- **Pokédex OS:** Navegación persistente y fluida empotrada en un *"dashboard lateral"*, erradicando la fricción clásica del enrutamiento multi-página.
 
 ---
 
-## 🚀 Guía de Instalación (Getting Started)
+## 🛡️ Robustez y Resiliencia
 
-Sigue estos pasos para correr el proyecto en tu entorno local:
+Diseñado bajo la firme filosofía de nunca fallar de forma silenciosa.
 
+- **Error Boundary Interceptor en Zustand:** Intercepción global a nivel Store de fallas de red de la API, mitigando de raíz el mortal *"White Screen of Death"* (WSOD).
+- **Fallback UI & Retry Async:** Si la red se desploma, el ecosistema despliega un Overlay cinemático, interrumpiendo elegantemente la falla y proveyendo un botón de recuperación (*Reintento de Conexión*) que limpia la caché y re-hidrata las promesas base.
+
+---
+
+## � Roadmap Evolutivo
+
+✅ **Características Clave (Completadas):** 
+- Combate PVE Integral (Duel Arena).
+- Oponente automatizado con Random Deck Generator de 6 slots.
+- Drag & Drop interactivo para el Deck Builder.
+- Filtros compuestos y multicapa.
+
+� **Próximos Pasos (En Desarrollo):**
+- 🎇 **Sistema de Partículas VFX para Ataques:** Generación geométrica de impactos y *damage numbers* flotantes al asestar golpes críticos aprovechando física Canvas.
+- 🔊 **Implementación de SFX Inmersivos:** Capa acústica reactiva a las *State Transitions* (sonidos metálicos al impacto, alarmas de *"Low HP"* y música dinámica).
+- 🎉 **Animaciones de Victoria con Canvas Confetti:** Explosiones de confeti direccional y celebraciones en el modal final al destrozar la alineación del bot.
+
+---
+
+## ⚙️ Instalación y Despliegue Local
+
+Sigue estos pasos para clonar el proyecto, inicializar la base de datos y correr el frontend.
+
+### 1. Clonar el repositorio
 ```bash
-# 1. Clonar el repositorio
-git clone https://github.com/barockatr/pi-pokemon.git
-
-# 2. Navegar al directorio del proyecto
-cd pi-pokemon-1
-
-# 3. Instalar las dependencias (Frontend y Backend)
+git clone https://github.com/tu-usuario/pi-pokemon.git
 cd pi-pokemon
-npm install
-
-cd ../PI-Pokemon-main/api
-npm install
-
-# 4. Configurar variables de entorno y Base de Datos
-# En la carpeta PI-Pokemon-main/api, renombra/crea el archivo .env y configura tus credenciales:
-# DB_USER=tu_usuario_postgres
-# DB_PASSWORD=tu_password
-# DB_HOST=localhost
-# IMPORTANTE: Crear la base de datos "pokemon" en tu motor de PostgreSQL.
-
-# 5. Iniciar el servidor backend (Desde la carpeta PI-Pokemon-main/api)
-npm start
-
-# 6. Iniciar el servidor de desarrollo UI (Desde la carpeta pi-pokemon)
-npm run dev
 ```
 
----
+### 2. Configuración del Backend y Base de Datos (PostgreSQL)
 
-## 🏗️ Arquitectura y Estructura del Proyecto
+El proyecto requiere un Backend funcionando con una base de datos PostgreSQL conectada a través de Sequelize. Asegúrate de tener PostgreSQL instalado e inicializado.
 
-El proyecto sigue una arquitectura Full-Stack estricta, separando el cliente del servidor para garantizar escalabilidad y un código limpio:
+Crea un archivo `.env` en el directorio raíz de la API (Backend) con las siguientes variables:
+```env
+DB_USER=tu_usuario_postgres
+DB_PASSWORD=tu_password_postgres
+DB_HOST=localhost
+PORT=3001
+```
 
-- **Backend (`/api`)**: API RESTful construida con Node.js y Express. Utiliza un patrón de controladores y enrutamiento modularizado. La persistencia y modelado de datos se manejan a través del ORM Sequelize conectado a PostgreSQL.
-- **Frontend (`/client` o `/pi-pokemon`)**: SPA (Single Page Application) desarrollada con React. La estructura jerarquiza componentes reutilizables de UI (`/components`), vistas lógicas (`/views`) y gestión de peticiones.
-- **State Management (`/redux`)**: Centralización del estado global para evitar el anti-patrón de *prop drilling* y mantener sincronizada la paginación y los filtros en toda la app.
+Instala las dependencias y corre el servidor backend:
+```bash
+# Dentro de la carpeta de tu API/Backend
+npm install
+npm start
+```
 
----
+### 3. Ejecutar el Frontend (Vite)
 
-## 🧠 Decisiones Técnicas y Retos
-
-- **Unificación de Fuentes de Datos**: Se diseñó una lógica en el backend para normalizar y unificar las respuestas asíncronas provenientes de la PokéAPI con los registros de la base de datos local (PostgreSQL). Esto garantiza que el frontend reciba un único arreglo estandarizado.
-- **Validaciones Estrictas y Controladas:** Para el formulario de creación de nuevos Pokémon, se prescindió de validaciones HTML nativas en favor de un estado 100% controlado por JavaScript. Esto asegura una sanitización profunda de los inputs.
-- **Optimización de Renderizado (Paginación):** Dado el volumen masivo de datos que maneja la franquicia, se implementó un sistema de paginación mediante Redux (12 elementos por página) para no sobrecargar el DOM.
-- **Lógica de Normalización TCG:** Se desarrolló un algoritmo para transformar los stats base de la API en valores competitivos de juego de cartas (HP, Attack Damage, Retreat Cost).
-- **Interfaz Dinámica TCG:** Uso de CSS avanzado para replicar fielmente el diseño de las cartas clásicas de 2008, asegurando responsividad y componentes interactivos para cada tipo de energía.
-- **Reto Técnico TCG:** Sincronizar la estética visual de las cartas del TCG con datos dinámicos, manteniendo el rendimiento de carga al procesar múltiples imágenes, lazy loading de lore, y tipos de energía simultáneamente.
-
----
-
-## 💻 Implementación Técnica (Best Practices)
-
-### ⚡ Manejo de Asincronía (Async/Await)
-Se implementó un flujo asíncrono robusto para el renderizado de las cartas TCG. Dado que cada carta requiere datos de múltiples endpoints (stats base + especies/lore), se optimizó el fetching para evitar "waterfalls" de peticiones, garantizando que la carta se muestre completa y sin saltos visuales.
-
-### 🛡️ Gestión de Errores (Try/Catch)
-El algoritmo de normalización de stats (conversión a valores TCG) incluye bloques de seguridad para manejar datos nulos o incompletos de la API. Si un Pokémon carece de cierto stat, el sistema asigna valores por defecto balanceados para no romper la interfaz de la carta.
-
-### 🧩 Manejo de Estado y UI Reactiva
-Uso intensivo de `useEffect` para el cálculo dinámico de debilidades y resistencias basado en el tipo de Pokémon, asegurando que la carta se actualice instantáneamente al realizar filtrados o búsquedas.
-
-### 🔑 Seguridad de Datos
-Al igual que en mis otros proyectos de alto valor, las credenciales de la base de datos PostgreSQL se manejan estrictamente vía variables de entorno (`.env`), protegiendo la integridad del servidor en entornos de producción.
+Asegúrate de estar en la carpeta del cliente (`pi-pokemon`) y luego instala y corre el entorno de desarrollo HMR de Vite.
+```bash
+# Dentro de la carpeta del Frontend
+npm install
+npm run dev
+```
+La aplicación cliente debería arrancar en `http://localhost:5173`. ¡Disfruta la Arena!
 
 ---
-
-## 🗺️ Roadmap (Próximas Mejoras)
-
-- [ ] Implementar un sistema de caché en el servidor para reducir el consumo de la PokéAPI externa y disminuir los tiempos de respuesta (*latency*).
-- [ ] Desarrollar tests unitarios para los modelos de la base de datos y rutas principales del backend utilizando Jest y Supertest.
-- [ ] Refactorizar el manejo de asincronía en Redux integrando herramientas más modernas como Redux Toolkit.
-- [ ] Mecánica de Combate: Implementar lógica de enfrentamiento 1v1 basada en debilidades elementales y tipos de energía.
-- [ ] PWA (Progressive Web App): Permitir que la colección de cartas se pueda consultar offline como una app nativa en el móvil.
-
----
-
-## 👨‍💻 Autor
-
-**Antonio**
-- [LinkedIn](TU_URL_DE_LINKEDIN_AQUI) <!-- Reemplazar con URL -->
-- [GitHub](https://github.com/barockatr)
+*Desarrollado con arquitectura sólida, pasión por el código limpio y el rigor de un ingeniero buscando el máximo rendimiento en la UI.*
