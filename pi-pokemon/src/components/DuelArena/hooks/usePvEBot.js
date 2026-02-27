@@ -25,16 +25,18 @@ export const usePvEBot = ({
         playerActive,
         setPlayerDamage,
         setIsAttacking,
+        opponentBench,
+        setOpponentBench
     } = boardState;
 
     const { opponentHand, setOpponentHand } = useDeckStore();
 
     // Usamos refs para evitar que cierres asíncronos lean estado viejo
-    const stateRef = useRef({ opponentActive, playerActive, opponentHand, isFsmPaused, turnPlayer });
+    const stateRef = useRef({ opponentActive, playerActive, opponentHand, opponentBench, isFsmPaused, turnPlayer });
 
     useEffect(() => {
-        stateRef.current = { opponentActive, playerActive, opponentHand, isFsmPaused, turnPlayer };
-    }, [opponentActive, playerActive, opponentHand, isFsmPaused, turnPlayer]);
+        stateRef.current = { opponentActive, playerActive, opponentHand, opponentBench, isFsmPaused, turnPlayer };
+    }, [opponentActive, playerActive, opponentHand, opponentBench, isFsmPaused, turnPlayer]);
 
     useEffect(() => {
         console.log(`🤖 [BOT Observer] Evaluando turno... turnPlayer: ${turnPlayer}, isFsmPaused: ${isFsmPaused}`);
@@ -49,24 +51,34 @@ export const usePvEBot = ({
         const runBotTurn = async () => {
             console.log("🤖 [BOT] Iniciando rutina...");
 
-            // FASE 1: INVOCAR (si la zona está vacía)
+            // FASE 1: INVOCAR (Reemplazo Táctico - Módulo 1)
             let currentActive = stateRef.current.opponentActive;
 
             if (!currentActive) {
-                console.log("🤖 [BOT] Zona activa vacía. Preparando invocación...");
+                console.log("🤖 [BOT] Zona activa vacía. Preparando invocación táctica...");
                 await delay(1000); // Tensión
                 if (isCancelled || stateRef.current.isFsmPaused) return;
 
                 const hand = [...stateRef.current.opponentHand];
+                const bench = [...stateRef.current.opponentBench];
+
                 if (hand.length > 0) {
-                    const nextPokemon = hand.shift(); // Saca el primero de la mano
-                    console.log(`🤖 [BOT] Invocando a ${nextPokemon.name}`);
+                    // Prioridad 1: Jugar desde la Mano
+                    const nextPokemon = hand.shift();
+                    console.log(`🤖 [BOT] Invocando a ${nextPokemon.name} desde la Mano`);
                     setOpponentHand(hand);
                     setOpponentActive(nextPokemon);
-                    currentActive = nextPokemon; // Actualizar variable local
+                    currentActive = nextPokemon;
+                } else if (bench.length > 0) {
+                    // Prioridad 2: Jugar desde la Banca si la Mano está vacía
+                    const nextPokemon = bench.shift();
+                    console.log(`🤖 [BOT] Invocando a ${nextPokemon.name} desde la Banca`);
+                    setOpponentBench(bench);
+                    setOpponentActive(nextPokemon);
+                    currentActive = nextPokemon;
                 } else {
-                    console.log("🤖 [BOT] ¡Mazo vacío! No puedo hacer nada.");
-                    // Módulo de derrota iría aquí
+                    console.log("🤖 [BOT] ¡Mazo y Banca vacíos! No puedo hacer nada. Me rindo.");
+                    // Módulo de victoria letal se maneja en el Observer de DuelArenaContainer
                 }
             }
 

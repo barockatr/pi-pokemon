@@ -7,8 +7,8 @@
     inset: 0;
     z-index: 800;
     background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,61 +31,66 @@
     flex-direction: column;
     align-items: center;
     gap: 16px;
+    pointer-events: none;
+    /* Let clicks pass through the wrapper spacing */
 }
 
-/* === CLOSE BUTTON === */
-.cdm-close-btn {
+/* === BACK BUTTON === */
+.cdm-back-btn {
     position: absolute;
-    top: -16px;
-    right: -16px;
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    color: white;
-    font-size: 1rem;
+    top: 30px;
+    left: 40px;
+    padding: 12px 24px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 204, 0, 0.4);
+    border-radius: 8px;
+    color: #ffcc00;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
     cursor: pointer;
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 10;
-    transition: background 0.2s;
+    gap: 12px;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease-in-out;
+    pointer-events: auto;
 }
 
-.cdm-close-btn:hover {
-    background: rgba(220, 10, 45, 0.7);
+.cdm-back-btn:hover {
+    background: rgba(255, 204, 0, 0.15);
+    border-color: #ffcc00;
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
+    transform: translateX(-5px);
 }
 
-/* === 3D CARD CONTAINER === */
+.back-arrow {
+    font-size: 1.2rem;
+    transform: translateY(-2px);
+}
+
+/* === 3D CARD CONTAINER (TILT NATIVE) === */
 .cdm-card {
     width: 320px;
-    background: linear-gradient(145deg, #fceb6a, #e8c830);
     border-radius: 18px;
     border: 4px solid #bba32e;
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    cursor: none;
+    cursor: default;
     position: relative;
-    overflow: hidden;
-    transform-style: preserve-3d;
-    will-change: transform;
     user-select: none;
+    pointer-events: auto;
+    /* The card itself needs pointer-events for the hover/tilt effect to trigger */
 }
 
-/* === HOLOGRAPHIC FOIL LAYER === */
-.cdm-holo-foil {
-    position: absolute;
-    inset: 0;
-    border-radius: 18px;
-    mix-blend-mode: color-dodge;
-    pointer-events: none;
-    z-index: 5;
-    transition: background 0.05s linear;
-    opacity: 0.8;
+/* Parallax Tilt overrides */
+.parallax-effect {
+    transform-style: preserve-3d;
 }
+
+
 
 /* === CARD HEADER === */
 .cdm-header {
@@ -174,46 +179,76 @@
     color: #333;
 }
 
-/* === STATS ROW === */
-.cdm-stats {
+/* === RADAR CHART MODULE 23 === */
+.cdm-stats-radar {
+    width: 100%;
     display: flex;
-    justify-content: space-around;
-    border-top: 2px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    padding: 8px 0;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    border: 1px inset rgba(255, 255, 255, 0.2);
     position: relative;
     z-index: 6;
+    margin: 4px 0;
 }
 
-.cdm-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
+/* Customizing Recharts Tooltip/Text if needed implicitly via CSS */
+.recharts-polar-angle-axis-tick-value {
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
-.cdm-stat-label {
-    font-size: 0.55rem;
-    font-weight: 800;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.cdm-stat-value {
-    font-size: 1.4rem;
-    font-weight: 900;
-    color: #000;
-}
-
-/* === FOOTER === */
+/* === FOOTER & DECK BUILDER === */
 .cdm-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 0.7rem;
     color: #555;
-    text-align: center;
     text-transform: capitalize;
     position: relative;
     z-index: 6;
+    margin-top: 5px;
+}
+
+.cdm-deck-btn {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    border: 1px solid #81C784;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
+    /* Re-enable clicks specifically for this button */
+}
+
+.cdm-deck-btn:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+    background: linear-gradient(135deg, #66BB6A, #388E3C);
+}
+
+.cdm-deck-btn.removing {
+    background: linear-gradient(135deg, #F44336, #D32F2F);
+    border-color: #E57373;
+}
+
+.cdm-deck-btn.removing:hover {
+    box-shadow: 0 6px 12px rgba(244, 67, 54, 0.4);
+    background: linear-gradient(135deg, #EF5350, #C62828);
+}
+
+.cdm-deck-btn.disabled {
+    background: #555;
+    border-color: #444;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* === HINT TEXT === */

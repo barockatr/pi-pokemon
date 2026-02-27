@@ -19,13 +19,16 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1300px;
+    gap: 30px;
 }
 
 .dock-header {
     display: flex;
     flex-direction: column;
     color: white;
+    flex: 1;
+    min-width: 200px;
 }
 
 .dock-header h3 {
@@ -57,7 +60,9 @@
 
 .dock-slots {
     display: flex;
-    gap: 10px;
+    justify-content: center;
+    gap: 12px;
+    flex: 2;
 }
 
 .dock-slot {
@@ -113,7 +118,9 @@
 }
 
 .dock-slot.filled:hover .dock-card-img {
-    transform: scale(1.1);
+    transform: scale(1.3);
+    position: relative;
+    z-index: 10;
 }
 
 .dock-remove-btn {
@@ -143,19 +150,29 @@
 .dock-action {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    /* Duel button stays right */
+    gap: 30px;
+    /* Garantees minimum distance so they never overlap */
+    flex: 1;
+    min-width: 330px;
+    padding-left: 0;
 }
 
 .dock-random-btn {
     background: transparent;
     border: none;
     padding: 0;
-    margin-right: 20px;
+    margin: 0 auto;
+    /* Centers the pokeball perfectly in the available flex space */
     cursor: pointer;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     align-items: center;
     justify-content: center;
     outline: none;
+    flex-shrink: 0;
+    /* Prevents squishing on small screens */
 }
 
 .dock-random-btn:hover {
@@ -167,8 +184,10 @@
 }
 
 .random-pokeball {
-    width: 45px;
-    height: 45px;
+    width: 60px;
+    /* Increased size */
+    height: 60px;
+    /* Increased size */
     border-radius: 50%;
     background: linear-gradient(to bottom, #ff3333 48%, #333 48%, #333 52%, #fff 52%);
     border: 3px solid #bba32e;
@@ -183,8 +202,10 @@
 .random-pokeball::after {
     content: '';
     position: absolute;
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    /* Increased size */
+    height: 18px;
+    /* Increased size */
     background: #fff;
     border: 3px solid #333;
     border-radius: 50%;
@@ -195,7 +216,8 @@
     position: absolute;
     z-index: 10;
     font-family: 'Press Start 2P', monospace;
-    font-size: 0.8rem;
+    font-size: 1.1rem;
+    /* Increased font size */
     color: #333;
     font-weight: 900;
 }
@@ -220,6 +242,8 @@
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
+    flex-shrink: 0;
+    /* Prevents squishing text on small screens */
 }
 
 .dock-duel-btn.disabled {

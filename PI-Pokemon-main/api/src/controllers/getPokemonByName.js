@@ -16,7 +16,7 @@ const getPokemonByName = async (req, res) => {
         const dbPokemons = await Pokemon.findAll({
             where: {
                 name: {
-                    [Op.iLike]: `%${lowerName}%`,
+                    [Op.like]: `%${lowerName}%`,
                 },
             },
             include: {

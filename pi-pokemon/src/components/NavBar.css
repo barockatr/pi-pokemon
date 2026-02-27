@@ -19,32 +19,58 @@
     text-shadow: 2px 2px 0 #cc0000;
 }
 
-.navbar-links {
+/* ===== TRAINER STATUS in NAVBAR ===== */
+.trainer-status {
     display: flex;
-    gap: 15px;
+    align-items: center;
+    gap: 14px;
+    background: rgba(0, 212, 255, 0.06);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 12px;
+    padding: 8px 15px;
+    backdrop-filter: blur(10px);
 }
 
-.nav-btn {
-    color: white;
-    text-decoration: none;
-    font-family: 'Trebuchet MS', Arial, sans-serif;
-    font-weight: bold;
-    font-size: 1rem;
-    padding: 8px 16px;
-    border-radius: 6px;
-    background-color: #2a2a4e;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
+.trainer-avatar {
+    font-size: 1.5rem;
+    line-height: 1;
 }
 
-.nav-btn:hover {
-    background-color: #3a3a6e;
-    transform: translateY(-2px);
+.trainer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 150px;
 }
 
-.nav-btn.active {
-    background-color: #fceb6a;
-    color: #1a1a2e;
-    border-color: #bba32e;
-    box-shadow: 0 0 10px rgba(252, 235, 106, 0.5);
+.trainer-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45rem;
+    color: #00d4ff;
+    letter-spacing: 1px;
+}
+
+.trainer-progress-bg {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trainer-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00d4ff, #7c3aed);
+    border-radius: 3px;
+    transition: width 0.5s ease-out;
+}
+
+.trainer-collection {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.trainer-collection strong {
+    color: #00d4ff;
+    font-weight: 900;
 }

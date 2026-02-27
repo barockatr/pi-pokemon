@@ -1,0 +1,263 @@
+/* Módulo 13: Sidebar Pokedex Shell */
+
+.sidebar-toggle-btn {
+    position: fixed;
+    top: 80px;
+    /* Offset to clear the global NavBar */
+    left: 0;
+    z-index: 10000;
+    /* Must be higher than NavBar's 9999 */
+    background: linear-gradient(135deg, #1e1e1e, #333);
+    border: 2px solid rgba(255, 204, 0, 0.5);
+    border-left: none;
+    border-radius: 0 12px 12px 0;
+    padding: 12px 15px;
+    cursor: pointer;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sidebar-toggle-btn.open {
+    transform: translateX(320px);
+}
+
+.toggle-icon {
+    font-size: 1.5rem;
+    color: #ffcc00;
+    /* Primary gold */
+}
+
+.sidebar-pokedex-shell {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100vh;
+    background: rgba(15, 15, 20, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 204, 0, 0.2);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    z-index: 10001;
+    /* Higher than toggle */
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sidebar-pokedex-shell.open {
+    transform: translateX(0);
+}
+
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+}
+
+/* HEADER & FUZZY SEARCH */
+.sidebar-header {
+    padding: 25px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h2 {
+    color: #ffdb4d;
+    /* Brillighter gold for better a11y contrast */
+    margin: 0 0 15px 0;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    gap: 8px;
+}
+
+.fuzzy-search-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 10px 15px;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.fuzzy-search-input:focus {
+    border-color: #ffcc00;
+}
+
+.search-exec-btn {
+    background: #ffcc00;
+    color: #111;
+    border: none;
+    border-radius: 8px;
+    padding: 0 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* DROPDOWN SUGERENCIAS */
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 5px;
+    background: rgba(20, 20, 25, 0.95);
+    border: 1px solid rgba(255, 204, 0, 0.3);
+    border-radius: 8px;
+    list-style: none;
+    padding: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.suggestions-dropdown li {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+    color: #ddd;
+    text-transform: capitalize;
+}
+
+.suggestions-dropdown li:hover {
+    background: rgba(255, 204, 0, 0.1);
+    color: white;
+}
+
+.suggestion-sprite {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-right: 12px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+}
+
+.suggestion-empty,
+.suggestion-loading {
+    padding: 15px !important;
+    text-align: center;
+    color: #aaa !important;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: default !important;
+    background: transparent !important;
+}
+
+.suggestion-empty .empty-icon {
+    font-size: 1.5rem;
+    animation: sway 2s infinite ease-in-out;
+}
+
+@keyframes sway {
+
+    0%,
+    100% {
+        transform: rotate(-10deg);
+    }
+
+    50% {
+        transform: rotate(10deg);
+    }
+}
+
+/* BODY */
+.sidebar-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.sidebar-body h3 {
+    color: #b3b3b3;
+    /* Lighter gray for better legibility against dark mode */
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+/* FOOTER (Premium Arena Button) */
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.premium-arena-btn {
+    width: 100%;
+    position: relative;
+    background: linear-gradient(135deg, #cc2e2e, #800000);
+    color: white;
+    border: 2px solid #ff4d4d;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    animation: heartbeat-glow 2s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes heartbeat-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(255, 77, 77, 0.9), 0 0 10px rgba(255, 200, 200, 0.3);
+    }
+}
+
+.premium-arena-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(255, 77, 77, 0.6);
+}
+
+.premium-arena-btn .btn-glint {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: skewX(-20deg);
+    animation: glint 3s infinite;
+}
+
+@keyframes glint {
+    0% {
+        left: -100%;
+    }
+
+    20% {
+        left: 200%;
+    }
+
+    100% {
+        left: 200%;
+    }
+}

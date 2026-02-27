@@ -1,0 +1,152 @@
+.evolution-path-container {
+    width: 100%;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+}
+
+.evolution-title {
+    margin: 0 0 10px 0;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #444;
+    font-family: 'Press Start 2P', monospace;
+}
+
+.evolution-timeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.evolution-node-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.evolution-connector {
+    height: 3px;
+    width: 25px;
+    background: #ccc;
+    opacity: 0.6;
+    border-radius: 2px;
+    margin: 0 5px;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.evolution-node {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.evolution-node:hover:not(.active) {
+    transform: scale(1.15) translateY(-5px);
+    background: #fff;
+    border-color: #333 !important;
+}
+
+.evolution-node.active {
+    transform: scale(1.1);
+    background: #fff;
+    cursor: default;
+}
+
+.evolution-sprite {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+}
+
+/* Base state for unselected evos - grayscale to signify not current */
+.evolution-node:not(.active) .evolution-sprite {
+    filter: grayscale(80%) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+    opacity: 0.7;
+    transition: all 0.3s;
+}
+
+.evolution-node:hover:not(.active) .evolution-sprite {
+    filter: grayscale(0%) drop-shadow(0 4px 5px rgba(0, 0, 0, 0.4));
+    opacity: 1;
+}
+
+/* Tooltip implementation */
+.evolution-tooltip {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 0.55rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-transform: capitalize;
+    font-family: 'Press Start 2P', monospace;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, bottom 0.2s;
+    white-space: nowrap;
+    z-index: 20;
+}
+
+.evolution-node:hover .evolution-tooltip {
+    opacity: 1;
+    bottom: -30px;
+}
+
+/* Loading Skeletons */
+.evolution-path-skeleton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.evo-skel-ball {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.evo-skel-line {
+    height: 3px;
+    width: 25px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.pulse {
+    animation: pulse-op 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-op {
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0.3;
+    }
+}

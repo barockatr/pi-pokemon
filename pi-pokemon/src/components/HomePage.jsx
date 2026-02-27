@@ -4,45 +4,7 @@ import useGameStore from "../store/useGameStore";
 import CardDetailModal from "./CardDetailModal";
 import "./HomePage.css";
 
-const TrainerStatus = () => {
-  const [capturedCount, setCapturedCount] = useState(0);
-  const MAX_POKEMON = 151;
 
-  useEffect(() => {
-    const collection = JSON.parse(localStorage.getItem('myCollection') || '[]');
-    setCapturedCount(collection.length);
-  }, []);
-
-  // Listen for capture updates
-  useEffect(() => {
-    const handleStorage = () => {
-      const collection = JSON.parse(localStorage.getItem('myCollection') || '[]');
-      setCapturedCount(collection.length);
-    };
-    window.addEventListener('storage', handleStorage);
-    // Also poll every 2s to catch updates within same tab
-    const interval = setInterval(handleStorage, 2000);
-    return () => { window.removeEventListener('storage', handleStorage); clearInterval(interval); };
-  }, []);
-
-  const level = Math.floor(capturedCount / 10) + 1;
-  const progressPercent = ((capturedCount % 10) / 10) * 100;
-
-  return (
-    <div className="trainer-status">
-      <div className="trainer-avatar">🧢</div>
-      <div className="trainer-info">
-        <span className="trainer-label">ENTRENADOR Nv.{level}</span>
-        <div className="trainer-progress-bg">
-          <div className="trainer-progress-fill" style={{ width: `${progressPercent}%` }} />
-        </div>
-        <span className="trainer-collection">
-          🎴 Capturadas: <strong>{capturedCount}</strong> / {MAX_POKEMON}
-        </span>
-      </div>
-    </div>
-  );
-};
 
 const SpotlightCard = ({ pokemons }) => {
   const [spotlight, setSpotlight] = useState(null);
@@ -90,13 +52,10 @@ const HomePage = () => {
   return (
     <div className="homepage">
       {/* ⚔️ TCG ARENA TITLE */}
-      <div className="arena-header">
+      <div className="arena-header" style={{ paddingTop: '20px' }}>
         <h1 className="arena-title-main">⚔️ TCG ARENA</h1>
         <p className="arena-subtitle">Pokémon Trading Card Network — Global Roster</p>
       </div>
-
-      {/* 🧢 TRAINER STATUS */}
-      <TrainerStatus />
 
       {/* ⭐ CARTA DEL DÍA */}
       {pokemons.length > 0 && <SpotlightCard pokemons={pokemons} />}

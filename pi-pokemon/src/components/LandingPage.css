@@ -5,10 +5,60 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #1f1f2e 0%, #0d0d16 100%);
+    background-color: #0d0d16;
+    /* Base Fallback */
     color: white;
     font-family: 'Trebuchet MS', sans-serif;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+/* === MODULE 26: VIGILANT BACKGROUND (PARALLAX & GRADIENT) === */
+.landing-vigilant-bg {
+    position: absolute;
+    top: -5%;
+    left: -5%;
+    width: 110%;
+    height: 110%;
+    background: linear-gradient(135deg, #0b0f19 0%, #1a1a2e 50%, #2a0a2a 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
+    z-index: -2;
+    pointer-events: none;
+    transition: transform 0.1s ease-out;
+    /* Smooth Parallax Tracking */
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.landing-particles {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.particle-mote {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.4);
 }
 
 .landing-title {
@@ -26,10 +76,15 @@
     perspective: 1000px;
     transition: transform 0.3s ease;
     animation: pulse 2s infinite;
+    z-index: 5;
 }
 
-.pokeball-cta:hover {
+.pokeball-cta:hover:not(:disabled) {
     transform: scale(1.1) translateY(-10px);
+}
+
+.pokeball-cta:disabled {
+    cursor: default;
 }
 
 .pokeball-img {
@@ -39,8 +94,71 @@
     transition: transform 0.5s ease;
 }
 
-.pokeball-cta:hover .pokeball-img {
+.pokeball-cta:hover:not(:disabled) .pokeball-img {
     transform: rotate(360deg);
+}
+
+/* === MODULE 27: THE CAPTURE SEQUENCE === */
+.shaking-ball {
+    animation: shakeCapture 0.5s ease-in-out forwards !important;
+}
+
+@keyframes shakeCapture {
+    0% {
+        transform: scale(1.1) rotate(0deg);
+    }
+
+    10% {
+        transform: scale(1.1) rotate(-20deg);
+    }
+
+    20% {
+        transform: scale(1.1) rotate(20deg);
+    }
+
+    30% {
+        transform: scale(1.1) rotate(-15deg);
+    }
+
+    40% {
+        transform: scale(1.1) rotate(15deg);
+    }
+
+    50% {
+        transform: scale(1.1) rotate(-10deg) scale(0.9);
+    }
+
+    60% {
+        transform: scale(1.1) rotate(10deg) scale(0.9);
+    }
+
+    70% {
+        transform: scale(1.1) rotate(-5deg) scale(0.8);
+    }
+
+    80% {
+        transform: scale(1.1) rotate(5deg) scale(0.8);
+    }
+
+    90% {
+        transform: scale(1.1) rotate(0deg) scale(0.7);
+    }
+
+    100% {
+        transform: scale(1.1) rotate(0deg) scale(0.6);
+        filter: brightness(2) drop-shadow(0 0 20px white);
+    }
+}
+
+.capture-flash {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border-radius: 50%;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 0 50px 20px white;
 }
 
 .landing-subtitle {

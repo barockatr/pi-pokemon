@@ -345,3 +345,18 @@
   text-transform: uppercase;
   color: #555;
 }
+
+/* === IN DECK SELECTION GLOW === */
+.tcg-in-deck {
+  border: 3px solid #00ffcc !important;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.6), inset 0 0 20px rgba(0, 255, 204, 0.2);
+}
+
+.tcg-in-deck::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 255, 204, 0.05);
+  pointer-events: none;
+  z-index: 5;
+}

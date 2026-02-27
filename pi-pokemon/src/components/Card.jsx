@@ -116,7 +116,7 @@ const Card = ({ id, name, image, types, life, attack, moves, isArena = false }) 
 
   return (
     <div
-      className={`tcg-card ${attack > 80 ? 'tcg-holographic' : ''} ${isCaptured ? 'tcg-captured-card' : ''}`}
+      className={`tcg-card ${attack > 80 ? 'tcg-holographic' : ''} ${isCaptured ? 'tcg-captured-card' : ''} ${isAlreadyInDeck ? 'tcg-in-deck' : ''}`}
       style={{ textDecoration: 'none', cursor: 'pointer' }}
     >
 

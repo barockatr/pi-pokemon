@@ -1,0 +1,106 @@
+.tcg-skeleton-card {
+    width: 200px;
+    height: 300px;
+    background: rgba(30, 30, 35, 0.8);
+    border: 8px solid rgba(80, 80, 90, 0.3);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    /* Maintain same flex behaviors as real cards */
+    margin: 0 auto;
+}
+
+/* The animated shine that sweeps across the skeleton */
+.skeleton-glimmer {
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.05) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-20deg);
+    animation: shimmer 1.5s infinite;
+    z-index: 10;
+}
+
+@keyframes shimmer {
+    100% {
+        left: 250%;
+    }
+}
+
+/* Structural Block Helpers */
+.tcg-skeleton-card>div:not(.skeleton-glimmer) {
+    background: rgba(80, 80, 90, 0.3);
+    border-radius: 4px;
+}
+
+.skel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent !important;
+    margin-bottom: 10px;
+}
+
+.skel-title {
+    width: 60%;
+    height: 15px;
+    background: rgba(80, 80, 90, 0.4);
+    border-radius: 4px;
+}
+
+.skel-hp {
+    width: 25%;
+    height: 15px;
+    background: rgba(80, 80, 90, 0.4);
+    border-radius: 4px;
+}
+
+.skel-image-box {
+    width: 100%;
+    height: 120px;
+    margin-bottom: 15px;
+}
+
+.skel-types {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    background: transparent !important;
+    margin-bottom: 15px;
+}
+
+.skel-pill {
+    width: 40px;
+    height: 12px;
+    background: rgba(80, 80, 90, 0.4);
+    border-radius: 8px;
+}
+
+.skel-stats {
+    display: flex;
+    justify-content: space-between;
+    background: transparent !important;
+    margin-bottom: 15px;
+}
+
+.skel-stat {
+    width: 28%;
+    height: 10px;
+    background: rgba(80, 80, 90, 0.4);
+    border-radius: 4px;
+}
+
+.skel-footer {
+    width: 100%;
+    height: 60px;
+    margin-top: auto;
+}

@@ -8,6 +8,9 @@ const useDeckStore = create((set, get) => ({
     opponentHand: [],
     isInitializing: true, // Módulo 2: Skeletons Flag
 
+    // Update the opponent's hand array (used by PvEBot to shift cards)
+    setOpponentHand: (newHand) => set({ opponentHand: newHand }),
+
     // Add a card to the deck (max 6)
     addCard: (card) => {
         const currentDeck = get().deck;

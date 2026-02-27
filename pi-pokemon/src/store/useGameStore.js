@@ -12,6 +12,10 @@ const useGameStore = create((set, get) => ({
     globalError: false,
     errorMessage: "",
 
+    // Module 16: Evolution State
+    currentEvolutionChain: [],
+    isFetchingEvolution: false,
+
     // --- 2. ACCIONES ASÍNCRONAS (Ex-Thunks) ---
     getPokemons: async () => {
         try {
@@ -60,6 +64,68 @@ const useGameStore = create((set, get) => ({
         }
     },
 
+    // Módulo 16: Lógica de Evoluciones
+    fetchEvolutionChain: async (pokemonId) => {
+        // Ignoramos pokemons customizados de DB que tienen UUID largos
+        if (!pokemonId || isNaN(parseInt(pokemonId)) || pokemonId.toString().length >= 10) {
+            set({ currentEvolutionChain: [] });
+            return;
+        }
+
+        set({ isFetchingEvolution: true, currentEvolutionChain: [] });
+
+        try {
+            // 1. Obtener la especie para sacar la URL de la cadena evolutiva
+            const speciesRes = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`);
+            const chainUrl = speciesRes.data.evolution_chain?.url;
+
+            if (!chainUrl) {
+                set({ isFetchingEvolution: false, currentEvolutionChain: [] });
+                return;
+            }
+
+            // 2. Obtener el árbol evolutivo
+            const chainRes = await axios.get(chainUrl);
+            const chainData = chainRes.data.chain;
+
+            // 3. Aplanar el árbol recursivamente
+            const flatChain = [];
+            const extractEvolutions = (node) => {
+                if (!node) return;
+
+                // Parse ID from URL to get the exact sprite, URL ends in /id/
+                const urlParts = node.species.url.split('/');
+                const id = urlParts[urlParts.length - 2];
+
+                flatChain.push({
+                    id: parseInt(id),
+                    name: node.species.name,
+                    // Fallback to raw PokeAPI sprite so it always works even if not loaded in local store
+                    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+                });
+
+                if (node.evolves_to && node.evolves_to.length > 0) {
+                    node.evolves_to.forEach(nextEvo => extractEvolutions(nextEvo));
+                }
+            };
+
+            extractEvolutions(chainData);
+
+            // 4. Mapear con datos locales si existen (para stats exactos si el usuario da click)
+            const { allPokemons } = get();
+            const enrichedChain = flatChain.map(evo => {
+                const localMatch = allPokemons.find(p => p.id === evo.id);
+                return localMatch ? { ...evo, isLocal: true, ...localMatch } : { ...evo, isLocal: false };
+            });
+
+            set({ currentEvolutionChain: enrichedChain, isFetchingEvolution: false });
+
+        } catch (error) {
+            console.error("Error fetching evolution chain:", error);
+            set({ isFetchingEvolution: false, currentEvolutionChain: [] });
+        }
+    },
+
     // --- 3. ACCIONES SÍNCRONAS (Filtros y Ordenamiento) ---
     filterByType: (type) => {
         const { allPokemons } = get();
@@ -102,6 +168,20 @@ const useGameStore = create((set, get) => ({
             : [...pokemons].sort((a, b) => b.attack - a.attack);
 
         set({ pokemons: sortedAttack });
+    },
+
+    filterByAttackRange: (minAttack) => {
+        const { allPokemons } = get();
+        // Filtrar desde el array original para no perder datos si subimos el slider y luego lo bajamos
+        const attackFiltered = allPokemons.filter(p => (p.attack || 0) >= minAttack);
+        set({ pokemons: attackFiltered });
+    },
+
+    filterByLifeRange: (minLife) => {
+        const { allPokemons } = get();
+        // Filtrar desde el array original
+        const lifeFiltered = allPokemons.filter(p => (p.life || 0) >= minLife);
+        set({ pokemons: lifeFiltered });
     },
 
     // --- 4. ACCIONES DE UTILIDAD ---

@@ -24,9 +24,6 @@ const DuelArenaContainer = () => {
     const [activeMenu, setActiveMenu] = useState(null);
     const [selectedInfoCard, setSelectedInfoCard] = useState(null);
 
-    // Initial Opponent logic
-    const [opponentCard, setOpponentCard] = useState(null);
-
     // Board State
     const [playerHand, setPlayerHand] = useState([]);
     const [playerBench, setPlayerBench] = useState([]);
@@ -74,18 +71,10 @@ const DuelArenaContainer = () => {
 
         setPlayerHand(deck.map((card, idx) => ({ ...card, currentInstanceId: `hand-${card.id}-${idx}` })));
 
-        // Dummy opponent
-        const dummyOpponent = {
-            id: 'dummy-ai-1',
-            name: "Dragonite (Gimnasio)",
-            hp: 200,
-            image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png"
-        };
+        // Limpiar al rival
+        setOpponentActive(null);
 
-        setOpponentCard(dummyOpponent);
-        setOpponentActive({ ...dummyOpponent, currentInstanceId: `opp-${dummyOpponent.id}` });
-
-        // Módulo 2: Inicializar el Mazo del Bot desde la BD
+        // Módulo 2: Inicializar el Mazo aleatorio del Bot desde la BD (6 Cartas)
         generarMazoBot();
 
         // Limpiar el estado de banca del rival al iniciar
@@ -97,6 +86,16 @@ const DuelArenaContainer = () => {
         setGameOver(null);
         setHasGameStarted(false);
     }, [deck, navigate]);
+
+    // Inyectar el primer Pokémon del Bot a la zona activa tras cargar el mazo
+    useEffect(() => {
+        if (!isInitializing && opponentHand.length === 6 && !opponentActive) {
+            const initialHand = [...opponentHand];
+            const firstStriker = initialHand.shift();
+            setOpponentActive(firstStriker);
+            useDeckStore.setState({ opponentHand: initialHand });
+        }
+    }, [isInitializing, opponentHand, opponentActive]);
 
     // --- Módulo 3: El Cerebro de Nuez ---
     usePvEBot({
@@ -175,13 +174,13 @@ const DuelArenaContainer = () => {
             pauseFSM();
         }
 
-        // Opponent Lose Condition: Active vacío Y Banca vacía
-        if (!opponentActive && opponentBench.length === 0 && opponentCard) {
+        // Opponent Lose Condition (Módulo 1): Active vacío Y Banca vacía Y Mano vacía
+        if (!opponentActive && opponentBench.length === 0 && opponentHand.length === 0 && !isInitializing) {
             setGameOver('VICTORY');
             setResult('🏆 ¡VICTORIA APLASTANTE!');
             pauseFSM();
         }
-    }, [isFsmPaused, playerActive, playerBench.length, playerHand.length, opponentActive, opponentBench.length, gameOver, hasGameStarted, deck.length]);
+    }, [isFsmPaused, playerActive, playerBench.length, playerHand.length, opponentActive, opponentBench.length, opponentHand.length, gameOver, hasGameStarted, deck.length, isInitializing]);
 
     // --- Context Menu Triggers ---
     const handleCardClick = (e, card, locationType) => {
@@ -258,7 +257,7 @@ const DuelArenaContainer = () => {
     };
 
     // Early return para Módulo 2
-    if (!opponentCard || isInitializing) return <ArenaSkeleton />;
+    if (isInitializing) return <ArenaSkeleton />;
 
     return (
         <div className="duel-arena-container tactical-mode" onClick={closeMenu}>
@@ -367,39 +366,51 @@ const DuelArenaContainer = () => {
             {/* AREA 2: 2D PLAYER DOCK (Bottom 25%) */}
             <div className="player-dock-2d">
                 <div className="dock-header">
-                    <div className="dock-title">Mano Táctica</div>
-
-                    {/* Indicador de Turno */}
+                    {/* Indicador de Turno (Módulo 2: Movido a la Izquierda) */}
                     <div className={`turn-indicator ${turnPlayer === PLAYERS.PLAYER ? 'player-turn' : 'opponent-turn'}`}>
                         {turnPlayer === PLAYERS.PLAYER ? '🟢 Tu Turno' : '🔴 Turno Rival'}
                     </div>
 
-                    {/* Botón de Terminar Turno */}
-                    {turnPlayer === PLAYERS.PLAYER && (
+                    <div className="dock-title">Mano Táctica</div>
+
+                    {/* Botón de Terminar Turno (Módulo 2: Alineado a la Derecha por Flex Space-Between) */}
+                    <div style={{ minWidth: '150px', textAlign: 'right' }}>
                         <button
-                            className="end-turn-btn"
+                            className={`end-turn-btn ${turnPlayer === PLAYERS.PLAYER ? '' : 'hidden-btn'}`}
+                            style={{ opacity: turnPlayer === PLAYERS.PLAYER ? 1 : 0, pointerEvents: turnPlayer === PLAYERS.PLAYER ? 'auto' : 'none' }}
                             onClick={() => {
                                 console.log("Cambiando turno a OPPONENT");
                                 passTurn();
                             }}
-                            disabled={isFsmPaused}
+                            disabled={isFsmPaused || turnPlayer !== PLAYERS.PLAYER}
                         >
                             Terminar Turno
                         </button>
-                    )}
+                    </div>
                 </div>
 
                 <div className="hand-cards-container">
-                    {playerHand.map((card, index) => (
-                        <div key={card.currentInstanceId} className="staggered-entrance" style={{ animationDelay: `${index * 0.15}s` }}>
-                            <div
-                                className="dock-card-wrapper interactive-card"
-                                onClick={(e) => handleCardClick(e, card, 'HAND')}
-                            >
-                                <Card {...card} isArena={true} />
+                    {playerHand.map((card, index) => {
+                        // Módulo 2: Type Colors for Neon Shadow
+                        const primaryTypeObj = card.types?.[0] || card.type;
+                        const pType = primaryTypeObj?.name || primaryTypeObj || 'normal';
+
+                        return (
+                            <div key={card.currentInstanceId} className="staggered-entrance" style={{ animationDelay: `${index * 0.15}s` }}>
+                                <div
+                                    className="dock-card-wrapper interactive-card tactical-hover"
+                                    style={{
+                                        '--card-glow': `var(--type-${pType}, #bba32e)`
+                                    }}
+                                    onClick={(e) => handleCardClick(e, card, 'HAND')}
+                                >
+                                    <div className="tactical-glow-layer">
+                                        <Card {...card} isArena={true} />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                     {playerHand.length === 0 && (
                         <div className="empty-hand-text">Sin cartas en la mano</div>
                     )}
