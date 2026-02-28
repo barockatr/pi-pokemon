@@ -39,7 +39,6 @@ export const usePvEBot = ({
     }, [opponentActive, playerActive, opponentHand, opponentBench, isFsmPaused, turnPlayer]);
 
     useEffect(() => {
-        console.log(`🤖 [BOT Observer] Evaluando turno... turnPlayer: ${turnPlayer}, isFsmPaused: ${isFsmPaused}`);
 
         // Solo actuar si es turno del oponente y no hay pausa
         if (turnPlayer !== PLAYERS.OPPONENT || isFsmPaused) return;
@@ -49,13 +48,11 @@ export const usePvEBot = ({
         const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
         const runBotTurn = async () => {
-            console.log("🤖 [BOT] Iniciando rutina...");
 
             // FASE 1: INVOCAR (Reemplazo Táctico - Módulo 1)
             let currentActive = stateRef.current.opponentActive;
 
             if (!currentActive) {
-                console.log("🤖 [BOT] Zona activa vacía. Preparando invocación táctica...");
                 await delay(1000); // Tensión
                 if (isCancelled || stateRef.current.isFsmPaused) return;
 
@@ -65,19 +62,16 @@ export const usePvEBot = ({
                 if (hand.length > 0) {
                     // Prioridad 1: Jugar desde la Mano
                     const nextPokemon = hand.shift();
-                    console.log(`🤖 [BOT] Invocando a ${nextPokemon.name} desde la Mano`);
                     setOpponentHand(hand);
                     setOpponentActive(nextPokemon);
                     currentActive = nextPokemon;
                 } else if (bench.length > 0) {
                     // Prioridad 2: Jugar desde la Banca si la Mano está vacía
                     const nextPokemon = bench.shift();
-                    console.log(`🤖 [BOT] Invocando a ${nextPokemon.name} desde la Banca`);
                     setOpponentBench(bench);
                     setOpponentActive(nextPokemon);
                     currentActive = nextPokemon;
                 } else {
-                    console.log("🤖 [BOT] ¡Mazo y Banca vacíos! No puedo hacer nada. Me rindo.");
                     // Módulo de victoria letal se maneja en el Observer de DuelArenaContainer
                 }
             }
@@ -100,8 +94,6 @@ export const usePvEBot = ({
                     ? (currentActive.moves?.[1] || "Slam")
                     : (currentActive.moves?.[0] || "Quick Attack");
 
-                console.log(`🤖 [BOT] ${currentActive.name} usará ${moveName} por ${finalDamage} DMG!`);
-
                 const striker = { ...currentActive, attackDamage: finalDamage };
 
                 await ejecutarAtaque({
@@ -111,14 +103,12 @@ export const usePvEBot = ({
                     setIsAttacking
                 });
             } else if (!target) {
-                console.log("🤖 [BOT] No hay objetivo válido al que atacar.");
             }
 
             // FASE 4: TERMINAR TURNO
             await delay(1200); // Tiempo post-animación
             if (isCancelled || stateRef.current.isFsmPaused) return;
 
-            console.log("🤖 [BOT] Turno finalizado.");
             passTurn();
         };
 

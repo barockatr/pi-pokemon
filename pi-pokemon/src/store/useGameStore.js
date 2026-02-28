@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import axios from 'axios';
 import { shuffleArray } from '../utils/shuffle';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+console.log(`[Vite Env Vercel] Inicializando Store. API Target:`, API_URL);
+
 // Store global centralizado (Reemplazo total de Redux)
 const useGameStore = create((set, get) => ({
     // --- 1. ESTADO GLOBAL ---
@@ -19,7 +22,7 @@ const useGameStore = create((set, get) => ({
     // --- 2. ACCIONES ASÍNCRONAS (Ex-Thunks) ---
     getPokemons: async () => {
         try {
-            const { data } = await axios.get('http://localhost:3001/pokemons');
+            const { data } = await axios.get(`${API_URL}/pokemons`);
             // Módulo 2: Inyección de Aleatoriedad Real (Fisher-Yates) pura
             const shuffled = shuffleArray(data);
 
@@ -40,7 +43,7 @@ const useGameStore = create((set, get) => ({
 
     getTypes: async () => {
         try {
-            const { data } = await axios.get('http://localhost:3001/types');
+            const { data } = await axios.get(`${API_URL}/types`);
             set({ types: data });
         } catch (error) {
             console.error("Error fetching types:", error);
@@ -53,7 +56,7 @@ const useGameStore = create((set, get) => ({
 
     getPokemonByName: async (name) => {
         try {
-            const { data } = await axios.get(`http://localhost:3001/pokemons?name=${name}`);
+            const { data } = await axios.get(`${API_URL}/pokemons?name=${name}`);
             set({ pokemons: data });
         } catch (error) {
             console.error("Error fetching pokemon by name:", error);

@@ -15,6 +15,17 @@
 
 ---
 
+## 🚀 Despliegue (Live Demo)
+
+Puedes ver la aplicación funcionando aquí: [Link a tu Vercel]
+
+> **⚠️ Nota sobre el rendimiento:** 
+> El backend de este proyecto está alojado en un plan gratuito de **Render**. 
+> Debido a las políticas de "suspensión por inactividad", el servidor puede tardar entre **30 y 50 segundos** en responder tras la primera carga. 
+> ¡Gracias por tu paciencia mientras el Centro Pokémon despierta! ⚡
+
+---
+
 ## ⚔️ Duel Arena: El Motor de Combate (Highlight Principal)
 
 <p align="center">

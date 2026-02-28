@@ -150,7 +150,12 @@ const Card = ({ id, name, image, types, life, attack, moves, isArena = false }) 
       </div>
 
       <div className="tcg-image-container">
-        <img src={image} alt={name} />
+        <img
+          src={image}
+          alt={`Artwork de ${name}`}
+          loading="lazy"
+          decoding="async"
+        />
         {/* Pokeball Watermark Sello de Captura */}
         {isCaptured && (
           <div className="tcg-captured-seal">
