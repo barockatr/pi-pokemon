@@ -3,7 +3,12 @@ import axios from 'axios';
 import { shuffleArray } from '../utils/shuffle';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-console.log(`[Vite Env Vercel] Inicializando Store. API Target:`, API_URL);
+
+if (!import.meta.env.VITE_API_URL) {
+    console.warn("⚠️ [Zustand Warn] VITE_API_URL no está definida. Fallback a http://localhost:3001 activo. Si esto es producción, las peticiones fallarán.");
+} else {
+    console.log(`[Vite Env Vercel] Inicializando Store. API Target:`, API_URL);
+}
 
 // Store global centralizado (Reemplazo total de Redux)
 const useGameStore = create((set, get) => ({
