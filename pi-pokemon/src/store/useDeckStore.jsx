@@ -81,8 +81,9 @@ const useDeckStore = create(
                     // Fallback just in case
                     set({ opponentHand: [], isInitializing: false });
                 }
-            })
-        , {
+            }
+        }),
+        {
             name: 'tcg-deck-storage', // Clave única en el localStorage
             storage: createJSONStorage(() => localStorage),
             version: 1, // Módulo 2: Versionado contra caché agresivo
