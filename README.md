@@ -17,7 +17,7 @@
 
 ## 🚀 Despliegue (Live Demo)
 
-Puedes ver la aplicación funcionando aquí: [Link a tu Vercel]
+Puedes ver la aplicación funcionando aquí: [https://tcg-arena-pokedex.vercel.app/]
 
 > **⚠️ Nota sobre el rendimiento:** 
 > El backend de este proyecto está alojado en un plan gratuito de **Render**. 
