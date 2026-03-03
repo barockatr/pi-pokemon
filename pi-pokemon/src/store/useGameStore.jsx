@@ -13,6 +13,7 @@ if (!import.meta.env.VITE_API_URL) {
 // Store global centralizado (Reemplazo total de Redux)
 const useGameStore = create((set, get) => ({
     // --- 1. ESTADO GLOBAL ---
+    isPokedexOpen: false,
     pokemons: [],
     allPokemons: [],
     types: [],
@@ -135,6 +136,8 @@ const useGameStore = create((set, get) => ({
     },
 
     // --- 3. ACCIONES SÍNCRONAS (Filtros y Ordenamiento) ---
+    setIsPokedexOpen: (isOpen) => set({ isPokedexOpen: isOpen }),
+
     filterByType: (type) => {
         const { allPokemons } = get();
         const typeFiltered = type === 'all'

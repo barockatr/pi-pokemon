@@ -6,29 +6,11 @@ import './NavBar.css';
 
 const NavBar = () => {
     const location = useLocation();
-    const [capturedCount, setCapturedCount] = useState(0);
-    const MAX_POKEMON = 151;
-
-    useEffect(() => {
-        const collection = JSON.parse(localStorage.getItem('myCollection') || '[]');
-        setCapturedCount(collection.length);
-    }, []);
-
-    // Listen for capture updates
-    useEffect(() => {
-        const handleStorage = () => {
-            const collection = JSON.parse(localStorage.getItem('myCollection') || '[]');
-            setCapturedCount(collection.length);
-        };
-        window.addEventListener('storage', handleStorage);
-        const interval = setInterval(handleStorage, 2000);
-        return () => { window.removeEventListener('storage', handleStorage); clearInterval(interval); };
-    }, []);
-
     // Spotlight logic
     const [spotlight, setSpotlight] = useState(null);
     const [selectedPokemon, setSelectedPokemon] = useState(null);
     const pokemons = useGameStore(state => state.pokemons);
+    const setIsPokedexOpen = useGameStore(state => state.setIsPokedexOpen);
 
     useEffect(() => {
         if (pokemons && pokemons.length > 0) {
@@ -42,11 +24,16 @@ const NavBar = () => {
     // Don't show NavBar on the Landing Page
     if (location.pathname === '/') return null;
 
-    const level = Math.floor(capturedCount / 10) + 1;
-    const progressPercent = ((capturedCount % 10) / 10) * 100;
-
     return (
         <nav className="global-navbar">
+            <button
+                className="navbar-search-btn"
+                onClick={() => setIsPokedexOpen(true)}
+                title="Búsqueda Global"
+            >
+                🔍
+            </button>
+
             <Link to="/home" className="navbar-logo-link" style={{ textDecoration: 'none' }}>
                 <div className="navbar-logo">
                     <img
@@ -73,20 +60,6 @@ const NavBar = () => {
                     {selectedPokemon && <CardDetailModal pokemon={selectedPokemon} onClose={() => setSelectedPokemon(null)} />}
                 </>
             )}
-
-            {/* Trainer Status directly in NavBar */}
-            <div className="trainer-status">
-                <div className="trainer-avatar">🧢</div>
-                <div className="trainer-info">
-                    <span className="trainer-label">ENTRENADOR Nv.{level}</span>
-                    <div className="trainer-progress-bg">
-                        <div className="trainer-progress-fill" style={{ width: `${progressPercent}%` }} />
-                    </div>
-                    <span className="trainer-collection">
-                        🎴 Capturadas: <strong>{capturedCount}</strong> / {MAX_POKEMON}
-                    </span>
-                </div>
-            </div>
         </nav>
     );
 };

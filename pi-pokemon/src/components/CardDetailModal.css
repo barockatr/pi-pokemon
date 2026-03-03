@@ -72,16 +72,21 @@
 /* === 3D CARD CONTAINER (TILT NATIVE) === */
 .cdm-card {
     width: 320px;
+    max-height: 90vh;
+    /* RESTRICCIÓN VISUAL: No exceder la pantalla */
     border-radius: 18px;
     border: 4px solid #bba32e;
-    padding: 16px;
+    padding: min(16px, 2.5vh);
+    /* Padding dinámico */
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: min(12px, 1.5vh);
+    /* Gap dinámico  */
     cursor: default;
     position: relative;
     user-select: none;
     pointer-events: auto;
+    box-sizing: border-box;
     /* The card itself needs pointer-events for the hover/tilt effect to trigger */
 }
 
@@ -140,7 +145,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 200px;
+    height: clamp(80px, 20vh, 200px);
+    /* COMPRESIÓN VERTICAL ADAPTATIVA */
     overflow: hidden;
     position: relative;
     z-index: 6;
@@ -190,7 +196,15 @@
     border: 1px inset rgba(255, 255, 255, 0.2);
     position: relative;
     z-index: 6;
-    margin: 4px 0;
+    margin: min(4px, 0.5vh) 0;
+    height: clamp(60px, 15vh, 150px);
+    /* ACHATAR ADAPTATIVO */
+    overflow: hidden;
+}
+
+/* OVERRIDE del alto fijo de React/Recharts para permitir shrink dinámico */
+.cdm-stats-radar .recharts-responsive-container {
+    height: 100% !important;
 }
 
 /* Customizing Recharts Tooltip/Text if needed implicitly via CSS */

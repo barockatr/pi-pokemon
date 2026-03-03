@@ -17,7 +17,6 @@ const CardsContainer = () => {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
-  const [isTutorialOpen, setTutorialOpen] = useState(false);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const cardsPerPage = 12;
 
@@ -71,9 +70,7 @@ const CardsContainer = () => {
           📱
         </button>
 
-        <TutorialModal isOpen={isTutorialOpen} onClose={() => setTutorialOpen(false)} />
-
-        {/* === CARD DETAIL MODAL (3D Holographic) === */}
+        {/* === MAIN CARD GRID (Now handled globally, removed local TutorialModal to prevent double render) === */}
         <CardDetailModal pokemon={selectedPokemon} onClose={() => setSelectedPokemon(null)} />
 
         {/* === CARD CAROUSEL SECTIOn === */}
