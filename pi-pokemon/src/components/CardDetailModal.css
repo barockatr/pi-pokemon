@@ -4,15 +4,21 @@
 
 .cdm-overlay {
     position: fixed;
-    inset: 0;
-    z-index: 800;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    /* Asegura que cubra la pantalla independiente del scroll global */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
-    animation: cdm-open 0.3s ease-out;
+    z-index: 99999;
+    /* Sobreponer encima del NavBar y Sidebar */
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+    pointer-events: auto;
 }
 
 @keyframes cdm-open {
@@ -72,10 +78,8 @@
 /* === 3D CARD CONTAINER (TILT NATIVE) === */
 .cdm-card {
     width: 320px;
-    height: clamp(350px, 60vh, 500px);
-    /* FASE 3: Tamaño Dinámico */
-    max-height: 85vh;
-    /* FASE 3: Límite estricto de pantalla */
+    height: clamp(550px, 85vh, 850px);
+    max-height: 90vh;
     border-radius: 18px;
     border: 4px solid #bba32e;
     padding: min(16px, 2.5vh);
@@ -165,18 +169,13 @@
     filter: drop-shadow(4px 8px 20px rgba(0, 0, 0, 0.6));
 }
 
-/* === INFO SCROLL AREA (FASE 3) === */
+/* === INFO SCROLL AREA (FASE 3 - Scroll Removed) === */
 .cdm-scroll-area {
     flex: 1;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: min(12px, 1.5vh);
-    padding-right: 5px;
-}
-
-.cdm-scroll-area::-webkit-scrollbar {
-    width: 4px;
+    justify-content: space-evenly;
+    gap: min(8px, 1vh);
 }
 
 .cdm-scroll-area::-webkit-scrollbar-thumb {
@@ -217,8 +216,8 @@
     position: relative;
     z-index: 6;
     margin: min(4px, 0.5vh) 0;
-    height: clamp(60px, 15vh, 150px);
-    /* ACHATAR ADAPTATIVO */
+    min-height: 220px;
+    flex-shrink: 0;
     overflow: hidden;
 }
 

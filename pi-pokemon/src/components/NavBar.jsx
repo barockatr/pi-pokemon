@@ -8,7 +8,8 @@ const NavBar = () => {
     const location = useLocation();
     // Spotlight logic
     const [spotlight, setSpotlight] = useState(null);
-    const [selectedPokemon, setSelectedPokemon] = useState(null);
+    // FASE 3: Estado local de modal eliminado.
+    const setPokemonForDetail = useGameStore(state => state.setPokemonForDetail);
     const pokemons = useGameStore(state => state.pokemons);
     const setIsPokedexOpen = useGameStore(state => state.setIsPokedexOpen);
 
@@ -47,7 +48,7 @@ const NavBar = () => {
             {/* ⭐ CARTA DEL DÍA EN EL HEADER */}
             {spotlight && (
                 <>
-                    <div className="spotlight-header-card" onClick={() => setSelectedPokemon(spotlight)}>
+                    <div className="spotlight-header-card" onClick={() => setPokemonForDetail(spotlight)}>
                         <div className="spotlight-holo" />
                         <div className="spotlight-content">
                             <img src={spotlight.image} alt={spotlight.name} className="spotlight-img" />
@@ -57,7 +58,6 @@ const NavBar = () => {
                             </div>
                         </div>
                     </div>
-                    {selectedPokemon && <CardDetailModal pokemon={selectedPokemon} onClose={() => setSelectedPokemon(null)} />}
                 </>
             )}
         </nav>

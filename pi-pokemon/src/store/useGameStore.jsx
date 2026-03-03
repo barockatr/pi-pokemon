@@ -14,6 +14,7 @@ if (!import.meta.env.VITE_API_URL) {
 const useGameStore = create((set, get) => ({
     // --- 1. ESTADO GLOBAL ---
     isPokedexOpen: false,
+    selectedPokemonForDetail: null, // Módulo Centralizado del Modal 3D
     pokemons: [],
     allPokemons: [],
     types: [],
@@ -137,6 +138,7 @@ const useGameStore = create((set, get) => ({
 
     // --- 3. ACCIONES SÍNCRONAS (Filtros y Ordenamiento) ---
     setIsPokedexOpen: (isOpen) => set({ isPokedexOpen: isOpen }),
+    setPokemonForDetail: (pokemon) => set({ selectedPokemonForDetail: pokemon }), // FASE 1: Acción centralizada
 
     filterByType: (type) => {
         const { allPokemons } = get();

@@ -8,6 +8,7 @@ const PokedexSidebar = () => {
     const setIsPokedexOpen = useGameStore(state => state.setIsPokedexOpen);
     const allPokemons = useGameStore(state => state.allPokemons);
     const types = useGameStore(state => state.types);
+    const setPokemonForDetail = useGameStore(state => state.setPokemonForDetail);
     const setChallenger = useGameStore(state => state.setChallenger);
     const navigate = useNavigate();
 
@@ -80,10 +81,8 @@ const PokedexSidebar = () => {
         setIsPokedexOpen(false); // 1. Cerrar Dashboard
         setChallenger(pokemon);  // 2. Marcar como enfocado
 
-        // 3. Redirigir visualmente (Si el usuario quiere ver detalles 3D u Arena)
-        // Opcional: navigate('/arena') o despachar evento personalizado para la carta 3D
-        const customEvent = new CustomEvent('pokedexSelect', { detail: pokemon });
-        window.dispatchEvent(customEvent);
+        // FASE 3: Disparar el Modal Global de Zustand
+        setPokemonForDetail(pokemon);
     };
 
     return (
@@ -190,7 +189,7 @@ const PokedexSidebar = () => {
                                         </div>
                                     </div>
                                     <div className="result-action">
-                                        👉
+                                        <div className="sidebar-pokeball-icon" />
                                     </div>
                                 </div>
                             ))

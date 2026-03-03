@@ -6,7 +6,8 @@ import PokedexSidebar from "./PokedexSidebar";
 import "./HomePage.css";
 
 const HomePage = () => {
-  const pokemons = useGameStore(state => state.pokemons);
+  const selectedPokemonForDetail = useGameStore(state => state.selectedPokemonForDetail);
+  const setPokemonForDetail = useGameStore(state => state.setPokemonForDetail);
 
   return (
     <div className="homepage">
@@ -15,6 +16,14 @@ const HomePage = () => {
 
       {/* GRID PRINCIPAL */}
       <CardsContainer />
+
+      {/* FASE 2: Modal Centralizado */}
+      {selectedPokemonForDetail && (
+        <CardDetailModal
+          pokemon={selectedPokemonForDetail}
+          onClose={() => setPokemonForDetail(null)}
+        />
+      )}
     </div>
   );
 };

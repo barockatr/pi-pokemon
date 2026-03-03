@@ -17,7 +17,8 @@ const CardsContainer = () => {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [pageCount, setPageCount] = useState(0);
-  const [selectedPokemon, setSelectedPokemon] = useState(null);
+  // FASE 3: Estado local de modal eliminado.
+  const setPokemonForDetail = useGameStore((state) => state.setPokemonForDetail);
   const cardsPerPage = 12;
 
   // Carousel Hooks
@@ -70,8 +71,7 @@ const CardsContainer = () => {
           📱
         </button>
 
-        {/* === MAIN CARD GRID (Now handled globally, removed local TutorialModal to prevent double render) === */}
-        <CardDetailModal pokemon={selectedPokemon} onClose={() => setSelectedPokemon(null)} />
+        {/* === MAIN CARD GRID (Now handled globally by HomePage) === */}
 
         {/* === CARD CAROUSEL SECTIOn === */}
         <div className="carousel-wrapper">
@@ -97,7 +97,7 @@ const CardsContainer = () => {
                     animationDelay: `${index * 0.04}s`,
                     opacity: 0
                   }}
-                  onClick={() => setSelectedPokemon(pokemon)}
+                  onClick={() => setPokemonForDetail(pokemon)}
                 >
                   <Card
                     id={pokemon.id}

@@ -234,7 +234,7 @@ const CardDetailModal = ({ pokemon, onClose }) => {
 
                                 {/* MODULE 23: RADAR CHART STATS */}
                                 <div className="cdm-stats-radar">
-                                    <ResponsiveContainer width="100%" height={150}>
+                                    <ResponsiveContainer width="100%" height={220}>
                                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
                                             <PolarGrid stroke="#fff" strokeOpacity={0.3} />
                                             <PolarAngleAxis dataKey="subject" tick={{ fill: '#333', fontSize: 10, fontWeight: 'bold' }} />
