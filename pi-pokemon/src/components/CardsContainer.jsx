@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import useGameStore from '../store/useGameStore';
 import Card from './Card';
 import CardSkeleton from './CardSkeleton';
@@ -20,6 +20,19 @@ const CardsContainer = () => {
   const [isTutorialOpen, setTutorialOpen] = useState(false);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const cardsPerPage = 12;
+
+  // Carousel Hooks
+  const carouselRef = useRef(null);
+
+  const handleScroll = (direction) => {
+    if (carouselRef.current) {
+      const scrollAmount = 350 + 32; // Card width + gap (approx)
+      carouselRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   useEffect(() => {
     // Artificial 600ms loader to guarantee smooth Skeleton showcase since local fetch is too fast
@@ -46,11 +59,8 @@ const CardsContainer = () => {
   return (
     <div style={{ minHeight: '100vh', width: '100%' }}>
 
-      {/* === Módulo 13: NEW SIDEBAR NAVIGATION === */}
-      <SidebarPokedex setCurrentPage={setCurrentPage} onToggle={(open) => setIsSidebarOpen(open)} />
-
-      {/* Main Grid Content - Pushed dynamically when Sidebar opens */}
-      <div className={`pokedex-grid-wrapper ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+      {/* Main Grid Content - Full Width Gallery */}
+      <div className={`pokedex-grid-wrapper gallery-mode`}>
 
         {/* === FLOATING POKÉDEX BUTTON (bottom-right) === */}
         <button
@@ -66,42 +76,55 @@ const CardsContainer = () => {
         {/* === CARD DETAIL MODAL (3D Holographic) === */}
         <CardDetailModal pokemon={selectedPokemon} onClose={() => setSelectedPokemon(null)} />
 
-        {/* === CARD GRID with staggered animation === */}
-        <div className="container">
-          {isFetchingLocal ? (
-            // Render 12 Skeleton Loaders
-            Array.from({ length: 12 }).map((_, index) => (
-              <CardSkeleton key={index} />
-            ))
-          ) : currentCards.length ? (
-            currentCards.map((pokemon, index) => (
-              <div
-                key={pokemon.id}
-                style={{
-                  animation: 'card-pop-in 0.4s ease-out forwards',
-                  animationDelay: `${index * 0.04}s`,
-                  opacity: 0
-                }}
-                onClick={() => setSelectedPokemon(pokemon)}
-              >
-                <Card
-                  id={pokemon.id}
-                  name={pokemon.name}
-                  image={pokemon.image}
-                  types={pokemon.types}
-                  life={pokemon.life}
-                  attack={pokemon.attack}
-                  moves={pokemon.moves}
-                />
+        {/* === CARD CAROUSEL SECTIOn === */}
+        <div className="carousel-wrapper">
+          <button className="carousel-arrow left" onClick={() => handleScroll('left')}>
+            &#10094;
+          </button>
+
+          <div className="container" ref={carouselRef}>
+            {isFetchingLocal ? (
+              // Render 12 Skeleton Loaders
+              Array.from({ length: 12 }).map((_, index) => (
+                <div key={index} className="card-wrapper">
+                  <CardSkeleton />
+                </div>
+              ))
+            ) : currentCards.length ? (
+              currentCards.map((pokemon, index) => (
+                <div
+                  key={pokemon.id}
+                  className="card-wrapper"
+                  style={{
+                    animation: 'card-pop-in 0.4s ease-out forwards',
+                    animationDelay: `${index * 0.04}s`,
+                    opacity: 0
+                  }}
+                  onClick={() => setSelectedPokemon(pokemon)}
+                >
+                  <Card
+                    id={pokemon.id}
+                    name={pokemon.name}
+                    image={pokemon.image}
+                    types={pokemon.types}
+                    life={pokemon.life}
+                    attack={pokemon.attack}
+                    moves={pokemon.moves}
+                  />
+                </div>
+              ))
+            ) : (
+              // Global Empty State if completely empty
+              <div className="global-empty-state">
+                <h2>404: POKÉMON NOT FOUND</h2>
+                <p>El Prof. Oak dice que no existe registro de esto.</p>
               </div>
-            ))
-          ) : (
-            // Global Empty State if completely empty
-            <div className="global-empty-state">
-              <h2>404: POKÉMON NOT FOUND</h2>
-              <p>El Prof. Oak dice que no existe registro de esto.</p>
-            </div>
-          )}
+            )}
+          </div>
+
+          <button className="carousel-arrow right" onClick={() => handleScroll('right')}>
+            &#10095;
+          </button>
         </div>
 
         {/* === PAGINATION === */}
