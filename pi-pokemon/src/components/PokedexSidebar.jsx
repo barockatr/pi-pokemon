@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import useGameStore from '../store/useGameStore';
 import { useNavigate } from 'react-router-dom';
 import './PokedexSidebar.css';
@@ -8,9 +8,21 @@ const PokedexSidebar = () => {
     const setIsPokedexOpen = useGameStore(state => state.setIsPokedexOpen);
     const allPokemons = useGameStore(state => state.allPokemons);
     const types = useGameStore(state => state.types);
-    const setPokemonForDetail = useGameStore(state => state.setPokemonForDetail);
     const setChallenger = useGameStore(state => state.setChallenger);
+    const pokemons = useGameStore(state => state.pokemons); // Para Spotlight
     const navigate = useNavigate();
+
+    // Lógica Carta del Día (Spotlight) reubicada del NavBar
+    const [spotlight, setSpotlight] = useState(null);
+
+    useEffect(() => {
+        if (pokemons && pokemons.length > 0) {
+            const sorted = [...pokemons].sort((a, b) => (b.attack || 0) - (a.attack || 0));
+            const topTen = sorted.slice(0, 10);
+            const random = topTen[Math.floor(Math.random() * topTen.length)];
+            setSpotlight(random);
+        }
+    }, [pokemons]);
 
     // Lógica del Entrenador
     const [capturedCount, setCapturedCount] = useState(0);
@@ -113,6 +125,21 @@ const PokedexSidebar = () => {
                             </span>
                         </div>
                     </div>
+
+                    {/* ⭐ CARTA DEL DÍA REUBICADA */}
+                    {spotlight && (
+                        <div className="sidebar-spotlight-card" onClick={() => handleSelectPokemon(spotlight)}>
+                            <div className="spotlight-holo" />
+                            <div className="spotlight-content">
+                                <img src={spotlight.image} alt={spotlight.name} className="spotlight-img" />
+                                <div className="spotlight-info">
+                                    <p className="spotlight-name-label">CARTA DEL DÍA</p>
+                                    <h4 className="spotlight-name">{spotlight.name}</h4>
+                                    <p className="spotlight-attack">⚔️ ATK {spotlight.attack}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Fase 2: Buscador Inteligente */}
                     <div className="pokedex-search-box">

@@ -7,20 +7,9 @@ import './NavBar.css';
 const NavBar = () => {
     const location = useLocation();
     // Spotlight logic
-    const [spotlight, setSpotlight] = useState(null);
     // FASE 3: Estado local de modal eliminado.
     const setPokemonForDetail = useGameStore(state => state.setPokemonForDetail);
-    const pokemons = useGameStore(state => state.pokemons);
     const setIsPokedexOpen = useGameStore(state => state.setIsPokedexOpen);
-
-    useEffect(() => {
-        if (pokemons && pokemons.length > 0) {
-            const sorted = [...pokemons].sort((a, b) => (b.attack || 0) - (a.attack || 0));
-            const topTen = sorted.slice(0, 10);
-            const random = topTen[Math.floor(Math.random() * topTen.length)];
-            setSpotlight(random);
-        }
-    }, [pokemons]);
 
     // Don't show NavBar on the Landing Page
     if (location.pathname === '/') return null;
@@ -45,21 +34,7 @@ const NavBar = () => {
                 </div>
             </Link>
 
-            {/* ⭐ CARTA DEL DÍA EN EL HEADER */}
-            {spotlight && (
-                <>
-                    <div className="spotlight-header-card" onClick={() => setPokemonForDetail(spotlight)}>
-                        <div className="spotlight-holo" />
-                        <div className="spotlight-content">
-                            <img src={spotlight.image} alt={spotlight.name} className="spotlight-img" />
-                            <div className="spotlight-info">
-                                <p className="spotlight-name">{spotlight.name}</p>
-                                <p className="spotlight-attack">⚔️ ATK: {spotlight.attack}</p>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            )}
+
         </nav>
     );
 };

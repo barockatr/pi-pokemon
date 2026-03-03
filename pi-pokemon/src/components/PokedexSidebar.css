@@ -142,6 +142,100 @@
     font-weight: 900;
 }
 
+/* ⭐ FASE 3: CARTA DEL DÍA (Spotlight Reubicada) */
+.sidebar-spotlight-card {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.9), rgba(10, 10, 15, 0.95));
+    border: 1px solid rgba(255, 204, 0, 0.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-spotlight-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(255, 204, 0, 0.2);
+    border-color: rgba(255, 204, 0, 0.6);
+}
+
+.sidebar-spotlight-card .spotlight-holo {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: holo-pass 3s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes holo-pass {
+    0% {
+        transform: rotate(45deg) translateY(-100%);
+    }
+
+    100% {
+        transform: rotate(45deg) translateY(100%);
+    }
+}
+
+.sidebar-spotlight-card .spotlight-content {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.sidebar-spotlight-card .spotlight-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+    transition: transform 0.3s ease;
+}
+
+.sidebar-spotlight-card:hover .spotlight-img {
+    transform: scale(1.1);
+}
+
+.sidebar-spotlight-card .spotlight-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.sidebar-spotlight-card .spotlight-name-label {
+    font-size: 0.55rem;
+    color: #fceb6a;
+    margin: 0 0 4px 0;
+    letter-spacing: 1px;
+}
+
+.sidebar-spotlight-card .spotlight-name {
+    font-size: 0.9rem;
+    color: white;
+    margin: 0 0 6px 0;
+    text-transform: capitalize;
+}
+
+.sidebar-spotlight-card .spotlight-attack {
+    font-size: 0.65rem;
+    color: #EE8130;
+    margin: 0;
+}
+
 /* Search Box */
 .pokedex-search-box {
     position: relative;
