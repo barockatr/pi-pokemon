@@ -97,12 +97,6 @@ const PokedexSidebar = () => {
             {/* Fase 1: Estructura y Diseño Visual */}
             <div className={`pokedex-sidebar ${isPokedexOpen ? 'open' : ''}`}>
                 <div className="pokedex-sidebar-header">
-                    <div className="pokedex-lens-container">
-                        <div className="pokedex-big-lens"></div>
-                        <div className="pokedex-sm-lens red"></div>
-                        <div className="pokedex-sm-lens yellow"></div>
-                        <div className="pokedex-sm-lens green"></div>
-                    </div>
                     <button className="pokedex-close-btn" onClick={() => setIsPokedexOpen(false)}>✖</button>
                 </div>
 

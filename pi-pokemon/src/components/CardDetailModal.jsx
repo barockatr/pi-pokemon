@@ -223,32 +223,35 @@ const CardDetailModal = ({ pokemon, onClose }) => {
                                 <img src={activeDisplayPokemon.image} alt={activeDisplayPokemon.name} className="cdm-image" />
                             </div>
 
-                            {/* CARD TYPES */}
-                            <div className="cdm-types">
-                                {activeDisplayPokemon.types && activeDisplayPokemon.types.map((t, i) => (
-                                    <span key={i} className="cdm-type-badge">{t}</span>
-                                ))}
-                            </div>
+                            {/* FASE 3: SCROLL AREA para Info Adicional */}
+                            <div className="cdm-scroll-area">
+                                {/* CARD TYPES */}
+                                <div className="cdm-types">
+                                    {activeDisplayPokemon.types && activeDisplayPokemon.types.map((t, i) => (
+                                        <span key={i} className="cdm-type-badge">{t}</span>
+                                    ))}
+                                </div>
 
-                            {/* MODULE 23: RADAR CHART STATS */}
-                            <div className="cdm-stats-radar">
-                                <ResponsiveContainer width="100%" height={150}>
-                                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-                                        <PolarGrid stroke="#fff" strokeOpacity={0.3} />
-                                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#333', fontSize: 10, fontWeight: 'bold' }} />
-                                        <Radar name="Stats" dataKey="A" stroke={solidColorHex} fill={glowColor} fillOpacity={0.7} />
-                                    </RadarChart>
-                                </ResponsiveContainer>
-                            </div>
+                                {/* MODULE 23: RADAR CHART STATS */}
+                                <div className="cdm-stats-radar">
+                                    <ResponsiveContainer width="100%" height={150}>
+                                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+                                            <PolarGrid stroke="#fff" strokeOpacity={0.3} />
+                                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#333', fontSize: 10, fontWeight: 'bold' }} />
+                                            <Radar name="Stats" dataKey="A" stroke={solidColorHex} fill={glowColor} fillOpacity={0.7} />
+                                        </RadarChart>
+                                    </ResponsiveContainer>
+                                </div>
 
-                            {/* EVOLUTION PATH INTEGRATION */}
-                            <EvolutionPath
-                                chain={currentEvolutionChain}
-                                isFetching={isFetchingEvolution}
-                                currentPokemonId={activeDisplayPokemon.id}
-                                primaryType={primaryType}
-                                onEvolutionClick={handleEvolutionClick}
-                            />
+                                {/* EVOLUTION PATH INTEGRATION */}
+                                <EvolutionPath
+                                    chain={currentEvolutionChain}
+                                    isFetching={isFetchingEvolution}
+                                    currentPokemonId={activeDisplayPokemon.id}
+                                    primaryType={primaryType}
+                                    onEvolutionClick={handleEvolutionClick}
+                                />
+                            </div>
 
                             {/* FOOTER & DECK BUILDER MODULE 22 */}
                             <div className="cdm-footer" style={{ position: 'relative', zIndex: 9999 }}>

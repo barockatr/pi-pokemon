@@ -72,22 +72,23 @@
 /* === 3D CARD CONTAINER (TILT NATIVE) === */
 .cdm-card {
     width: 320px;
-    max-height: 90vh;
-    /* RESTRICCIÓN VISUAL: No exceder la pantalla */
+    height: clamp(350px, 60vh, 500px);
+    /* FASE 3: Tamaño Dinámico */
+    max-height: 85vh;
+    /* FASE 3: Límite estricto de pantalla */
     border-radius: 18px;
     border: 4px solid #bba32e;
     padding: min(16px, 2.5vh);
-    /* Padding dinámico */
     display: flex;
     flex-direction: column;
     gap: min(12px, 1.5vh);
-    /* Gap dinámico  */
     cursor: default;
     position: relative;
     user-select: none;
     pointer-events: auto;
     box-sizing: border-box;
-    /* The card itself needs pointer-events for the hover/tilt effect to trigger */
+    overflow: hidden;
+    /* Mantener bordes limpios */
 }
 
 /* Parallax Tilt overrides */
@@ -162,6 +163,25 @@
 
 .cdm-card:hover .cdm-image {
     filter: drop-shadow(4px 8px 20px rgba(0, 0, 0, 0.6));
+}
+
+/* === INFO SCROLL AREA (FASE 3) === */
+.cdm-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: min(12px, 1.5vh);
+    padding-right: 5px;
+}
+
+.cdm-scroll-area::-webkit-scrollbar {
+    width: 4px;
+}
+
+.cdm-scroll-area::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
 }
 
 /* === TYPES BADGES === */
