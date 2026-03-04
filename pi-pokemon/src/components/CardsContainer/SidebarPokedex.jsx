@@ -98,7 +98,10 @@ const SidebarPokedex = ({ setCurrentPage, onToggle }) => {
                 <div className="sidebar-header">
                     <h2>Pokédex OS</h2>
                     <div className="search-wrapper">
+                        <label htmlFor="pokedexSearch" className="sr-only" style={{ display: 'none' }}>Buscar Pokémon</label>
                         <input
+                            id="pokedexSearch"
+                            name="pokedexSearch"
                             type="text"
                             placeholder="Buscar Pokémon..."
                             className="fuzzy-search-input"

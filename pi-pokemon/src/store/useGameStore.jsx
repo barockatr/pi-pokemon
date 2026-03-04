@@ -5,7 +5,7 @@ import { shuffleArray } from '../utils/shuffle';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 if (!import.meta.env.VITE_API_URL) {
-    console.warn("⚠️ [Zustand Warn] VITE_API_URL no está definida. Fallback a http://localhost:3001 activo. Si esto es producción, las peticiones fallarán.");
+    // Fallback silencioso a localhost
 } else {
     console.log(`[Vite Env Vercel] Inicializando Store. API Target:`, API_URL);
 }
@@ -21,6 +21,7 @@ const useGameStore = create((set, get) => ({
     challenger: null,
     globalError: false,
     errorMessage: "",
+    hasMore: true, // Freno de Seguridad
 
     // Module 16: Evolution State
     currentEvolutionChain: [],
@@ -34,21 +35,45 @@ const useGameStore = create((set, get) => ({
             const shuffled = shuffleArray(data);
 
             set((state) => {
+                // Fila de seguridad: Si el array viene vacío o no trae elementos suficientes
+                if (shuffled.length === 0) {
+                    return { hasMore: false };
+                }
+
+                // Limpieza completa si es la página 1 para permitir nuevas búsquedas/reinicios
+                if (page === 1) {
+                    return {
+                        pokemons: [...shuffled],
+                        allPokemons: [...shuffled],
+                        globalError: false,
+                        errorMessage: "",
+                        hasMore: true
+                    };
+                }
+
+                // Filtrar duplicados: Atomicidad garantizada al usar 'state' actual
                 const newIds = new Set(state.pokemons.map(p => p.id));
                 const filteredNew = shuffled.filter(p => !newIds.has(p.id));
 
+                // Si no hay elementos nuevos tras filtrar repetidos, también apagamos el hasMore
+                if (filteredNew.length === 0) {
+                    return { hasMore: false };
+                }
+
                 return {
-                    pokemons: page === 1 ? shuffled : [...state.pokemons, ...filteredNew],
-                    allPokemons: page === 1 ? shuffled : [...state.allPokemons, ...filteredNew],
+                    pokemons: [...state.pokemons, ...filteredNew],
+                    allPokemons: [...state.allPokemons, ...filteredNew],
                     globalError: false,
-                    errorMessage: ""
+                    errorMessage: "",
+                    hasMore: true
                 };
             });
         } catch (error) {
             console.error("Error fetching pokemons:", error);
             set({
                 globalError: true,
-                errorMessage: "El Centro Pokémon está fuera de servicio. Intenta más tarde."
+                errorMessage: "El Centro Pokémon está fuera de servicio. Intenta más tarde.",
+                hasMore: false
             });
         }
     },
@@ -218,6 +243,18 @@ const useGameStore = create((set, get) => ({
 
     clearGlobalError: () => {
         set({ globalError: false, errorMessage: "" });
+    },
+
+    // --- 5. ACCIONES AVANZADAS ---
+    resetPokedex: () => {
+        set({
+            hasMore: true,
+            pokemons: [],
+            allPokemons: [],
+            globalError: false,
+            errorMessage: ""
+        });
+        get().getPokemons(1);
     }
 }));
 
