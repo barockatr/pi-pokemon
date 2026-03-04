@@ -35,16 +35,16 @@
 }
 
 .dt-50 {
-    width: 55px;
-    height: 55px;
-    font-size: 1.4rem;
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
     z-index: 52;
 }
 
 .dt-10 {
-    width: 40px;
-    height: 40px;
-    font-size: 1.1rem;
+    width: 25px;
+    height: 25px;
+    font-size: 0.7rem;
     z-index: 51;
 }
 
@@ -66,37 +66,40 @@
 .duel-arena-container.tactical-mode {
     position: fixed;
     inset: 0;
+    width: 100vw;
+    height: 100vh;
     background: radial-gradient(circle at center, #1e212b 0%, #0a0b10 100%);
     z-index: 9999;
     display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    flex-direction: row;
+    overflow: hidden !important;
 }
 
-/* AREA 1: 3D Viewport (75% height) */
+/* AREA 1: 3D Viewport */
 .arena-viewport {
-    flex: 1;
+    width: 100vw;
+    height: 100vh;
     display: -webkit-flex;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Módulo 3: Perspective Afinada para Vista de Entrenador */
-    -webkit-perspective: 1500px;
-    perspective: 1500px;
+    /* Fase 3: Perspective Ajustada */
+    -webkit-perspective: 1200px;
+    perspective: 1200px;
     position: relative;
-    padding-bottom: 20px;
 }
 
 .playmat-board {
-    width: 95vw;
-    max-width: 1000px;
-    height: 90%;
+    width: 100%;
+    max-width: 1200px;
+    height: 100vh;
     position: relative;
+    margin: 0 auto;
 
-    /* Isometric/Perspective Transform - Afinada */
-    -webkit-transform: rotateX(60deg) translateY(-50px) translateZ(-50px);
-    -ms-transform: rotateX(60deg) translateY(-50px) translateZ(-50px);
-    transform: rotateX(60deg) translateY(-50px) translateZ(-50px);
+    /* Fase 3: Isometric/Perspective Transform - Menos inclinación, más "Mesa eSports" */
+    -webkit-transform: rotateX(35deg) translateY(0) translateZ(-50px);
+    -ms-transform: rotateX(35deg) translateY(0) translateZ(-50px);
+    transform: rotateX(35deg) translateY(0) translateZ(-50px);
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
 
@@ -118,6 +121,13 @@
     flex-direction: column;
     overflow: hidden;
     /* Mantener pseudo-elementos dentro */
+}
+
+/* Fase 2: Reducción de Cartas en Tablero */
+.playmat-board .tcg-card {
+    max-height: 280px;
+    transform: scale(0.7);
+    transform-origin: center center;
 }
 
 /* Módulo 3: Anillos/Marcas Holográficas del Estadio */
@@ -306,7 +316,8 @@
 /* Mod 1: Indicators and Dock UI */
 .dock-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    /* Centramos el título ahora que el HUD flotante salió */
     align-items: center;
     width: 100%;
     margin-bottom: 10px;
@@ -314,44 +325,58 @@
     box-sizing: border-box;
 }
 
+/* Fase 1: HUD Flotante - Indicador de Turno */
 .turn-indicator {
-    font-size: 1.2rem;
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    z-index: 10005;
+    font-size: 0.8rem;
     font-weight: 800;
-    padding: 8px 20px;
+    padding: 5px 15px;
     border-radius: 20px;
     letter-spacing: 1px;
     text-transform: uppercase;
     transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    background: rgba(20, 20, 35, 0.65) !important;
+    backdrop-filter: blur(15px) saturate(180%);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .turn-indicator.player-turn {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    border: 2px solid #34d399;
+    color: #34d399;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .turn-indicator.opponent-turn {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
-    border: 2px solid #f87171;
+    color: #f87171;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* Fase 1: HUD Flotante - Botón Terminar Turno */
 .end-turn-btn {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    position: fixed;
+    bottom: 150px;
+    right: calc(15vw + 40px);
+    /* Fase 3: HUD Cushion */
+    transform: none;
+    z-index: 10005;
     color: white;
     font-weight: bold;
     font-family: 'Outfit', sans-serif;
-    border: 2px solid #fbbf24;
-    padding: 10px 24px;
+    padding: 8px 16px;
+    width: auto;
+    font-size: 0.85rem;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
     letter-spacing: 1px;
+    background: rgba(20, 20, 35, 0.65) !important;
+    backdrop-filter: blur(15px) saturate(180%);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .end-turn-btn:hover {
@@ -367,7 +392,7 @@
 .escape-btn-floating {
     position: absolute;
     top: 20px;
-    right: 20px;
+    right: calc(15vw + 20px);
     background: rgba(0, 0, 0, 0.6);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -384,51 +409,56 @@
     border-color: #ef4444;
 }
 
-/* AREA 2: 2D Player Dock (Bottom ~25%) */
+/* AREA 2: Holographic Side-Deck (Right Sidebar) */
 .player-dock-2d {
-    height: 25vh;
-    min-height: 220px;
-    background: linear-gradient(to bottom, #111, #000);
-    border-top: 3px solid #bba32e;
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8);
-    position: relative;
+    width: 15vw;
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    top: 0;
+    background: rgba(10, 10, 20, 0.5) !important;
+    backdrop-filter: blur(25px) saturate(200%) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-top: none;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5), -15px 0 35px rgba(0, 0, 0, 0.6);
     z-index: 10001;
-    /* Flotar por encima del viewport */
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    padding: 10px 20px;
+    padding: 20px 0;
+    overflow: visible !important;
 }
 
-.dock-title {
-    color: #ffd700;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.8rem;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-    margin-bottom: 10px;
-    letter-spacing: 2px;
+/* Fase 4: Micro-detalle de Escaneo (Scanlines) */
+.player-dock-2d::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 4px, 3px 100%;
 }
 
 .hand-cards-container {
+    height: 55vh;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    padding: 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: -15px;
     width: 100%;
-    height: 100%;
-    overflow-x: auto;
-    padding-bottom: 15px;
-
-    /* Scroll horizontal fluido para Mobile */
-    white-space: nowrap;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible !important;
 }
 
-/* Mod 4: Ocultar scrollbar si no te apetece */
+/* Ocultar scrollbar si no te apetece */
 .hand-cards-container::-webkit-scrollbar {
-    height: 6px;
+    width: 6px;
 }
 
 .hand-cards-container::-webkit-scrollbar-thumb {
@@ -437,33 +467,65 @@
 }
 
 .dock-card-wrapper {
-    /* Scale down slightly to fit the dock neatly */
-    transform: scale(0.65);
-    transform-origin: top center;
-    margin: -50px -40px;
-    /* Counteract space taken by scale */
-    display: inline-block;
-    /* Para nowrap */
-    scroll-snap-align: center;
+    /* Fase 2: Escala de "Recurso" Premium */
+    transform: scale(0.28) rotate(-5deg);
+    margin-bottom: -40px;
+    transform-origin: center center;
+    display: block;
+    opacity: 0.9;
+    /* Fase 3: Estética de Mano de Cartas */
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), z-index 0s 0.1s, opacity 0.3s ease;
+}
+
+/* Fase 3: Efecto Abanico Sidebar Sutil */
+.staggered-entrance:nth-child(1) .dock-card-wrapper {
+    transform: scale(0.28) rotate(-4deg) translateX(-5px);
+}
+
+.staggered-entrance:nth-child(2) .dock-card-wrapper {
+    transform: scale(0.28) rotate(-2deg) translateX(-2px);
+}
+
+.staggered-entrance:nth-child(3) .dock-card-wrapper {
+    transform: scale(0.28) rotate(0deg) translateX(0);
+}
+
+.staggered-entrance:nth-child(4) .dock-card-wrapper {
+    transform: scale(0.28) rotate(1deg) translateX(0);
+}
+
+.staggered-entrance:nth-child(5) .dock-card-wrapper {
+    transform: scale(0.28) rotate(3deg) translateX(-2px);
+}
+
+.staggered-entrance:nth-child(6) .dock-card-wrapper {
+    transform: scale(0.28) rotate(5deg) translateX(-5px);
 }
 
 /* --- Módulo 2: Efectos de Selección (Hover Premium) --- */
 .tactical-hover {
-    -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), -webkit-box-shadow 0.3s ease;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     border-radius: 12px;
     /* Smooth corners for shadow */
     will-change: transform, box-shadow;
 }
 
 .tactical-hover:hover {
-    -webkit-transform: translateY(-30px) scale(1.1);
-    -ms-transform: translateY(-30px) scale(1.1);
-    transform: translateY(-30px) scale(1.1);
-    z-index: 10;
-    /* Usa la variable inyectada en React, con fallback a amarillo */
+    /* Fase 2: El Salto al Centro Absoluto (Hover Magic) */
+    position: fixed;
+    top: 50%;
+    right: 35vw;
+    -webkit-transform: translate(0, -50%) scale(1.0) !important;
+    -ms-transform: translate(0, -50%) scale(1.0) !important;
+    transform: translate(0, -50%) scale(1.0) !important;
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: 2000000 !important;
     -webkit-box-shadow: 0 0 25px 5px var(--card-glow, #bba32e);
     box-shadow: 0 0 25px 5px var(--card-glow, #bba32e);
+    -webkit-filter: brightness(1.1) drop-shadow(-15px 0px 20px rgba(0, 0, 0, 0.7));
+    filter: brightness(1.1) drop-shadow(-15px 0px 20px rgba(0, 0, 0, 0.7));
+    opacity: 1.0 !important;
 }
 
 .tactical-glow-layer {
@@ -471,6 +533,11 @@
     height: 100%;
     border-radius: inherit;
     /* Optional inner glow layer if needed for more fidelity */
+}
+
+/* Fase 3: Menú Táctico Infalible */
+.card-context-menu {
+    z-index: 1000000 !important;
 }
 
 /* Pokemon Type Colors para Neon Shadows */

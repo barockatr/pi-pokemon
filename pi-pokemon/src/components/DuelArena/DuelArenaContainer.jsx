@@ -363,32 +363,26 @@ const DuelArenaContainer = () => {
                 </div>
             </div>
 
+            {/* INDICADOR DE TURNO (HUD Flotante Fase 1) */}
+            <div className={`turn-indicator ${turnPlayer === PLAYERS.PLAYER ? 'player-turn' : 'opponent-turn'}`}>
+                {turnPlayer === PLAYERS.PLAYER ? '🟢 Tu Turno' : '🔴 Turno Rival'}
+            </div>
+
+            {/* BOTÓN TERMINAR TURNO (HUD Flotante Fase 1) */}
+            <button
+                className={`end-turn-btn ${turnPlayer === PLAYERS.PLAYER ? '' : 'hidden-btn'}`}
+                style={{ opacity: turnPlayer === PLAYERS.PLAYER ? 1 : 0, pointerEvents: turnPlayer === PLAYERS.PLAYER ? 'auto' : 'none' }}
+                onClick={() => {
+                    console.log("Cambiando turno a OPPONENT");
+                    passTurn();
+                }}
+                disabled={isFsmPaused || turnPlayer !== PLAYERS.PLAYER}
+            >
+                Terminar Turno
+            </button>
+
             {/* AREA 2: 2D PLAYER DOCK (Bottom 25%) */}
             <div className="player-dock-2d">
-                <div className="dock-header">
-                    {/* Indicador de Turno (Módulo 2: Movido a la Izquierda) */}
-                    <div className={`turn-indicator ${turnPlayer === PLAYERS.PLAYER ? 'player-turn' : 'opponent-turn'}`}>
-                        {turnPlayer === PLAYERS.PLAYER ? '🟢 Tu Turno' : '🔴 Turno Rival'}
-                    </div>
-
-                    <div className="dock-title">Mano Táctica</div>
-
-                    {/* Botón de Terminar Turno (Módulo 2: Alineado a la Derecha por Flex Space-Between) */}
-                    <div style={{ minWidth: '150px', textAlign: 'right' }}>
-                        <button
-                            className={`end-turn-btn ${turnPlayer === PLAYERS.PLAYER ? '' : 'hidden-btn'}`}
-                            style={{ opacity: turnPlayer === PLAYERS.PLAYER ? 1 : 0, pointerEvents: turnPlayer === PLAYERS.PLAYER ? 'auto' : 'none' }}
-                            onClick={() => {
-                                console.log("Cambiando turno a OPPONENT");
-                                passTurn();
-                            }}
-                            disabled={isFsmPaused || turnPlayer !== PLAYERS.PLAYER}
-                        >
-                            Terminar Turno
-                        </button>
-                    </div>
-                </div>
-
                 <div className="hand-cards-container">
                     {playerHand.map((card, index) => {
                         // Módulo 2: Type Colors for Neon Shadow
