@@ -16,14 +16,6 @@ const NavBar = () => {
 
     return (
         <nav className="global-navbar">
-            <button
-                className="navbar-search-btn"
-                onClick={() => setIsPokedexOpen(true)}
-                title="Búsqueda Global"
-            >
-                🔍
-            </button>
-
             <Link to="/home" className="navbar-logo-link" style={{ textDecoration: 'none' }}>
                 <div className="navbar-logo">
                     <img
@@ -34,7 +26,13 @@ const NavBar = () => {
                 </div>
             </Link>
 
-
+            <button
+                className="navbar-search-btn"
+                onClick={() => setIsPokedexOpen(true)}
+                title="Búsqueda Global"
+            >
+                🔍
+            </button>
         </nav>
     );
 };

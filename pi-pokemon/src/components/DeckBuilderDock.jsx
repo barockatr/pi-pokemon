@@ -82,7 +82,7 @@ const DeckBuilderDock = () => {
                         </div>
                     </button>
                     {isDeckFull ? (
-                        <button className="dock-duel-btn active pulse-animation" onClick={handleStartDuel}>
+                        <button className="dock-duel-btn active duelo-ready" onClick={handleStartDuel}>
                             ¡DUELO! ⚔️
                         </button>
                     ) : (

@@ -210,32 +210,7 @@
     }
 }
 
-/* === PAGINATION === */
-.handlePageContainer {
-    display: flex;
-    justify-content: center;
-    margin: 20px;
-    gap: 5px;
-}
 
-.handlePageButton {
-    padding: 5px 10px;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    transition: background 0.2s;
-}
-
-.handlePageButton:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.handlePageButton.active {
-    background: linear-gradient(135deg, #6390F0, #134ba8);
-    border-color: #6390F0;
-    color: white;
-}
 
 /* === STAGGERED CARD ENTRY ANIMATION === */
 @keyframes card-pop-in {

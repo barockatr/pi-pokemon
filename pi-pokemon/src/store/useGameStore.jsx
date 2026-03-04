@@ -27,17 +27,22 @@ const useGameStore = create((set, get) => ({
     isFetchingEvolution: false,
 
     // --- 2. ACCIONES ASÍNCRONAS (Ex-Thunks) ---
-    getPokemons: async () => {
+    getPokemons: async (page = 1) => {
         try {
-            const { data } = await axios.get(`${API_URL}/pokemons`);
+            const { data } = await axios.get(`${API_URL}/pokemons?page=${page}`);
             // Módulo 2: Inyección de Aleatoriedad Real (Fisher-Yates) pura
             const shuffled = shuffleArray(data);
 
-            set({
-                pokemons: shuffled,
-                allPokemons: shuffled,
-                globalError: false,
-                errorMessage: ""
+            set((state) => {
+                const newIds = new Set(state.pokemons.map(p => p.id));
+                const filteredNew = shuffled.filter(p => !newIds.has(p.id));
+
+                return {
+                    pokemons: page === 1 ? shuffled : [...state.pokemons, ...filteredNew],
+                    allPokemons: page === 1 ? shuffled : [...state.allPokemons, ...filteredNew],
+                    globalError: false,
+                    errorMessage: ""
+                };
             });
         } catch (error) {
             console.error("Error fetching pokemons:", error);

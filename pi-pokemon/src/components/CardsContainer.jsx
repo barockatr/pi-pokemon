@@ -15,18 +15,18 @@ const CardsContainer = () => {
   const [isFetchingLocal, setIsFetchingLocal] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageCount, setPageCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const sentinelRef = useRef(null);
+
   // FASE 3: Estado local de modal eliminado.
   const setPokemonForDetail = useGameStore((state) => state.setPokemonForDetail);
-  const cardsPerPage = 12;
 
   // Carousel Hooks
   const carouselRef = useRef(null);
 
   const handleScroll = (direction) => {
     if (carouselRef.current) {
-      const scrollAmount = 350 + 32; // Card width + gap (approx)
+      const scrollAmount = 800; // Phase 4 spec: infinite horizontal flow
       carouselRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
@@ -35,41 +35,36 @@ const CardsContainer = () => {
   };
 
   useEffect(() => {
-    // Artificial 600ms loader to guarantee smooth Skeleton showcase since local fetch is too fast
-    setIsFetchingLocal(true);
-    getPokemon().then(() => {
-      setTimeout(() => setIsFetchingLocal(false), 600);
-    });
-  }, [getPokemon]);
+    if (page === 1) {
+      setIsFetchingLocal(true);
+      getPokemon(1).then(() => {
+        setTimeout(() => setIsFetchingLocal(false), 600);
+      });
+    } else {
+      getPokemon(page);
+    }
+  }, [page, getPokemon]);
 
   useEffect(() => {
-    setPageCount(Math.ceil(pokemons.length / cardsPerPage));
-  }, [pokemons.length, cardsPerPage]);
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !isFetchingLocal) {
+        setPage((prev) => prev + 1);
+      }
+    }, { threshold: 0.1 });
 
-  const handleNextClick = () => {
-    if (currentPage < pageCount - 1) setCurrentPage(currentPage + 1);
-  };
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) observer.observe(currentSentinel);
 
-  const handlePrevClick = () => {
-    if (currentPage > 0) setCurrentPage(currentPage - 1);
-  };
-
-  const currentCards = pokemons.slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage);
+    return () => {
+      if (currentSentinel) observer.unobserve(currentSentinel);
+    };
+  }, [isFetchingLocal]);
 
   return (
     <div style={{ minHeight: '100vh', width: '100%' }}>
 
       {/* Main Grid Content - Full Width Gallery */}
       <div className={`pokedex-grid-wrapper gallery-mode`}>
-
-        {/* === FLOATING POKÉDEX BUTTON (bottom-right) === */}
-        <button
-          className="floating-pokedex-btn"
-          onClick={() => setTutorialOpen(true)}
-          title="Abrir Pokédex TCG"
-        >
-          📱
-        </button>
 
         {/* === MAIN CARD GRID (Now handled globally by HomePage) === */}
 
@@ -80,36 +75,40 @@ const CardsContainer = () => {
           </button>
 
           <div className="container" ref={carouselRef}>
-            {isFetchingLocal ? (
+            {isFetchingLocal && page === 1 ? (
               // Render 12 Skeleton Loaders
               Array.from({ length: 12 }).map((_, index) => (
                 <div key={index} className="card-wrapper">
                   <CardSkeleton />
                 </div>
               ))
-            ) : currentCards.length ? (
-              currentCards.map((pokemon, index) => (
-                <div
-                  key={pokemon.id}
-                  className="card-wrapper"
-                  style={{
-                    animation: 'card-pop-in 0.4s ease-out forwards',
-                    animationDelay: `${index * 0.04}s`,
-                    opacity: 0
-                  }}
-                  onClick={() => setPokemonForDetail(pokemon)}
-                >
-                  <Card
-                    id={pokemon.id}
-                    name={pokemon.name}
-                    image={pokemon.image}
-                    types={pokemon.types}
-                    life={pokemon.life}
-                    attack={pokemon.attack}
-                    moves={pokemon.moves}
-                  />
-                </div>
-              ))
+            ) : pokemons.length ? (
+              <>
+                {pokemons.map((pokemon, index) => (
+                  <div
+                    key={`${pokemon.id}-${index}`}
+                    className="card-wrapper"
+                    style={{
+                      animation: 'card-pop-in 0.4s ease-out forwards',
+                      animationDelay: `${(index % 12) * 0.04}s`,
+                      opacity: 0
+                    }}
+                    onClick={() => setPokemonForDetail(pokemon)}
+                  >
+                    <Card
+                      id={pokemon.id}
+                      name={pokemon.name}
+                      image={pokemon.image}
+                      types={pokemon.types}
+                      life={pokemon.life}
+                      attack={pokemon.attack}
+                      moves={pokemon.moves}
+                    />
+                  </div>
+                ))}
+                {/* Centinela Invisible */}
+                <div ref={sentinelRef} style={{ minWidth: '20px', height: '100%' }}></div>
+              </>
             ) : (
               // Global Empty State if completely empty
               <div className="global-empty-state">
@@ -124,26 +123,7 @@ const CardsContainer = () => {
           </button>
         </div>
 
-        {/* === PAGINATION === */}
-        {pokemons.length > 0 && (
-          <div className="handlePageContainer">
-            <button disabled={currentPage === 0} onClick={handlePrevClick} className="handlePageButton">
-              {'<'}
-            </button>
-            {Array.from({ length: pageCount }).map((_, index) => (
-              <button
-                key={index}
-                className={`handlePageButton ${currentPage === index ? 'active' : ''}`}
-                onClick={() => setCurrentPage(index)}
-              >
-                {index + 1}
-              </button>
-            ))}
-            <button disabled={currentPage === pageCount - 1} onClick={handleNextClick} className="handlePageButton">
-              {'>'}
-            </button>
-          </div>
-        )}
+        {/* Pagination removed - Infinite carousel applied */}
 
       </div> {/* CLose Grid Wrapper */}
     </div>
