@@ -105,15 +105,13 @@ const PokedexSidebar = () => {
                 onClick={() => setIsPokedexOpen(false)}
             />
 
-            {/* Fase 1: Estructura y Diseño Visual */}
             <div className={`pokedex-sidebar ${isPokedexOpen ? 'open' : ''}`}>
-                <div className="pokedex-sidebar-header">
-                    <button className="pokedex-close-btn" onClick={() => setIsPokedexOpen(false)}>✖</button>
-                </div>
 
-                <div className="pokedex-sidebar-content">
-                    {/* Trainer Status Profile Segment */}
-                    <div className="sidebar-trainer-status">
+                {/* ================================================================ */}
+                {/* 🎩 FASE 1 — TRAINER HEADER: cima absoluta, fila con botón X      */}
+                {/* ================================================================ */}
+                <div className="pokedex-trainer-header">
+                    <div className="trainer-identity-row">
                         <div className="trainer-avatar">🧢</div>
                         <div className="trainer-info">
                             <span className="trainer-label">ENTRENADOR Nv.{level}</span>
@@ -125,21 +123,19 @@ const PokedexSidebar = () => {
                             </span>
                         </div>
                     </div>
+                    <button
+                        className="pokedex-close-btn"
+                        onClick={() => setIsPokedexOpen(false)}
+                        aria-label="Cerrar Pokédex"
+                    >
+                        ✖
+                    </button>
+                </div>
 
-                    {/* ⭐ CARTA DEL DÍA REUBICADA */}
-                    {spotlight && (
-                        <div className="sidebar-spotlight-card" onClick={() => handleSelectPokemon(spotlight)}>
-                            <div className="spotlight-holo" />
-                            <div className="spotlight-content">
-                                <img src={spotlight.image} alt={spotlight.name} className="spotlight-img" />
-                                <div className="spotlight-info">
-                                    <p className="spotlight-name-label">CARTA DEL DÍA</p>
-                                    <h4 className="spotlight-name">{spotlight.name}</h4>
-                                    <p className="spotlight-attack">⚔️ ATK {spotlight.attack}</p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                {/* ================================================================ */}
+                {/* ⚔️ FASE 2 — CUERPO CENTRAL: Buscador + Filtros + Lista           */}
+                {/* ================================================================ */}
+                <div className="pokedex-sidebar-content">
 
                     {/* Fase 2: Buscador Inteligente */}
                     <div className="pokedex-search-box">
@@ -155,7 +151,7 @@ const PokedexSidebar = () => {
                     {/* Fase 3: Sistema de Filtros Avanzado */}
                     <div className="pokedex-filters">
                         <div className="filter-group">
-                            <label>Origen:</label>
+                            <label>ORIGEN:</label>
                             <div className="toggle-group">
                                 <button className={originFilter === 'all' ? 'active' : ''} onClick={() => setOriginFilter('all')}>Todos</button>
                                 <button className={originFilter === 'official' ? 'active' : ''} onClick={() => setOriginFilter('official')}>Oficiales</button>
@@ -164,7 +160,7 @@ const PokedexSidebar = () => {
                         </div>
 
                         <div className="filter-group">
-                            <label>Poder:</label>
+                            <label>PODER:</label>
                             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                                 <option value="">Ordenar por...</option>
                                 <option value="atk-desc">Mayor Ataque (ATK)</option>
@@ -175,7 +171,7 @@ const PokedexSidebar = () => {
                         </div>
 
                         <div className="filter-group">
-                            <label>Tipo:</label>
+                            <label>TIPO:</label>
                             <div className="type-pills">
                                 <button
                                     className={`type-pill ${selectedType === 'all' ? 'active' : ''}`}
@@ -227,6 +223,27 @@ const PokedexSidebar = () => {
                         )}
                     </div>
                 </div>
+
+                {/* ================================================================ */}
+                {/* 🃏 FASE 3 — FOOTER: Carta del Día (Panel de Previsualización)    */}
+                {/* ================================================================ */}
+                {spotlight && (
+                    <div
+                        className="sidebar-spotlight-footer"
+                        onClick={() => handleSelectPokemon(spotlight)}
+                    >
+                        <div className="spotlight-holo" />
+                        <div className="spotlight-content">
+                            <img src={spotlight.image} alt={spotlight.name} className="spotlight-img" />
+                            <div className="spotlight-info">
+                                <p className="spotlight-name-label">CARTA DEL DÍA</p>
+                                <h4 className="spotlight-name">{spotlight.name}</h4>
+                                <p className="spotlight-attack">⚔️ ATK {spotlight.attack}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
             </div>
         </>
     );

@@ -72,38 +72,40 @@
     z-index: 9999;
     display: flex;
     flex-direction: row;
+    align-items: stretch;
     overflow: hidden !important;
 }
 
-/* AREA 1: 3D Viewport */
+/* AREA 1: 3D Viewport - flex:1 para dejar espacio al sidebar */
 .arena-viewport {
-    width: 100vw;
+    flex: 1;
+    min-width: 0;
     height: 100vh;
     display: -webkit-flex;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Fase 3: Perspective Ajustada */
-    -webkit-perspective: 1200px;
-    perspective: 1200px;
+    -webkit-perspective: 900px;
+    perspective: 900px;
     position: relative;
+    overflow: hidden;
 }
 
 .playmat-board {
     width: 100%;
-    max-width: 1200px;
-    height: 100vh;
+    max-width: 860px;
+    /* FIX: Altura reducida para encajar en pantalla a 100% */
+    height: calc(100vh - 20px);
     position: relative;
     margin: 0 auto;
 
-    /* Fase 3: Isometric/Perspective Transform - Menos inclinación, más "Mesa eSports" */
-    -webkit-transform: rotateX(35deg) translateY(0) translateZ(-50px);
-    -ms-transform: rotateX(35deg) translateY(0) translateZ(-50px);
-    transform: rotateX(35deg) translateY(0) translateZ(-50px);
+    /* Perspectiva 3D ajustada - menos inclinación para encajar */
+    -webkit-transform: rotateX(28deg) translateY(-40px) translateZ(-30px);
+    -ms-transform: rotateX(28deg) translateY(-40px) translateZ(-30px);
+    transform: rotateX(28deg) translateY(-40px) translateZ(-30px);
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
 
-    /* Módulo 3: Foco de Luz Central (Radial Gradient dinámico por Tipo) y Board Texture */
     background:
         -webkit-radial-gradient(center, circle, var(--arena-glow, rgba(50, 70, 100, 0.4)) 0%, rgba(10, 10, 15, 0.9) 70%),
         radial-gradient(circle at center, var(--arena-glow, rgba(50, 70, 100, 0.4)) 0%, rgba(10, 10, 15, 0.9) 70%),
@@ -120,15 +122,47 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    /* Mantener pseudo-elementos dentro */
 }
 
-/* Fase 2: Reducción de Cartas en Tablero */
+/* === ARENA: Carta compacta con zoom real (afecta layout) === */
 .playmat-board .tcg-card {
-    max-height: 280px;
-    transform: scale(0.7);
-    transform-origin: center center;
+    zoom: 0.55;
+    /* zoom SÍ reduce el espacio en layout (a diferencia de scale) */
+    height: auto !important;
+    /* dejar que la altura se adapte al contenido */
+    flex-shrink: 0;
 }
+
+/* Reducir imagen para que la carta quepa sin clipping */
+.playmat-board .tcg-image-container {
+    height: 90px !important;
+    margin-bottom: 4px !important;
+}
+
+/* Ocultar flavor text y footer en arena para ahorrar espacio */
+.playmat-board .tcg-flavor-text {
+    display: none !important;
+}
+
+/* Reducir fuente del header */
+.playmat-board .tcg-header h3 {
+    font-size: 0.9rem !important;
+}
+
+/* Movimientos más pequeños */
+.playmat-board .tcg-moves {
+    gap: 4px !important;
+    margin-top: 2px !important;
+}
+
+.playmat-board .tcg-move-name {
+    font-size: 0.75rem !important;
+}
+
+.playmat-board .tcg-move-damage {
+    font-size: 0.85rem !important;
+}
+
 
 /* Módulo 3: Anillos/Marcas Holográficas del Estadio */
 .playmat-board::before {
@@ -222,17 +256,17 @@
     box-shadow: inset 0 0 20px rgba(135, 206, 250, 0.05);
 }
 
-/* Mod 1: Graveyard positioning */
+/* Mod 1: Active zone ocupa más espacio para mostrar la carta activa sin clipping */
 .active-zone {
-    flex: 2;
-    /* Active is larger */
+    flex: 3;
 }
 
 .bench-zone {
-    flex: 3;
-    /* Módulo 3: Bench Glowing Dash */
+    flex: 2;
+    /* Bench más pequeño — cartas pequeñas no necesitan tanto espacio */
     border: 2px dashed rgba(255, 255, 255, 0.1);
     background: linear-gradient(to top, rgba(255, 255, 255, 0.02), transparent);
+    overflow: visible;
 }
 
 .graveyard-zone {
@@ -308,9 +342,9 @@
 }
 
 .playmat-board .interactive-card:hover {
-    -webkit-transform: rotateX(-20deg) translateY(-40px) scale(1.1);
-    -ms-transform: rotateX(-20deg) translateY(-40px) scale(1.1);
-    transform: rotateX(-20deg) translateY(-40px) scale(1.1);
+    -webkit-transform: rotateX(-15deg) translateY(-25px) scale(1.05);
+    -ms-transform: rotateX(-15deg) translateY(-25px) scale(1.05);
+    transform: rotateX(-15deg) translateY(-25px) scale(1.05);
 }
 
 /* Mod 1: Indicators and Dock UI */
@@ -357,9 +391,8 @@
 /* Fase 1: HUD Flotante - Botón Terminar Turno */
 .end-turn-btn {
     position: fixed;
-    bottom: 150px;
-    right: calc(15vw + 40px);
-    /* Fase 3: HUD Cushion */
+    bottom: 160px;
+    right: 20px;
     transform: none;
     z-index: 10005;
     color: white;
@@ -390,16 +423,16 @@
 }
 
 .escape-btn-floating {
-    position: absolute;
+    position: fixed;
     top: 20px;
-    right: calc(15vw + 20px);
+    right: 20px;
     background: rgba(0, 0, 0, 0.6);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 8px 16px;
     border-radius: 20px;
     cursor: pointer;
-    z-index: 100;
+    z-index: 10005;
     backdrop-filter: blur(5px);
     transition: all 0.3s;
 }
@@ -409,24 +442,25 @@
     border-color: #ef4444;
 }
 
-/* AREA 2: Holographic Side-Deck (Right Sidebar) */
+/* AREA 2: Holographic Side-Deck (Right Sidebar) -- ahora flex child real */
 .player-dock-2d {
-    width: 15vw;
+    width: 200px;
+    min-width: 180px;
+    flex-shrink: 0;
     height: 100vh;
-    position: fixed;
-    right: 0;
-    top: 0;
-    background: rgba(10, 10, 20, 0.5) !important;
+    position: relative;
+    /* FIX: ya no es fixed, participa en el flujo flex */
+    background: rgba(10, 10, 20, 0.75) !important;
     backdrop-filter: blur(25px) saturate(200%) !important;
     border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
     border-top: none;
-    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5), -15px 0 35px rgba(0, 0, 0, 0.6);
-    z-index: 10001;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5), -10px 0 25px rgba(0, 0, 0, 0.5);
+    z-index: 100;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px 0;
+    padding: 16px 0;
     overflow: visible !important;
 }
 
@@ -441,90 +475,100 @@
 }
 
 .hand-cards-container {
-    height: 55vh;
+    /* FIX: Usar toda la altura disponible del sidebar y repartir las cartas */
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 0;
-    transform: translateY(-50%);
-    padding: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    gap: -15px;
+    padding: 60px 0 80px 0;
+    /* espacio para los botones flotantes */
+    box-sizing: border-box;
+    overflow: visible;
+    /* FIX: visible para que el hover de carta no se corte */
+}
+
+/* FIX HOVER FLICKER: Cada carta ocupa un slot de altura fija.
+   Al hover la carta crece visualmente (overflow:visible) pero NO empuja a las demás. */
+.staggered-entrance {
+    position: relative;
+    flex: 1;
     width: 100%;
-    overflow: visible !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
 }
 
-/* Ocultar scrollbar si no te apetece */
-.hand-cards-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-.hand-cards-container::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 10px;
+/* FIX HOVER FLICKER: Cuando una carta está hovereada,
+   deshabilitar pointer-events en todas las DEMÁS del mazo.
+   Evita que la carta expandida interfiera con las vecinas. */
+.hand-cards-container:has(.tactical-hover:hover) .tactical-hover:not(:hover) {
+    pointer-events: none;
 }
 
 .dock-card-wrapper {
-    /* Fase 2: Escala de "Recurso" Premium */
-    transform: scale(0.28) rotate(-5deg);
-    margin-bottom: -40px;
-    transform-origin: center center;
+    /* FIX: zoom SÍ afecta el layout (a diferencia de transform:scale) */
+    /* Con zoom:0.26 la carta de 390px ocupa ~101px en el DOM */
+    zoom: 0.26;
+    transform: rotate(-3deg);
+    /* Sutil inclinación de carta */
     display: block;
-    opacity: 0.9;
-    /* Fase 3: Estética de Mano de Cartas */
-    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
-    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), z-index 0s 0.1s, opacity 0.3s ease;
+    opacity: 0.92;
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.35));
+    transition: zoom 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+        transform 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+        opacity 0.3s ease,
+        filter 0.3s ease;
 }
 
-/* Fase 3: Efecto Abanico Sidebar Sutil */
+/* Efecto abanico sutil con solo rotación (sin scale) */
 .staggered-entrance:nth-child(1) .dock-card-wrapper {
-    transform: scale(0.28) rotate(-4deg) translateX(-5px);
+    transform: rotate(-5deg) translateX(-3px);
 }
 
 .staggered-entrance:nth-child(2) .dock-card-wrapper {
-    transform: scale(0.28) rotate(-2deg) translateX(-2px);
+    transform: rotate(-3deg) translateX(-1px);
 }
 
 .staggered-entrance:nth-child(3) .dock-card-wrapper {
-    transform: scale(0.28) rotate(0deg) translateX(0);
+    transform: rotate(-1deg) translateX(0);
 }
 
 .staggered-entrance:nth-child(4) .dock-card-wrapper {
-    transform: scale(0.28) rotate(1deg) translateX(0);
+    transform: rotate(1deg) translateX(0);
 }
 
 .staggered-entrance:nth-child(5) .dock-card-wrapper {
-    transform: scale(0.28) rotate(3deg) translateX(-2px);
+    transform: rotate(3deg) translateX(-1px);
 }
 
 .staggered-entrance:nth-child(6) .dock-card-wrapper {
-    transform: scale(0.28) rotate(5deg) translateX(-5px);
+    transform: rotate(5deg) translateX(-3px);
 }
 
 /* --- Módulo 2: Efectos de Selección (Hover Premium) --- */
 .tactical-hover {
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: zoom 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+        transform 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+        box-shadow 0.3s ease,
+        filter 0.3s ease;
     border-radius: 12px;
-    /* Smooth corners for shadow */
-    will-change: transform, box-shadow;
+    will-change: zoom, transform;
 }
 
 .tactical-hover:hover {
-    /* Fase 2: El Salto al Centro Absoluto (Hover Magic) */
-    position: fixed;
-    top: 50%;
-    right: 35vw;
-    -webkit-transform: translate(0, -50%) scale(1.0) !important;
-    -ms-transform: translate(0, -50%) scale(1.0) !important;
-    transform: translate(0, -50%) scale(1.0) !important;
-    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-    z-index: 2000000 !important;
-    -webkit-box-shadow: 0 0 25px 5px var(--card-glow, #bba32e);
-    box-shadow: 0 0 25px 5px var(--card-glow, #bba32e);
-    -webkit-filter: brightness(1.1) drop-shadow(-15px 0px 20px rgba(0, 0, 0, 0.7));
-    filter: brightness(1.1) drop-shadow(-15px 0px 20px rgba(0, 0, 0, 0.7));
+    /* zoom:0.62 = preview legible; translateX(-85%) = carta expande hacia el tablero */
+    zoom: 0.65 !important;
+    transform: rotate(0deg) translateX(-85%) !important;
+    z-index: 10010 !important;
+    box-shadow: 0 0 35px 12px var(--card-glow, #bba32e);
+    filter: brightness(1.15) drop-shadow(-6px 0px 18px rgba(0, 0, 0, 0.9));
     opacity: 1.0 !important;
 }
 

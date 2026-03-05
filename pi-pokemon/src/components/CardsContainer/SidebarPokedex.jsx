@@ -94,57 +94,111 @@ const SidebarPokedex = ({ setCurrentPage, onToggle }) => {
             {/* Contenedor Principal del Sidebar */}
             <div className={`sidebar-pokedex-shell ${isOpen ? 'open' : ''}`}>
 
-                {/* HEADER: Buscador Inteligente */}
-                <div className="sidebar-header">
-                    <h2>Pokédex OS</h2>
-                    <div className="search-wrapper">
-                        <label htmlFor="pokedexSearch" className="sr-only" style={{ display: 'none' }}>Buscar Pokémon</label>
-                        <input
-                            id="pokedexSearch"
-                            name="pokedexSearch"
-                            type="text"
-                            placeholder="Buscar Pokémon..."
-                            className="fuzzy-search-input"
-                            value={searchTerm}
-                            onChange={handleSearchChange}
-                            onKeyDown={handleKeyDown}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Delay para poder hacer click en opciones
-                        />
-                        <button className="search-exec-btn" onClick={() => executeSearch(searchTerm)}>Ir</button>
+                {/* ===================================================== */}
+                {/* FASE 1: TRAINER HEADER — Cima absoluta, fila con X     */}
+                {/* ===================================================== */}
+                <div className="sidebar-trainer-header">
+                    <div className="trainer-identity">
+                        <span className="trainer-hat">🎩</span>
+                        <div className="trainer-info">
+                            <span className="trainer-header">ENTRENADOR Lv. 1</span>
+                            <div className="xp-bar-container">
+                                <div className="xp-bar-fill" style={{ width: '30%' }}></div>
+                            </div>
+                            <span className="mono-stats">Capturadas: 3 / 151</span>
+                        </div>
+                    </div>
+                    <button
+                        className="sidebar-close-btn"
+                        onClick={() => {
+                            setIsOpen(false);
+                            if (onToggle) onToggle(false);
+                        }}
+                        aria-label="Cerrar sidebar"
+                    >
+                        ✕
+                    </button>
+                </div>
 
-                        {/* Dropdown de Sugerencias */}
-                        {isFocused && (suggestions.length > 0 || isSearching) && (
-                            <ul className="suggestions-dropdown">
-                                {isSearching ? (
-                                    <li className="suggestion-loading">Rastreando Pokédex...</li>
-                                ) : suggestions[0]?.isEmpty ? (
-                                    <li className="suggestion-empty">
-                                        <span className="empty-icon">🍃</span>
-                                        ¡Vaya! Parece que ese Pokémon huyó de la hierba alta.
-                                    </li>
-                                ) : (
-                                    suggestions.map(s => (
-                                        <li key={s.id} onClick={() => executeSearch(s.name)}>
-                                            <img src={s.image} alt={s.name} className="suggestion-sprite" />
-                                            <span>{s.name}</span>
-                                        </li>
-                                    ))
+                {/* ===================================================== */}
+                {/* FASE 2: CUERPO CENTRAL — Buscador + Filtros            */}
+                {/* ===================================================== */}
+                <div className="sidebar-scroll-area">
+                    <div className="sidebar-section tactical-unified-filters">
+                        <div className="sidebar-header" style={{ padding: 0, border: 'none', marginBottom: '15px' }}>
+                            <div className="search-wrapper">
+                                <label htmlFor="pokedexSearch" className="sr-only" style={{ display: 'none' }}>Buscar Pokémon</label>
+                                <input
+                                    id="pokedexSearch"
+                                    name="pokedexSearch"
+                                    type="text"
+                                    placeholder="Buscar Pokémon..."
+                                    className="fuzzy-search-input"
+                                    value={searchTerm}
+                                    onChange={handleSearchChange}
+                                    onKeyDown={handleKeyDown}
+                                    onFocus={() => setIsFocused(true)}
+                                    onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+                                />
+                                <button className="search-exec-btn" onClick={() => executeSearch(searchTerm)}>Ir</button>
+
+                                {isFocused && (suggestions.length > 0 || isSearching) && (
+                                    <ul className="suggestions-dropdown">
+                                        {isSearching ? (
+                                            <li className="suggestion-loading">Rastreando Pokédex...</li>
+                                        ) : suggestions[0]?.isEmpty ? (
+                                            <li className="suggestion-empty">
+                                                <span className="empty-icon">🍃</span>
+                                                ¡Vaya! Parece que ese Pokémon huyó de la hierba alta.
+                                            </li>
+                                        ) : (
+                                            suggestions.map(s => (
+                                                <li key={s.id} onClick={() => executeSearch(s.name)}>
+                                                    <img src={s.image} alt={s.name} className="suggestion-sprite" />
+                                                    <span>{s.name}</span>
+                                                </li>
+                                            ))
+                                        )}
+                                    </ul>
                                 )}
-                            </ul>
-                        )}
+                            </div>
+                        </div>
+
+                        <div className="sidebar-body" style={{ padding: 0 }}>
+                            <Filter setCurrentPage={setCurrentPage} isSidebar={true} />
+                        </div>
+                    </div>
+
+                    {/* EQUIPO ACTUAL */}
+                    <div className="sidebar-section current-team-container">
+                        <h4>EQUIPO ACTUAL</h4>
+                        <div className="team-scrollbox">
+                            <div className="team-slot"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png" alt="Charmeleon" /><span>charmeleon</span></div>
+                            <div className="team-slot"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/9.png" alt="Blastoise" /><span>blastoise</span></div>
+                            <div className="team-slot"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png" alt="Pikachu" /><span>pikachu</span></div>
+                        </div>
                     </div>
                 </div>
 
-                {/* BODY: Filtros (Módulo 15 vendrá aquí) */}
-                <div className="sidebar-body">
-                    <h3>Filtros de Red</h3>
-                    {/* Reutilizamos el Filter temporalmente hasta el Mod 15 */}
-                    <Filter setCurrentPage={setCurrentPage} isSidebar={true} />
-                </div>
-
-                {/* FOOTER: Botón de Combate */}
+                {/* ===================================================== */}
+                {/* FASE 3: FOOTER — Carta del Día + Arena Button           */}
+                {/* ===================================================== */}
                 <div className="sidebar-footer">
+
+                    {/* Panel de Previsualización: Carta del Día */}
+                    <div className="card-of-the-day-footer">
+                        <span className="cotd-title">CARTA DEL DÍA</span>
+                        <div className="cotd-image-wrapper">
+                            <img
+                                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png"
+                                alt="Charizard"
+                                className="cotd-sprite"
+                                style={{ filter: 'drop-shadow(0 0 15px rgba(255, 165, 0, 0.5))' }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Botón de Combate */}
                     <button className="premium-arena-btn" onClick={() => navigate('/arena')}>
                         <span className="btn-glint"></span>
                         IR A LA ARENA

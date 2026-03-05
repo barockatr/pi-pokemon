@@ -114,12 +114,27 @@ function Filter({ setCurrentPage }) {
       <details className="filter-accordion">
         <summary>Filtros de Búsqueda</summary>
         <div className="accordion-content">
-          <label htmlFor="filterCreated">Origen:</label>
-          <select id="filterCreated" onChange={handleCreated} className="filter-button">
-            <option value="all">Todos</option>
-            <option value="api">Oficiales</option>
-            <option value="created">Creados</option>
-          </select>
+          <label>Origen:</label>
+          <div className="origin-grid-filter">
+            <button
+              className={`type-btn-pill origin-cyan ${useGameStore.getState().currentFilters?.created === 'all' || !useGameStore.getState().currentFilters?.created ? 'active' : ''}`}
+              onClick={() => handleCreated({ target: { value: 'all' } })}
+            >
+              Todos
+            </button>
+            <button
+              className={`type-btn-pill origin-cyan ${useGameStore.getState().currentFilters?.created === 'api' ? 'active' : ''}`}
+              onClick={() => handleCreated({ target: { value: 'api' } })}
+            >
+              Oficiales
+            </button>
+            <button
+              className={`type-btn-pill origin-cyan ${useGameStore.getState().currentFilters?.created === 'created' ? 'active' : ''}`}
+              onClick={() => handleCreated({ target: { value: 'created' } })}
+            >
+              Creados
+            </button>
+          </div>
           <label>Tipo de Elemento:</label>
           <div className="type-grid-filter">
             {/* "All" Button */}

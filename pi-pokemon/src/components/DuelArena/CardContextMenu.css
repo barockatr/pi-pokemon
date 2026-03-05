@@ -1,17 +1,19 @@
 /* CardContextMenu.css */
 .card-context-menu {
-    position: absolute;
+    position: fixed;
+    /* FIX: fixed en lugar de absolute para portals en body */
     z-index: 9999999;
-    /* Sobrevolar TODO, incluso modales de Game Over si fuera necesario */
-    background: linear-gradient(135deg, rgba(20, 20, 25, 0.95), rgba(10, 10, 15, 0.95));
+    background: linear-gradient(135deg, rgba(20, 20, 25, 0.97), rgba(10, 10, 15, 0.97));
     border: 2px solid #bba32e;
-    transform: translateY(-2px);
+    border-radius: 8px;
     box-shadow: 0 5px 15px rgba(255, 51, 51, 0.4), 0 0 10px rgba(187, 163, 46, 0.5);
     padding: 10px;
-    min-width: 180px;
+    min-width: 200px;
+    max-width: 240px;
     backdrop-filter: blur(10px);
     animation: menuPopIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     transform-origin: top left;
+    pointer-events: auto;
 }
 
 .context-menu-header {
@@ -76,6 +78,45 @@
     cursor: not-allowed;
     background: transparent;
     border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Attack Buttons */
+.context-btn.attack-btn {
+    border-color: rgba(231, 76, 60, 0.4);
+    color: #ff9f9f;
+}
+
+.context-btn.attack-btn:hover:not(.disabled) {
+    background: rgba(231, 76, 60, 0.2);
+    border-color: #e74c3c;
+    color: #fff;
+}
+
+.context-btn.attack-btn.ultimate-btn {
+    border-color: rgba(255, 165, 0, 0.4);
+    color: #ffd700;
+    font-weight: 700;
+}
+
+.context-btn.attack-btn.ultimate-btn:hover:not(.disabled) {
+    background: rgba(255, 165, 0, 0.2);
+    border-color: #ffa500;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.3);
+}
+
+.dmg-badge {
+    font-size: 0.7rem;
+    opacity: 0.75;
+    font-weight: normal;
+    margin-left: auto;
+    padding-left: 8px;
+}
+
+.rpg-attacks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 @keyframes menuPopIn {

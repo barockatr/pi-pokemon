@@ -70,6 +70,20 @@
     color: #000;
 }
 
+/* === ORIGIN FILTER GRID === */
+.origin-grid-filter {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.type-btn-pill.origin-cyan.active {
+    border-color: #00e5ff;
+    box-shadow: 0 0 12px #00e5ff, inset 0 0 8px rgba(0, 229, 255, 0.5);
+    background: #111;
+}
+
 /* === TYPE FILTER GRID === */
 .type-grid-filter {
     display: grid;

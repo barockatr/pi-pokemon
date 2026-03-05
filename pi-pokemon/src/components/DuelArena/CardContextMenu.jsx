@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './CardContextMenu.css';
 
@@ -26,7 +26,7 @@ const CardContextMenu = ({
         // Tiempo de espera para evitar que el mismo click que abre el menú, lo cierre mágicamente.
         const timeoutId = setTimeout(() => {
             document.addEventListener('mousedown', handleClickOutside);
-            document.addEventListener('touchstart', handleClickOutside); // Soporte móvil
+            document.addEventListener('touchstart', handleClickOutside);
         }, 10);
 
         return () => {
@@ -36,10 +36,39 @@ const CardContextMenu = ({
         };
     }, [actions]);
 
-    // Prevención de rebase del Viewport
+    // FIX: useLayoutEffect → clamping ANTES del primer paint (sin flickering)
+    // Se ejecuta síncronamente después del DOM update pero ANTES del paint.
+    useLayoutEffect(() => {
+        if (!menuRef.current) return;
+        const rect = menuRef.current.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        let newLeft = parseFloat(menuRef.current.style.left) || position.x;
+        let newTop = parseFloat(menuRef.current.style.top) || position.y;
+
+        // Si el menú se sale por la derecha → abrirlo a la IZQUIERDA del cursor
+        if (rect.right > vw - 10) newLeft = position.x - rect.width - 10;
+        // Si se sale por abajo → abrirlo ENCIMA del cursor
+        if (rect.bottom > vh - 10) newTop = position.y - rect.height - 10;
+        // Límites: nunca salir por la izquierda ni por arriba
+        if (newLeft < 10) newLeft = 10;
+        if (newTop < 10) newTop = 10;
+
+        menuRef.current.style.left = `${newLeft}px`;
+        menuRef.current.style.top = `${newTop}px`;
+    }, [position]);
+
+    // Posición inicial inteligente:
+    // Si el click está en el 60% derecho → abrimos a la izquierda del cursor desde el inicio.
+    const MENU_W = 215;
+    const MENU_H = 190;
+    const isNearRight = position.x > window.innerWidth * 0.6;
+    const isNearBottom = position.y > window.innerHeight * 0.6;
+
     const style = {
-        top: `${position.y}px`,
-        left: `${position.x}px`,
+        top: isNearBottom ? `${position.y - MENU_H}px` : `${position.y}px`,
+        left: isNearRight ? `${position.x - MENU_W}px` : `${position.x}px`,
     };
 
     const cardArgsActiveFilled = !contextArgs.isPlayerActiveEmpty;
@@ -52,7 +81,7 @@ const CardContextMenu = ({
                         <button
                             className={`context-btn action-btn ${!contextArgs.canMoveToBench ? 'disabled' : ''}`}
                             onClick={() => { if (contextArgs.canMoveToBench) actions.onMoveToActive(card); }}
-                            disabled={!contextArgs.canMoveToBench} // We use the bench condition because if the hand is empty it shouldn't show anyway
+                            disabled={!contextArgs.canMoveToBench}
                         >
                             🚀 Jugar a Activo
                         </button>
@@ -75,7 +104,7 @@ const CardContextMenu = ({
                 return (
                     <>
                         <button
-                            className={`context-btn action-btn`}
+                            className="context-btn action-btn"
                             onClick={() => actions.onMoveToActive(card)}
                         >
                             🚀 Mover a Activo
@@ -86,32 +115,54 @@ const CardContextMenu = ({
                     </>
                 );
             }
-            // If active is filled, only show info.
             return (
                 <button className="context-btn info-btn" onClick={() => actions.onViewInfo(card)}>
                     🔍 Ver Info
                 </button>
             );
         } else if (contextArgs.type === 'ACTIVE') {
-            // Módulo 3: Menú Táctico RPG
-            // Buscar 'moves' definidos o generar placeholders basados en el 'attackDamage' base
-            const baseDamage = card.attackDamage || card.attack || 40;
-            const move1 = card.moves?.[0] || 'Tackle';
-            const move2 = card.moves?.[1] || 'Quick Attack';
+            // Ataques REALES de la carta TCG (card.attacks[])
+            const realAttacks = card.attacks || [];
+            const baseFallbackDmg = card.attackDamage || card.attack || 40;
 
+            if (realAttacks.length > 0) {
+                return (
+                    <div className="rpg-attacks-container">
+                        {realAttacks.map((atk, idx) => {
+                            const parsedDmg = parseInt(atk.damage, 10) || Math.round(baseFallbackDmg / (idx === 0 ? 2 : 1));
+                            const icon = idx === 0 ? '🗡️' : '💥';
+                            const cls = idx === 0 ? 'context-btn attack-btn' : 'context-btn attack-btn ultimate-btn';
+                            return (
+                                <button
+                                    key={idx}
+                                    className={cls}
+                                    onClick={() => actions.onAttack(parsedDmg, atk.name)}
+                                >
+                                    {icon} {atk.name} <span className="dmg-badge">({parsedDmg} DMG)</span>
+                                </button>
+                            );
+                        })}
+                        <button className="context-btn info-btn" onClick={() => actions.onViewInfo(card)} style={{ marginTop: '6px' }}>
+                            🔍 Ver Info de la Carta
+                        </button>
+                    </div>
+                );
+            }
+
+            // Fallback genérico
             return (
                 <div className="rpg-attacks-container">
                     <button
                         className="context-btn attack-btn"
-                        onClick={() => actions.onAttack(Math.round(baseDamage / 2), move1)}
+                        onClick={() => actions.onAttack(Math.round(baseFallbackDmg / 2), 'Tackle')}
                     >
-                        🗡️ {move1} <span className="dmg-badge">({Math.round(baseDamage / 2)} DMG)</span>
+                        🗡️ Tackle <span className="dmg-badge">({Math.round(baseFallbackDmg / 2)} DMG)</span>
                     </button>
                     <button
                         className="context-btn attack-btn ultimate-btn"
-                        onClick={() => actions.onAttack(baseDamage, move2)}
+                        onClick={() => actions.onAttack(baseFallbackDmg, 'Quick Attack')}
                     >
-                        💥 {move2} <span className="dmg-badge">({baseDamage} DMG)</span>
+                        💥 Quick Attack <span className="dmg-badge">({baseFallbackDmg} DMG)</span>
                     </button>
                     <button className="context-btn info-btn" onClick={() => actions.onViewInfo(card)} style={{ marginTop: '10px' }}>
                         🔍 Ver Info de la Carta
@@ -131,7 +182,7 @@ const CardContextMenu = ({
                 {renderButtons()}
             </div>
         </div>,
-        document.body // Inyectar directamente al body para sobrevolar TODOS los contenedores (Módulo 2 rule)
+        document.body
     );
 };
 
