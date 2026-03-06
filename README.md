@@ -94,9 +94,42 @@ Diseñado bajo la firme filosofía de nunca fallar de forma silenciosa.
 
 ## ⚙️ Instalación y Despliegue Local
 
-Sigue estos pasos para clonar el proyecto, inicializar la base de datos y correr el frontend.
+Sigue estos pasos para correr el proyecto completamente en local. Necesitarás **dos terminales abiertas**.
 
 ### 1. Clonar el repositorio
 ```bash
-git clone [https://github.com/tu-usuario/pi-pokemon.git](https://github.com/tu-usuario/pi-pokemon.git)
+git clone https://github.com/barockatr/pi-pokemon.git
 cd pi-pokemon
+```
+
+---
+
+### 2. Iniciar el Backend (API + SQLite)
+
+Navega a la carpeta de la API e instala las dependencias:
+
+```bash
+cd PI-Pokemon-main/api
+npm install
+npm start
+```
+
+> El servidor backend quedará corriendo en **`http://localhost:3001`** 🟢
+
+---
+
+### 3. Iniciar el Frontend (React + Vite)
+
+Abre una **segunda terminal**, navega a la carpeta del cliente e instala las dependencias:
+
+```bash
+cd pi-pokemon
+npm install
+npm run dev
+```
+
+> La aplicación estará disponible en **`http://localhost:5173`** 🚀
+
+---
+
+> **Nota:** Asegúrate de que el backend esté corriendo **antes** de abrir el frontend, de lo contrario las cartas no cargarán.
