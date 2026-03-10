@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import useGameStore from '../store/useGameStore';
 import Card from './Card';
 import CardSkeleton from './CardSkeleton';
-import SidebarPokedex from './CardsContainer/SidebarPokedex';
-import TutorialModal from './TutorialModal';
 import CardDetailModal from './CardDetailModal';
 import './CardsContainer.css';
 
