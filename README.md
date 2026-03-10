@@ -21,7 +21,7 @@
 
 ## 🚀 Despliegue (Live Demo)
 
-Puedes ver la aplicación funcionando aquí: [https://tcg-arena-pokedex.vercel.app/]
+Puedes ver la aplicación funcionando aquí: [Ver Demo](https://tcg-arena-pokedex.vercel.app/)
 
 > **⚠️ Nota sobre el rendimiento:** > El backend de este proyecto está alojado en un plan gratuito de **Render/Railway**. 
 > Debido a las políticas de "suspensión por inactividad", el servidor puede tardar entre **30 y 50 segundos** en responder tras la primera carga. 
